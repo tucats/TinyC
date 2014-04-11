@@ -283,10 +283,10 @@ extern TCContext* activeContext;
             
         }
         NSString * buffer = [NSString stringWithFormat:formatString array:valueArgs];
-        
-        printf([buffer UTF8String]);
-        // NSLog(@"%@", buffer);
-        return [[TCValue alloc]initWithInteger: arguments.count];
+        NSString *newString = [buffer stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+
+        int bytesPrinted = printf("%s", [newString UTF8String]);
+        return [[TCValue alloc]initWithInteger: bytesPrinted];
     }
     
     // not found!
