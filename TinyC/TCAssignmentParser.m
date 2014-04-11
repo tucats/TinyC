@@ -17,7 +17,7 @@
 
     // Right now all we know about is simple identifiers
     
-    int savedPosition = parser.position;
+    long savedPosition = parser.position;
     
     if( [parser isNextToken:TOKEN_IDENTIFIER]) {
         lvalue.nodeType = LANGUAGE_ADDRESS;
@@ -36,7 +36,7 @@
     TCSyntaxNode * stmt = [[TCSyntaxNode alloc] init];
     stmt.nodeType = LANGUAGE_ASSIGNMENT;
     
-    int savedPosition = parser.position;
+    long savedPosition = parser.position;
     
     TCSyntaxNode * lvalue = [self parseLValue:parser];
     if( lvalue != nil ) {

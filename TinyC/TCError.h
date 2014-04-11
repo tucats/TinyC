@@ -41,12 +41,12 @@ typedef enum {
 @property int code;
 @property NSString* message;
 @property NSString* sourceText;
-@property int position;
+@property long position;
 @property NSObject *argument;
 
 +(NSString*) errorTextForCode:(TCErrorType) code;
 -(NSString*) errorMessage;
--(instancetype) initWithCode:(TCErrorType)code inSource:(NSString*) source atPosition:(int)position;
+-(instancetype) initWithCode:(TCErrorType)code inSource:(NSString*) source atPosition:(long)position;
 -(instancetype) initWithCode:(TCErrorType)code withArgument:(NSObject*) argument;
 -(BOOL) isError;
 -(BOOL) isBreak;

@@ -21,14 +21,14 @@ typedef enum {
 @interface TCValue : NSValue
 
 {
-    int         intValue;
+    long        intValue;
     double      doubleValue;
     NSString *  stringValue;
     int         type;
 }
 -(instancetype)initWithDouble:(double) value;
 -(instancetype)initWithString:(NSString*) value;
--(instancetype)initWithInteger:(int) value;
+-(instancetype)initWithInteger:(long) value;
 -(int)compareToValue:(TCValue*) value;
 -(TCValue*) castTo:(TCValueType)newType;
 -(TCValue*) addValue:(TCValue*) value;
@@ -40,7 +40,7 @@ typedef enum {
 -(TCValue*) booleanNot;
 
 -(int)getType;
--(int)getInteger;
+-(long)getInteger;
 -(double)getDouble;
 -(NSString*) getString;
 @end

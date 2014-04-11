@@ -28,7 +28,7 @@
             for( NSDictionary * t in tempDict) {
                 NSString * spelling = [t valueForKey:@"spelling"];
                 NSNumber * typeNum =  [t valueForKey:@"type"];
-                int type = [typeNum integerValue];
+                int type = (int) [typeNum integerValue];
                 
                 // Special token that holds dictionary version is handled differently.  Otherwise
                 // just add the token data to the dictionary normally.
@@ -171,7 +171,7 @@
 //	Diagnostic routine that dumps out the token buffer.
 //
 -(void) dump {
-    int len = [self count];
+    long len = [self count];
     NSLog(@"Token buffer:");
     for( int i = 0; i < len; i++ ) {
         NSLog(@"[%2d]: %@", i, [tokenList objectAtIndex:i]);
@@ -182,18 +182,18 @@
 //
 //	Get the current position in the token buffer
 //
--(int) position {
+-(long) position {
     return tokenPosition;
 }
 
 //
 //	Set the current position in the token buffer.
 //
--(void) setPosition:(int) newPosition {
+-(void) setPosition:(long) newPosition {
     if( newPosition >= 0 | newPosition < [tokenList count])
         tokenPosition = newPosition;
     else
-        tokenPosition = [tokenList count] + 1;
+        tokenPosition = (long)[tokenList count] + 1;
 }
 //
 //	Get the next token in the buffer.
@@ -203,7 +203,7 @@
         lastToken = [tokenList objectAtIndex:tokenPosition++];
         return [lastToken type];
     }
-    lastToken = [[TCToken alloc] initWithSpelling:@"<end-of-string>" ofType:TOKEN_EOS atPosition:[tokenList count]];
+    lastToken = [[TCToken alloc] initWithSpelling:@"<end-of-string>" ofType:TOKEN_EOS atPosition:(long)[tokenList count]];
     return TOKEN_EOS;
     
     
@@ -212,7 +212,7 @@
 //
 //	Return the number of tokens (total) in the buffer.
 //
--(int) count {
+-(long) count {
     return [tokenList count];
 }
 
@@ -307,7 +307,7 @@
  @return a count of the number of tokens found
  */
 
--(int) lex:(NSString*) string {
+-(long) lex:(NSString*) string {
     
     
     scanner = [[NSScanner alloc] initWithString:string];
@@ -342,7 +342,7 @@
 
 -(BOOL) lexNext {
     
-    int len = [buffer length];
+    long len = [buffer length];
     if( charPos >= len )
         return NO;
     
@@ -455,7 +455,7 @@
             else {
                 // Handle case of special character strings that are made up of
                 // multiple bytes
-                int complexTokenLength = 0;
+                long complexTokenLength = 0;
                 for (NSString * key in _dictionary) {
                     TCToken * aToken = [_dictionary objectForKey:key];
                      NSString * testSpelling = aToken.spelling;

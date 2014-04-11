@@ -86,7 +86,7 @@
  @param position the position in the source buffer where the error was found
  @returns a new instance of the object
  */
--(instancetype) initWithCode:(TCErrorType)code inSource:(NSString *)source atPosition:(int)position
+-(instancetype) initWithCode:(TCErrorType)code inSource:(NSString *)source atPosition:(long)position
 {
     if(( self = [super init])) {
         _code = code;
@@ -102,7 +102,7 @@
         _code = code;
         _argument = argument;
         _sourceText = nil;
-        _position = nil;
+        _position = 0;
     }
     return self;
 }
@@ -169,12 +169,12 @@
         // a line break - we only want to print the source line with the error
         // and not the whole buffer if it is a multi-line buffer.
         
-        int positionOffset = 0;
+        long positionOffset = 0;
         NSRange line;
         line.location = 0;
         line.length = [_sourceText length];
         
-        for( int dx = _position; dx>0; dx--) {
+        for( long dx = _position; dx>0; dx--) {
             if( [_sourceText characterAtIndex:dx] == '\n') {
                 positionOffset = _position - dx;
                 line.location = dx;
@@ -187,7 +187,7 @@
         // the string to see if there is a second delimiter we should care
         // about.
         
-        for( int dx = line.location; dx < [_sourceText length]; dx++) {
+        for( long dx = (long) line.location; dx < [_sourceText length]; dx++) {
             if([_sourceText characterAtIndex:dx] == '\n') {
                 line.length = dx;
                 break;

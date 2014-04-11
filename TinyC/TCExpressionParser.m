@@ -311,7 +311,7 @@
 -(TCSyntaxNode*) parse:(TCParser *)parser
 {
     
-    int startingLocation = [parser position];
+    long startingLocation = [parser position];
     TCSyntaxNode * tree = [self parseBoolean:parser];
     if (!tree) {
         [parser setPosition:startingLocation];

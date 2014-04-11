@@ -53,7 +53,7 @@ typedef  enum TOKEN_TYPE {
 @interface TCToken : NSObject
 
 @property int type;
-@property int position;
+@property long position;
 @property NSString * spelling;
--(id) initWithSpelling:(NSString *) tokenSpelling ofType:(TokenType) tokenKind atPosition:(int) tokenPosition;
+-(id) initWithSpelling:(NSString *) tokenSpelling ofType:(TokenType) tokenKind atPosition:(long) tokenPosition;
 @end

@@ -18,7 +18,7 @@
  This is the primary init method for this class
  */
 
--(id) initWithSpelling:(NSString *) tokenSpelling ofType:(TokenType) tokenKind atPosition:(int) tokenPosition {
+-(id) initWithSpelling:(NSString *) tokenSpelling ofType:(TokenType) tokenKind atPosition:(long) tokenPosition {
     
     if(self = [super init]) {
         _spelling = [[NSString alloc] initWithString:tokenSpelling];

@@ -19,7 +19,7 @@
     
     // Is this an IF statement?
     
-    int savedPosition = parser.position;
+    long savedPosition = parser.position;
     if([parser isNextToken:TOKEN_IF]) {
         if([parser isNextToken:TOKEN_PAREN_LEFT]) {
             //NSLog(@"PARSE parse if");

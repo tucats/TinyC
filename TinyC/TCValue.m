@@ -28,7 +28,7 @@ typedef struct {
 }
 
 
--(int)getInteger
+-(long)getInteger
 {
     
     switch([self getType]) {
@@ -71,7 +71,7 @@ typedef struct {
     
     switch([self getType]) {
         case TCVALUE_INTEGER:
-            return [NSString stringWithFormat:@"%d", intValue];
+            return [NSString stringWithFormat:@"%ld", intValue];
             
         case TCVALUE_FLOAT:
         case TCVALUE_DOUBLE:
@@ -96,7 +96,7 @@ typedef struct {
     return self;
 }
 
--(instancetype) initWithInteger:(int) value
+-(instancetype) initWithInteger:(long) value
 {
     if((self = [super self])) {
         type = TCVALUE_INTEGER;
@@ -153,7 +153,7 @@ typedef struct {
         case TCVALUE_STRING:
             switch([self getType]) {
                 case TCVALUE_INTEGER:
-                    return [[TCValue alloc]initWithString:[NSString stringWithFormat:@"%d", intValue]];
+                    return [[TCValue alloc]initWithString:[NSString stringWithFormat:@"%ld", intValue]];
                 case TCVALUE_DOUBLE:
                     return [[TCValue alloc]initWithString:[NSString stringWithFormat:@"%f", doubleValue]];
                     
@@ -233,8 +233,8 @@ typedef struct {
     switch(promotedType) {
         case TCVALUE_INTEGER:
         {
-            int v1 = [self getInteger];
-            int v2 = [value getInteger];
+            long v1 = [self getInteger];
+            long v2 = [value getInteger];
             if( v2 == 0 ) {
                 NSLog(@"Divide by zero");
                 return 0;
@@ -264,8 +264,14 @@ typedef struct {
     }
     
     switch( [self getType]) {
-        case TCVALUE_INTEGER:
-            return ([self getInteger] - [value getInteger]);
+        case TCVALUE_INTEGER: {
+            long testLong = [self getInteger] - [value getInteger];
+            if( testLong < 0 )
+                return -1;
+            else if( testLong > 0)
+                return 1;
+            else return 0;
+        }
             
         case TCVALUE_DOUBLE:
         {

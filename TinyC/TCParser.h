@@ -21,8 +21,8 @@
 	int	tokenKind;
 	
 	NSMutableArray *tokenList;
-	int tokenPosition;
-	int charPos;
+	long tokenPosition;
+	long charPos;
 	NSScanner * scanner;
 	NSMutableDictionary *_dictionary;
 }
@@ -52,10 +52,10 @@
 -(void) addSpelling:(NSString*)theSpelling forToken:(TokenType) code;
 
 -(int) nextToken;
--(int) lex:(NSString*) string;
--(int) count;
--(int) position;
--(void) setPosition:(int) newPosition;
+-(long) lex:(NSString*) string;
+-(long) count;
+-(long) position;
+-(void) setPosition:(long) newPosition;
 -(BOOL) lexNext;
 -(void) dump;
 

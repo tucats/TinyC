@@ -157,6 +157,8 @@
 		E262FE1118F8489B00DFC135 /* Semantic Parsing */ = {
 			isa = PBXGroup;
 			children = (
+				E262FDEA18F847BA00DFC135 /* TCIfParser.h */,
+				E262FDEB18F847BA00DFC135 /* TCIfParser.m */,
 				E262FDDC18F847BA00DFC135 /* TCAssignmentParser.h */,
 				E262FDDD18F847BA00DFC135 /* TCAssignmentParser.m */,
 				E262FDE018F847BA00DFC135 /* TCDeclarationParser.h */,
@@ -197,8 +199,6 @@
 		E262FE1318F848D900DFC135 /* Lexical Analysis */ = {
 			isa = PBXGroup;
 			children = (
-				E262FDEA18F847BA00DFC135 /* TCIfParser.h */,
-				E262FDEB18F847BA00DFC135 /* TCIfParser.m */,
 				E262FDEE18F847BA00DFC135 /* TCParser.h */,
 				E262FDEF18F847BA00DFC135 /* TCParser.m */,
 				E262FDF818F847BA00DFC135 /* TCToken.h */,
