@@ -12,6 +12,7 @@
 #import "TCExpressionParser.h"
 #import "TCSymbolTable.h"
 #import "TCContext.h"
+#import "NSString+NSStringFormatting.h"
 
 extern TCContext* activeContext;
 
@@ -34,9 +35,13 @@ extern TCContext* activeContext;
 
 -(TCValue*) evaluate:(TCSyntaxNode *)node withSymbols:(TCSymbolTable*) symbols
 {
- 
+    
     switch( node.nodeType) {
-        
+            
+            // An assignment operator?
+        case LANGUAGE_ASSIGNMENT:
+            return [activeContext execute:node withSymbols:symbols];
+            
             // A function call?
         case LANGUAGE_CALL:
             return [self functionCall:node withSymbols:symbols];
@@ -81,7 +86,7 @@ extern TCContext* activeContext;
                     
                 case TOKEN_STRING:
                     return [[TCValue alloc]initWithString:node.spelling];
-                   
+                    
                 default:
                     _error = [[TCError alloc] initWithCode:TCERROR_INTERP_BAD_SCALAR
                                               withArgument:[NSNumber numberWithInt:node.action]];
@@ -98,7 +103,7 @@ extern TCContext* activeContext;
             switch(node.action) {
                 case TOKEN_SUBTRACT:
                     return [target negate];
-                
+                    
                 case TOKEN_NOT:
                     return [target booleanNot];
                     
@@ -111,10 +116,20 @@ extern TCContext* activeContext;
         case LANGUAGE_DIADIC:
         {
             TCValue * left = [self evaluate:node.subNodes[0] withSymbols:symbols];
+            if( _error)
+                return nil;
             TCValue * right = [self evaluate:node.subNodes[1] withSymbols:symbols];
+            if( _error)
+                return nil;
+
+            if( left == nil || right == nil) {
+                _error = [[TCError alloc]initWithCode:TCERROR_UNINIT_VALUE withArgument:nil];
+                return nil;
+            }
+
             if( _debug)
                 NSLog(@"Diadic action %d on %@, %@", node.action, left, right);
-
+            
             switch(node.action) {
                 case TOKEN_BOOLEAN_AND:
                     return [[TCValue alloc]initWithInteger:([left getInteger] && [right getInteger])];
@@ -140,7 +155,7 @@ extern TCContext* activeContext;
                 {
                     TCValue * left = [self evaluate:node.subNodes[0] withSymbols:symbols];
                     TCValue * right = [self evaluate:node.subNodes[1] withSymbols:symbols];
-
+                    
                     return [[TCValue alloc]initWithInteger:[left compareToValue:right] > 0];
                 }
                 case TOKEN_GREATER_OR_EQUAL:
@@ -235,8 +250,50 @@ extern TCContext* activeContext;
             _error = newContext.error;
         return result;
     }
+    
+    // See if it is a built-in function?
+    
+    return [self executeFunction:node.spelling withArguments:arguments];
+}
+
+-(TCValue*) executeFunction:(NSString *)name withArguments:(NSArray *)arguments
+{
+    
+    if( [name isEqualToString:@"printf"]){
+        
+        // Simplest case, no arguments and we have no work.
+        
+        if( arguments == nil || arguments.count == 0 ) {
+            _error = nil;
+            return [[TCValue alloc]initWithInteger:0];
+        }
+        NSMutableArray * valueArgs = [NSMutableArray array];
+        TCValue* formatValue = (TCValue*) arguments[0];
+        NSString * formatString = [formatValue getString];
+        
+        for( int i = 1; i < arguments.count; i++ ) {
+            TCValue * x = (TCValue*) arguments[i];
+            
+            if( x.getType == TCVALUE_BOOLEAN)
+                [valueArgs addObject:[NSNumber numberWithBool:x.getInteger]];
+            if( x.getType == TCVALUE_INTEGER)
+                [valueArgs addObject:[NSNumber numberWithLong:x.getInteger]];
+            if( x.getType == TCVALUE_DOUBLE)
+                [valueArgs addObject:[NSNumber numberWithDouble:x.getDouble]];
+            
+        }
+        NSString * buffer = [NSString stringWithFormat:formatString array:valueArgs];
+        
+        printf([buffer UTF8String]);
+        // NSLog(@"%@", buffer);
+        return [[TCValue alloc]initWithInteger: arguments.count];
+    }
+    
     // not found!
-    _error = [[TCError alloc]initWithCode:TCERROR_UNK_ENTRYPOINT withArgument:node.spelling];
+    _error = [[TCError alloc]initWithCode:TCERROR_UNK_ENTRYPOINT withArgument:name];
     return nil;
+
 }
 @end
+
+

@@ -27,6 +27,7 @@
 		E262FE0B18F847BA00DFC135 /* TCToken.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDF918F847BA00DFC135 /* TCToken.m */; };
 		E262FE0C18F847BA00DFC135 /* TCValue.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDFB18F847BA00DFC135 /* TCValue.m */; };
 		E262FE1018F8481000DFC135 /* TinyC.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE0F18F8481000DFC135 /* TinyC.m */; };
+		E262FE1618F8645300DFC135 /* NSString+NSStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -83,6 +84,8 @@
 		E262FDFB18F847BA00DFC135 /* TCValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCValue.m; sourceTree = "<group>"; };
 		E262FE0E18F8481000DFC135 /* TinyC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyC.h; sourceTree = "<group>"; };
 		E262FE0F18F8481000DFC135 /* TinyC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TinyC.m; sourceTree = "<group>"; };
+		E262FE1418F8645300DFC135 /* NSString+NSStringFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NSStringFormatting.h"; sourceTree = "<group>"; };
+		E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSStringFormatting.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -192,6 +195,8 @@
 				E262FDF518F847BA00DFC135 /* TCSymbolTable.m */,
 				E262FDFA18F847BA00DFC135 /* TCValue.h */,
 				E262FDFB18F847BA00DFC135 /* TCValue.m */,
+				E262FE1418F8645300DFC135 /* NSString+NSStringFormatting.h */,
+				E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */,
 			);
 			name = Interpreter;
 			sourceTree = "<group>";
@@ -273,6 +278,7 @@
 				E262FE0518F847BA00DFC135 /* TCModuleParser.m in Sources */,
 				E262FDFE18F847BA00DFC135 /* TCContext.m in Sources */,
 				E262FDFF18F847BA00DFC135 /* TCDeclarationParser.m in Sources */,
+				E262FE1618F8645300DFC135 /* NSString+NSStringFormatting.m in Sources */,
 				E262FE0618F847BA00DFC135 /* TCParser.m in Sources */,
 				E262FE0A18F847BA00DFC135 /* TCSyntaxNode.m in Sources */,
 				E262FE0218F847BA00DFC135 /* TCExpressionInterpreter.m in Sources */,

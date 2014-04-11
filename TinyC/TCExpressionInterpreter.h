@@ -19,5 +19,6 @@
 -(TCValue *) evaluate:(TCSyntaxNode* ) node withSymbols:(TCSymbolTable*) symbols;
 -(TCValue *) evaluateString:(NSString*) string;
 -(TCValue*) functionCall:(TCSyntaxNode *) node withSymbols:(TCSymbolTable*)symbols;
+-(TCValue*) executeFunction:(NSString*) name withArguments:(NSArray*) arguments;
 
 @end

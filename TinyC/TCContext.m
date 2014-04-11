@@ -67,11 +67,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         activeContext = self;
     
     TCValue * result = [[TCValue alloc]initWithInteger:0];
-    self.block = nil;
-    self.parent = nil;
-    self.blockPosition = 0;
-    self.error = nil;
-    
+   
     if(_debug) {
         if( entryName != nil)
             NSLog(@"Searching MODULE for entrypoint %@", entryName);
@@ -93,6 +89,21 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     
     switch( tree.nodeType) {
         
+            // Most common case, a call to a function with no result or an assignment
+            
+        case LANGUAGE_EXPRESSION:
+        {
+            TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
+            expInt.debug = _debug;
+            
+            [expInt evaluate:tree withSymbols:_symbols];  // Note we don't care about result either
+            if(expInt.error) {
+                _error = expInt.error;
+                return nil;
+            }
+        }
+            break;
+            
         case LANGUAGE_ENTRYPOINT:
             
         {
@@ -180,6 +191,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCSyntaxNode * target = tree.subNodes[0];
             TCSyntaxNode * exp = tree.subNodes[1];
             TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
+            expInt.debug = _debug;
+            
             TCValue * value = [expInt evaluate:exp withSymbols:_symbols];
             if( expInt.error) {
                 _error = expInt.error;
@@ -198,6 +211,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 return nil;
             }
             targetValue.initialValue = value;
+            result = value;
         }
             break;
             
@@ -207,6 +221,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCSyntaxNode * ifTrue = tree.subNodes[1];
             
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
+            expInt.debug = _debug;
+            
             TCValue * condValue = [expInt evaluate:condition withSymbols:_symbols];
             if( condValue.getInteger ) {
                 if(_debug)
@@ -224,7 +240,13 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         case LANGUAGE_RETURN:
         {
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
+            expInt.debug = _debug;
+            
             result = [expInt evaluate:tree.subNodes[0] withSymbols:_symbols];
+            if( expInt.error) {
+                _error = expInt.error;
+                return nil;
+            }
             if( _debug) {
                 NSLog(@"Returning block value %@", result);
             }

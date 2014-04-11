@@ -22,7 +22,7 @@
     // Is it a function?
     
     if( [parser isNextToken:TOKEN_PAREN_LEFT]) {
-    
+        
         atom.nodeType = LANGUAGE_CALL;
         // Parse argument list
         BOOL requireComma = NO;
@@ -100,7 +100,7 @@
     //  hierarchy. Requires a closing parenthesis after the expression.
     
     if([parser isNextToken:TOKEN_PAREN_LEFT]) {
-        TCSyntaxNode * subExpression = [self parseBoolean:parser];
+        TCSyntaxNode * subExpression = [self parseAssignment:parser];
         if(![parser isNextToken:TOKEN_PAREN_RIGHT]) {
             [parser error:TCERROR_PARENMISMATCH];
             return nil;
@@ -117,14 +117,20 @@
         atom.action = TOKEN_INTEGER;
         atom.spelling = [parser lastSpelling];
         return atom;
-        
-        if([parser isNextToken:TOKEN_DOUBLE]) {
-            TCSyntaxNode *atom = [[TCSyntaxNode alloc]init];
-            atom.nodeType = LANGUAGE_SCALAR;
-            atom.action = TOKEN_DOUBLE;
-            atom.spelling = [parser lastSpelling];
-            return atom;
-        }
+    }
+    else if([parser isNextToken:TOKEN_DOUBLE]) {
+        TCSyntaxNode *atom = [[TCSyntaxNode alloc]init];
+        atom.nodeType = LANGUAGE_SCALAR;
+        atom.action = TOKEN_DOUBLE;
+        atom.spelling = [parser lastSpelling];
+        return atom;
+    }
+    else if([parser isNextToken:TOKEN_STRING]) {
+        TCSyntaxNode * atom = [[TCSyntaxNode alloc]init];
+        atom.nodeType = LANGUAGE_SCALAR;
+        atom.action = TOKEN_STRING;
+        atom.spelling = [parser lastSpelling];
+        return atom;
     }
     
     //  An unrecognized expression atom, so we are probably at the end of
@@ -156,7 +162,7 @@
         return nil;
     
     while( [parser isNextToken:TOKEN_MULTIPLY] ||
-       [parser isNextToken:TOKEN_DIVIDE]) {
+          [parser isNextToken:TOKEN_DIVIDE]) {
         TokenType whichOperation = [parser lastTokenType];
         NSString * spelling = [parser lastSpelling];
         
@@ -196,7 +202,7 @@
         return nil;
     
     while( [parser isNextToken:TOKEN_ADD] ||
-       [parser isNextToken:TOKEN_SUBTRACT]) {
+          [parser isNextToken:TOKEN_SUBTRACT]) {
         TokenType whichOperation = [parser lastTokenType];
         NSString * spelling = [parser lastSpelling];
         
@@ -259,9 +265,9 @@
  Parse diadic relational comparison operations.
  
  Parses an atom (which can be an entire subexpression) and if this is
- followed by a relational operator such as "<" or ">=" then create a 
- node for a RELATION operator and use the token as the action code.  
- Requires a valid right and left side or we just return the first 
+ followed by a relational operator such as "<" or ">=" then create a
+ node for a RELATION operator and use the token as the action code.
+ Requires a valid right and left side or we just return the first
  side found.
  
  Note that this could be implemented as a DIADIC operator with the
@@ -303,6 +309,28 @@
     return atom;
 }
 
+
+
+-(TCSyntaxNode*) parseAssignment:(TCParser *) parser
+{
+    TCSyntaxNode * atom = [self parseBoolean:parser];
+    if( !atom )
+        return nil;
+    
+    if([parser isNextToken:TOKEN_ASSIGNMENT]) {
+        
+        TCSyntaxNode * rightSide = [self parseBoolean:parser];
+        if( rightSide) {
+            TCSyntaxNode *thisRelation = [[TCSyntaxNode alloc]init];
+            thisRelation.nodeType = LANGUAGE_ASSIGNMENT;
+            [thisRelation addNode:atom];
+            [thisRelation addNode:rightSide];
+            return thisRelation;
+        }
+    }
+    return atom;
+}
+
 /**
  Given a parser, create a parse tree for a standard expression and return it
  as the method result.  Returns nil if no expression was found.
@@ -312,7 +340,7 @@
 {
     
     long startingLocation = [parser position];
-    TCSyntaxNode * tree = [self parseBoolean:parser];
+    TCSyntaxNode * tree = [self parseAssignment:parser];
     if (!tree) {
         [parser setPosition:startingLocation];
         _error = [parser error];

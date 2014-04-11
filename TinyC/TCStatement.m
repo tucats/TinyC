@@ -116,6 +116,16 @@
         }
     }
  
+    // How about a simple expression? Which can include function calls with discarded result values
+    if( tree == nil ) {
+        
+        TCExpressionParser * exp = [[TCExpressionParser alloc]init];
+        tree = [exp parse:parser];
+        if( parser.error != nil && error != nil) {
+            *error = parser.error;
+            return nil;
+        }
+    }
     
     if(tree != nil) {
         if(!(options & TCSTATEMENT_SUBSTATEMENT)) {

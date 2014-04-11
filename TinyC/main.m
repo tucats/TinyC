@@ -43,7 +43,7 @@ int main(int argc, const char * argv[])
         }
         
         if( path == nil && program == nil) {
-            program = @"int main( int argc ) { int bob; bob = getinfo(3); return bob+argc} int getinfo( int v ) { return v*100;} ";
+            program = @"int main( int argc ) { int bob; bob = 100; printf(\"Hello, %@\n\", bob); return bob+argc} int getinfo( int v ) { return v*100;} ";
             printf("No source given\n");
             debugFlag = YES;
         }
