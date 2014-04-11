@@ -1,19 +1,10 @@
-//
-//  main.m
-//  TinyC
-//
-//  Created by Tom Cole on 4/11/14.
-//  Copyright (c) 2014 Forest Edge. All rights reserved.
-//
-
 #import <Foundation/Foundation.h>
-#import "TCError.h"
-#import "TCValue.h"
 #import "TinyC.h"
+#import "TCContext.h"
 
-int main(int argc, const char * argv[])
-{
 
+int main (int argc, const char * argv[]) {
+    
     @autoreleasepool {
         
         NSString * program = nil;
@@ -55,12 +46,12 @@ int main(int argc, const char * argv[])
             error = [tinyC compileString:program];
         else
             error = [tinyC compileFile:path];
-        
+
         if( error != nil ) {
             printf("%s\n", [[error description] UTF8String]);
             return 1;
         }
-        
+       
         TCValue * result = nil;
         error = [tinyC executeReturningValue:&result];
         
@@ -72,6 +63,4 @@ int main(int argc, const char * argv[])
         printf("Program returns %s\n", [[result description] UTF8String]);
         return 0;
     }
-    return 0;
 }
-

@@ -1,0 +1,64 @@
+
+
+1.  [DONE] Add ability to have errors as a discrete object.  The error can
+    take a code as a value, and an optional argument.  The code is formatted
+    as a string internally for localization purposes.  The description method
+    formats the error for printing.
+
+2.  [DONE] Each major class must include the ability to have an error object
+    associated with it.  For example the parser can get an error, but so can
+    the ExpressionParser, DeclarationParser, etc.
+
+3.  [DONE] have the error formatter handle multi-line buffers gracefully by
+    only showing the individual line with the error on it.
+    
+
+4.  [DONE] Update the expression parser to use the new error object instead of
+    brute-force logging.
+    
+
+5.  [DONE] Update the expression intepreter to use the new error object instead of
+    brute-force logging.
+
+6.  [DONE] Create a Statement class that has the ability to use the parser to handle
+    parsing any known statement.  It should try to parse the next available
+    statement type.
+
+7.  [DONE] Add IF statement parser that knows how to process one or two (else-clause)
+    statements, which can include the BLOCK type. NOTE: this required considerable
+    adjustment to the relationship between blocks and statements and when a trailing
+    ";" is required, particularly for if statements with blocks.
+    
+8.  Add function entry point definition.  This may involve changing how
+    declarations are parsed, since a function can become a kind of declaration
+    now. 
+
+9.  [DONE] Create statement interpreter that traverses tree.  For BLOCK it creates
+    a new symbol table scope for declarations.  DECLARE adds to the symbol
+    table.  Assignment and IF statements execute normally.
+    
+10. [DONE] Implement RETURN statement thet returns a value from a block.
+
+11. [DONE]Change invocation to search for a function called "main" and execute that.
+
+12. [DONE]Function arguments must generate DECLARE objects in local block graph, with
+    specialized assignment operators that fetch argument list items.
+
+13. [DONE]You can execute a MODULE tree with an entry point name and it is searched
+    for an run.  Or you can start with a tree that is an ENTRYPOINT and it just
+    runs that tree.
+
+14. [DONE]A new call to a routine must parse an argument list and create an argument
+    array, then call a new invocation of TCContext to run it, creating a new
+    scope and storage area.
+    
+15. Rather than storing the value in the symbol table, we must have a storage area
+    of real memory that variables are allocated from.  This will be required before
+    pointers can work.  The DECLARE module will need to allocate storage and
+    save those allocated values in the table, which will be offsets into the storage
+    domain.  Need a separate class that is storage management.
+    
+
+    
+
+    

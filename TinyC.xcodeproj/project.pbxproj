@@ -10,6 +10,23 @@
 		E262FDCD18F8478400DFC135 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E262FDCC18F8478400DFC135 /* Foundation.framework */; };
 		E262FDD018F8478400DFC135 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDCF18F8478400DFC135 /* main.m */; };
 		E262FDD418F8478400DFC135 /* TinyC.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = E262FDD318F8478400DFC135 /* TinyC.1 */; };
+		E262FDFD18F847BA00DFC135 /* TCAssignmentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDDD18F847BA00DFC135 /* TCAssignmentParser.m */; };
+		E262FDFE18F847BA00DFC135 /* TCContext.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDDF18F847BA00DFC135 /* TCContext.m */; };
+		E262FDFF18F847BA00DFC135 /* TCDeclarationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDE118F847BA00DFC135 /* TCDeclarationParser.m */; };
+		E262FE0018F847BA00DFC135 /* TCError.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDE318F847BA00DFC135 /* TCError.m */; };
+		E262FE0118F847BA00DFC135 /* TCExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDE518F847BA00DFC135 /* TCExpression.m */; };
+		E262FE0218F847BA00DFC135 /* TCExpressionInterpreter.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDE718F847BA00DFC135 /* TCExpressionInterpreter.m */; };
+		E262FE0318F847BA00DFC135 /* TCExpressionParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDE918F847BA00DFC135 /* TCExpressionParser.m */; };
+		E262FE0418F847BA00DFC135 /* TCIfParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDEB18F847BA00DFC135 /* TCIfParser.m */; };
+		E262FE0518F847BA00DFC135 /* TCModuleParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDED18F847BA00DFC135 /* TCModuleParser.m */; };
+		E262FE0618F847BA00DFC135 /* TCParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDEF18F847BA00DFC135 /* TCParser.m */; };
+		E262FE0718F847BA00DFC135 /* TCStatement.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDF118F847BA00DFC135 /* TCStatement.m */; };
+		E262FE0818F847BA00DFC135 /* TCSymbol.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDF318F847BA00DFC135 /* TCSymbol.m */; };
+		E262FE0918F847BA00DFC135 /* TCSymbolTable.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDF518F847BA00DFC135 /* TCSymbolTable.m */; };
+		E262FE0A18F847BA00DFC135 /* TCSyntaxNode.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDF718F847BA00DFC135 /* TCSyntaxNode.m */; };
+		E262FE0B18F847BA00DFC135 /* TCToken.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDF918F847BA00DFC135 /* TCToken.m */; };
+		E262FE0C18F847BA00DFC135 /* TCValue.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDFB18F847BA00DFC135 /* TCValue.m */; };
+		E262FE1018F8481000DFC135 /* TinyC.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE0F18F8481000DFC135 /* TinyC.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -31,6 +48,41 @@
 		E262FDCF18F8478400DFC135 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		E262FDD218F8478400DFC135 /* TinyC-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TinyC-Prefix.pch"; sourceTree = "<group>"; };
 		E262FDD318F8478400DFC135 /* TinyC.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = TinyC.1; sourceTree = "<group>"; };
+		E262FDDA18F847BA00DFC135 /* DevNotes.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DevNotes.txt; sourceTree = "<group>"; };
+		E262FDDC18F847BA00DFC135 /* TCAssignmentParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCAssignmentParser.h; sourceTree = "<group>"; };
+		E262FDDD18F847BA00DFC135 /* TCAssignmentParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCAssignmentParser.m; sourceTree = "<group>"; };
+		E262FDDE18F847BA00DFC135 /* TCContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCContext.h; sourceTree = "<group>"; };
+		E262FDDF18F847BA00DFC135 /* TCContext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCContext.m; sourceTree = "<group>"; };
+		E262FDE018F847BA00DFC135 /* TCDeclarationParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCDeclarationParser.h; sourceTree = "<group>"; };
+		E262FDE118F847BA00DFC135 /* TCDeclarationParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCDeclarationParser.m; sourceTree = "<group>"; };
+		E262FDE218F847BA00DFC135 /* TCError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCError.h; sourceTree = "<group>"; };
+		E262FDE318F847BA00DFC135 /* TCError.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCError.m; sourceTree = "<group>"; };
+		E262FDE418F847BA00DFC135 /* TCExpression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCExpression.h; sourceTree = "<group>"; };
+		E262FDE518F847BA00DFC135 /* TCExpression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCExpression.m; sourceTree = "<group>"; };
+		E262FDE618F847BA00DFC135 /* TCExpressionInterpreter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCExpressionInterpreter.h; sourceTree = "<group>"; };
+		E262FDE718F847BA00DFC135 /* TCExpressionInterpreter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCExpressionInterpreter.m; sourceTree = "<group>"; };
+		E262FDE818F847BA00DFC135 /* TCExpressionParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCExpressionParser.h; sourceTree = "<group>"; };
+		E262FDE918F847BA00DFC135 /* TCExpressionParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCExpressionParser.m; sourceTree = "<group>"; };
+		E262FDEA18F847BA00DFC135 /* TCIfParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCIfParser.h; sourceTree = "<group>"; };
+		E262FDEB18F847BA00DFC135 /* TCIfParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCIfParser.m; sourceTree = "<group>"; };
+		E262FDEC18F847BA00DFC135 /* TCModuleParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCModuleParser.h; sourceTree = "<group>"; };
+		E262FDED18F847BA00DFC135 /* TCModuleParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCModuleParser.m; sourceTree = "<group>"; };
+		E262FDEE18F847BA00DFC135 /* TCParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCParser.h; sourceTree = "<group>"; };
+		E262FDEF18F847BA00DFC135 /* TCParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCParser.m; sourceTree = "<group>"; };
+		E262FDF018F847BA00DFC135 /* TCStatement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCStatement.h; sourceTree = "<group>"; };
+		E262FDF118F847BA00DFC135 /* TCStatement.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCStatement.m; sourceTree = "<group>"; };
+		E262FDF218F847BA00DFC135 /* TCSymbol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCSymbol.h; sourceTree = "<group>"; };
+		E262FDF318F847BA00DFC135 /* TCSymbol.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCSymbol.m; sourceTree = "<group>"; };
+		E262FDF418F847BA00DFC135 /* TCSymbolTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCSymbolTable.h; sourceTree = "<group>"; };
+		E262FDF518F847BA00DFC135 /* TCSymbolTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCSymbolTable.m; sourceTree = "<group>"; };
+		E262FDF618F847BA00DFC135 /* TCSyntaxNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCSyntaxNode.h; sourceTree = "<group>"; };
+		E262FDF718F847BA00DFC135 /* TCSyntaxNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCSyntaxNode.m; sourceTree = "<group>"; };
+		E262FDF818F847BA00DFC135 /* TCToken.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCToken.h; sourceTree = "<group>"; };
+		E262FDF918F847BA00DFC135 /* TCToken.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCToken.m; sourceTree = "<group>"; };
+		E262FDFA18F847BA00DFC135 /* TCValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCValue.h; sourceTree = "<group>"; };
+		E262FDFB18F847BA00DFC135 /* TCValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCValue.m; sourceTree = "<group>"; };
+		E262FE0E18F8481000DFC135 /* TinyC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TinyC.h; sourceTree = "<group>"; };
+		E262FE0F18F8481000DFC135 /* TinyC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TinyC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +126,12 @@
 			isa = PBXGroup;
 			children = (
 				E262FDCF18F8478400DFC135 /* main.m */,
-				E262FDD318F8478400DFC135 /* TinyC.1 */,
+				E262FE0E18F8481000DFC135 /* TinyC.h */,
+				E262FE0F18F8481000DFC135 /* TinyC.m */,
+				E262FE1118F8489B00DFC135 /* Semantic Parsing */,
+				E262FE1218F848C400DFC135 /* Interpreter */,
+				E262FE1318F848D900DFC135 /* Lexical Analysis */,
+				E262FE0D18F847C900DFC135 /* Documentation */,
 				E262FDD118F8478400DFC135 /* Supporting Files */,
 			);
 			path = TinyC;
@@ -86,6 +143,68 @@
 				E262FDD218F8478400DFC135 /* TinyC-Prefix.pch */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		E262FE0D18F847C900DFC135 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				E262FDD318F8478400DFC135 /* TinyC.1 */,
+				E262FDDA18F847BA00DFC135 /* DevNotes.txt */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+		E262FE1118F8489B00DFC135 /* Semantic Parsing */ = {
+			isa = PBXGroup;
+			children = (
+				E262FDDC18F847BA00DFC135 /* TCAssignmentParser.h */,
+				E262FDDD18F847BA00DFC135 /* TCAssignmentParser.m */,
+				E262FDE018F847BA00DFC135 /* TCDeclarationParser.h */,
+				E262FDE118F847BA00DFC135 /* TCDeclarationParser.m */,
+				E262FDE818F847BA00DFC135 /* TCExpressionParser.h */,
+				E262FDE918F847BA00DFC135 /* TCExpressionParser.m */,
+				E262FDEC18F847BA00DFC135 /* TCModuleParser.h */,
+				E262FDED18F847BA00DFC135 /* TCModuleParser.m */,
+				E262FDF018F847BA00DFC135 /* TCStatement.h */,
+				E262FDF118F847BA00DFC135 /* TCStatement.m */,
+				E262FDF618F847BA00DFC135 /* TCSyntaxNode.h */,
+				E262FDF718F847BA00DFC135 /* TCSyntaxNode.m */,
+			);
+			name = "Semantic Parsing";
+			sourceTree = "<group>";
+		};
+		E262FE1218F848C400DFC135 /* Interpreter */ = {
+			isa = PBXGroup;
+			children = (
+				E262FDDE18F847BA00DFC135 /* TCContext.h */,
+				E262FDDF18F847BA00DFC135 /* TCContext.m */,
+				E262FDE218F847BA00DFC135 /* TCError.h */,
+				E262FDE318F847BA00DFC135 /* TCError.m */,
+				E262FDE418F847BA00DFC135 /* TCExpression.h */,
+				E262FDE518F847BA00DFC135 /* TCExpression.m */,
+				E262FDE618F847BA00DFC135 /* TCExpressionInterpreter.h */,
+				E262FDE718F847BA00DFC135 /* TCExpressionInterpreter.m */,
+				E262FDF218F847BA00DFC135 /* TCSymbol.h */,
+				E262FDF318F847BA00DFC135 /* TCSymbol.m */,
+				E262FDF418F847BA00DFC135 /* TCSymbolTable.h */,
+				E262FDF518F847BA00DFC135 /* TCSymbolTable.m */,
+				E262FDFA18F847BA00DFC135 /* TCValue.h */,
+				E262FDFB18F847BA00DFC135 /* TCValue.m */,
+			);
+			name = Interpreter;
+			sourceTree = "<group>";
+		};
+		E262FE1318F848D900DFC135 /* Lexical Analysis */ = {
+			isa = PBXGroup;
+			children = (
+				E262FDEA18F847BA00DFC135 /* TCIfParser.h */,
+				E262FDEB18F847BA00DFC135 /* TCIfParser.m */,
+				E262FDEE18F847BA00DFC135 /* TCParser.h */,
+				E262FDEF18F847BA00DFC135 /* TCParser.m */,
+				E262FDF818F847BA00DFC135 /* TCToken.h */,
+				E262FDF918F847BA00DFC135 /* TCToken.m */,
+			);
+			name = "Lexical Analysis";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,7 +258,24 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E262FDFD18F847BA00DFC135 /* TCAssignmentParser.m in Sources */,
+				E262FE0018F847BA00DFC135 /* TCError.m in Sources */,
+				E262FE0118F847BA00DFC135 /* TCExpression.m in Sources */,
 				E262FDD018F8478400DFC135 /* main.m in Sources */,
+				E262FE1018F8481000DFC135 /* TinyC.m in Sources */,
+				E262FE0C18F847BA00DFC135 /* TCValue.m in Sources */,
+				E262FE0B18F847BA00DFC135 /* TCToken.m in Sources */,
+				E262FE0918F847BA00DFC135 /* TCSymbolTable.m in Sources */,
+				E262FE0818F847BA00DFC135 /* TCSymbol.m in Sources */,
+				E262FE0718F847BA00DFC135 /* TCStatement.m in Sources */,
+				E262FE0418F847BA00DFC135 /* TCIfParser.m in Sources */,
+				E262FE0318F847BA00DFC135 /* TCExpressionParser.m in Sources */,
+				E262FE0518F847BA00DFC135 /* TCModuleParser.m in Sources */,
+				E262FDFE18F847BA00DFC135 /* TCContext.m in Sources */,
+				E262FDFF18F847BA00DFC135 /* TCDeclarationParser.m in Sources */,
+				E262FE0618F847BA00DFC135 /* TCParser.m in Sources */,
+				E262FE0A18F847BA00DFC135 /* TCSyntaxNode.m in Sources */,
+				E262FE0218F847BA00DFC135 /* TCExpressionInterpreter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
