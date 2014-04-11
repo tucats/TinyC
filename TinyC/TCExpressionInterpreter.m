@@ -84,8 +84,23 @@ extern TCContext* activeContext;
                 case TOKEN_DOUBLE:
                     return [[TCValue alloc]initWithDouble:[node.spelling doubleValue]];
                     
-                case TOKEN_STRING:
-                    return [[TCValue alloc]initWithString:node.spelling];
+                case TOKEN_STRING: {
+                    // Do a little extra work here to handle escapes.
+                    
+                    NSString * escapedString = node.spelling;
+                    
+                    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\n"      // Newline
+                                                                             withString:@"\n"];
+                    
+                    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\t"      // Tab
+                                                                             withString:@"\t"];
+
+                    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\\""     // Double quote
+                                                                             withString:@"\""];
+                    
+                    return [[TCValue alloc] initWithString:escapedString];
+                }
+
                     
                 default:
                     _error = [[TCError alloc] initWithCode:TCERROR_INTERP_BAD_SCALAR
