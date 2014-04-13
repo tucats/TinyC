@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		E262FDCD18F8478400DFC135 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E262FDCC18F8478400DFC135 /* Foundation.framework */; };
 		E262FDD018F8478400DFC135 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDCF18F8478400DFC135 /* main.m */; };
-		E262FDD418F8478400DFC135 /* TinyC.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = E262FDD318F8478400DFC135 /* TinyC.1 */; };
 		E262FDFD18F847BA00DFC135 /* TCAssignmentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDDD18F847BA00DFC135 /* TCAssignmentParser.m */; };
 		E262FDFE18F847BA00DFC135 /* TCContext.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDDF18F847BA00DFC135 /* TCContext.m */; };
 		E262FDFF18F847BA00DFC135 /* TCDeclarationParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDE118F847BA00DFC135 /* TCDeclarationParser.m */; };
@@ -28,18 +27,19 @@
 		E262FE0C18F847BA00DFC135 /* TCValue.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDFB18F847BA00DFC135 /* TCValue.m */; };
 		E262FE1018F8481000DFC135 /* TinyC.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE0F18F8481000DFC135 /* TinyC.m */; };
 		E262FE1618F8645300DFC135 /* NSString+NSStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */; };
+		E262FE1718FADCB400DFC135 /* TinyC in CopyFiles */ = {isa = PBXBuildFile; fileRef = E262FDC918F8478400DFC135 /* TinyC */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		E262FDC718F8478400DFC135 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
+			buildActionMask = 12;
+			dstPath = /usr/local/bin;
 			dstSubfolderSpec = 0;
 			files = (
-				E262FDD418F8478400DFC135 /* TinyC.1 in CopyFiles */,
+				E262FE1718FADCB400DFC135 /* TinyC in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 

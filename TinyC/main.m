@@ -19,11 +19,20 @@ int main(int argc, const char * argv[])
         NSString * program = nil;
         NSString * path = nil;
         
-        BOOL debugFlag = NO;
+        TCDebugFlag df = TCDebugNone;
+        
         for( int ax = 1; ax < argc; ax++ ) {
-            if( strcmp(argv[ax], "-d") == 0) {
-                debugFlag = YES;
+            if( strcmp(argv[ax], "-p") == 0) {
+                df |= TCDebugParse;
                 //printf("Enable debug flag\n");
+                continue;
+            }
+            if( strcmp(argv[ax], "-t") == 0) {
+                df |= TCDebugTokens;
+                continue;
+            }
+            if( strcmp(argv[ax], "-x") == 0) {
+                df |= TCDebugTrace;
                 continue;
             }
             if( strcmp(argv[ax], "-") == 0) {
@@ -37,19 +46,39 @@ int main(int argc, const char * argv[])
                 break;
             }
             
+            if( *(argv[ax]) == '-') {
+                printf("Unrecognized command line option %s\n", argv[ax]);
+                printf("Usage:   tinyc  [-t][-p][-x] file\n");
+                printf("    -t   Dump token queue\n");
+                printf("    -p   Dump parse tree\n");
+                printf("    -x   Trace execution\n");
+                return -3;
+            }
             path = [NSString stringWithCString:argv[ax] encoding:NSUTF8StringEncoding];
             //printf("Program source from file %s\n", [path UTF8String]);
             
         }
         
         if( path == nil && program == nil) {
-            program = @"int main( int argc ) { int bob; bob = 100; printf(\"Hello\t%@\n\", bob); return bob+argc} int getinfo( int v ) { return v*100;} ";
-            printf("No source given\n");
-            debugFlag = YES;
+            program = @"  \
+            int main( int argc ) \
+            { \
+            int bob; \
+            bob = 100; \
+            printf(\"Hello\t%@\n\", bob); \
+            return bob+argc;\
+            } \
+            int getinfo( int v ) \
+            { \
+            return v*100;\
+            } ";
+            
+            printf("No source given, using internal test code\n");
+            df = TCDebugParse | TCDebugTrace;
         }
         TCError * error = nil;
         TinyC * tinyC = [[TinyC alloc]init];
-        [tinyC setDebug: debugFlag];
+        [tinyC setDebug: df];
         
         if( path == nil )
             error = [tinyC compileString:program];

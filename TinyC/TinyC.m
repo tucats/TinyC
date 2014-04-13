@@ -34,7 +34,7 @@
     
     parser = [[TCParser alloc]init];
     [parser lex:source];
-    if( _debug)
+    if( self.debugTokens)
         [parser dump];
     _moduleName = @"__STRING__";
     return parser.error;
@@ -63,11 +63,11 @@
         return error;
     }
     else {
-        if( _debug ) {
+        if( self.debugParse ) {
             [tree dumpTree];
         }
         TCContext * execution = [[TCContext alloc]init];
-        execution.debug = _debug;
+        execution.debug = self.debugTrace;
         
         functionResult = [execution execute:tree
                                  entryPoint:@"main"
@@ -76,4 +76,24 @@
     }
 
 }
+
+-(BOOL) debugParse
+{
+    return (debugFlags & TCDebugParse) ? YES: NO;
+}
+
+-(BOOL) debugTokens
+{
+    return (debugFlags & TCDebugTokens)? YES : NO;
+}
+-(BOOL) debugTrace
+{
+    return (debugFlags & TCDebugTrace)? YES : NO;
+}
+
+-(void) setDebug:(TCDebugFlag)debugFlag
+{
+    debugFlags = debugFlag;
+}
+
 @end

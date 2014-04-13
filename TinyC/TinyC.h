@@ -10,6 +10,14 @@
 #import "TCError.h"
 #import "TCValue.h"
 
+typedef enum {
+    TCDebugNone = 0,
+    TCDebugTokens = 1,
+    TCDebugParse = 2,
+    TCDebugTrace = 4
+} TCDebugFlag;
+
+
 @class TCParser;
 @class TCSyntaxNode;
 
@@ -19,9 +27,9 @@
     TCValue * functionResult;
     TCParser * parser;
     TCSyntaxNode * parseTree;
+    TCDebugFlag debugFlags;
 }
 
-@property BOOL debug;
 @property TCValue* result;
 @property NSString * moduleName;
 
@@ -33,6 +41,9 @@
 
 -(TCError*) executeReturningValue:(TCValue**) result;
 
--(void) setDebug:(BOOL) debugFlag;
+-(void) setDebug:(TCDebugFlag) debugFlag;
+-(BOOL) debugTokens;
+-(BOOL) debugParse;
+-(BOOL) debugTrace;
 
 @end
