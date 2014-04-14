@@ -10,6 +10,7 @@
 #import "TCSymbol.h"
 #import "TCSyntaxNode.h"
 #import "TCValue.h"
+#import "TCStorage.h"
 
 @interface TCSymbolTable : NSObject
 
@@ -17,8 +18,9 @@
 @property TCSymbolTable * parent;
 
 
--(TCSymbol*) newSymbol: (NSString*) name ofType:(TCSymbolType)type;
+//-(TCSymbol*) newSymbol: (NSString*) name ofType:(TCSymbolType)type;
 -(TCSymbol*) findSymbol: (NSString*) name;
 -(TCValue * ) valueOfSymbol: (NSString*) name;
+-(TCSymbol*) newSymbol:(NSString *)name ofType:(TCSymbolType)type storage:(TCStorage*) storage;
 
 @end

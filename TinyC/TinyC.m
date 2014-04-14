@@ -66,7 +66,9 @@
         if( self.debugParse ) {
             [tree dumpTree];
         }
-        TCContext * execution = [[TCContext alloc]init];
+        TCStorage * storage = [[TCStorage alloc]initWithStorage:65536];
+        storage.debug = YES;
+        TCContext * execution = [[TCContext alloc]initWithStorage:storage];
         execution.debug = self.debugTrace;
         
         functionResult = [execution execute:tree

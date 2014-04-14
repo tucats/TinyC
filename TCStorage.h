@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "TCValue.h"
 
 @interface TCStorage : NSObject
 
@@ -15,10 +16,15 @@
 @property long current;
 @property NSMutableArray * stack;
 @property long size;
+@property BOOL debug;
 
 -(instancetype) initWithStorage:(long) size;
 -(long) pushStorage;
 -(long) popStorage;
+-(long) alloc:(long)size;
+
+-(TCValue*) getValue:(long) address ofType:(TCValueType) type;
+-(void) setValue:(TCValue*) value at:(long) address;
 
 -(char) getChar:(long) address;
 -(void) setChar:(char) value at:(long) address;

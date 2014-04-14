@@ -35,11 +35,37 @@
     return symbol;
 }
 
--(TCSymbol*) newSymbol:(NSString *)name ofType:(TCSymbolType)type
+-(TCSymbol*) newSymbol:(NSString *)name ofType:(TCSymbolType)type storage:(TCStorage*) storage
 {
+    
     TCSymbol *symbol = [[TCSymbol alloc]init];
     symbol.spelling = name;
     symbol.type = type;
+    switch( type) {
+        case SYMBOL_INT:
+            symbol.size = sizeof(int);
+            break;
+        case SYMBOL_CHAR:
+            symbol.size = sizeof(char);
+            break;
+        case SYMBOL_DOUBLE:
+            symbol.size = sizeof(double);
+            break;
+        case SYMBOL_FLOAT:
+            symbol.size = sizeof(float);
+            break;
+        case SYMBOL_OFFSET:
+        case SYMBOL_LONG:
+            symbol.size = sizeof(long);
+            break;
+        case SYMBOL_POINTER:
+            symbol.size = sizeof(char*);
+            break;
+        default:
+            symbol.size = sizeof(long);
+    }
+    symbol.address = [storage alloc:symbol.size];
+    symbol.allocated = YES;
     [_symbols setObject:symbol forKey:name];
     return symbol;
 }

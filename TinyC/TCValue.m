@@ -85,6 +85,11 @@ typedef struct {
     }
 }
 
+-(char) getChar
+{
+    return (char) self.getInteger;
+}
+
 #pragma mark - Initializers
 
 -(instancetype) initWithString:(NSString *)value;

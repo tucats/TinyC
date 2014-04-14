@@ -7,6 +7,7 @@
 //
 
 #import "TCSymbol.h"
+#import "TCStorage.h"
 
 @implementation TCSymbol
 
@@ -28,11 +29,20 @@
         _type = type;
         _size = size;
         _initialValue = nil;
+        _allocated = NO;
+        _address = -1L;
     }
     
     return self;
 }
 
+-(void) setValue:(TCValue*)value storage:(TCStorage*) storage
+{
+    _initialValue = value;
+    if( _allocated )
+        [storage setValue:value at:_address];
+    
+}
 -(NSString*)description
 {
     NSMutableString * d = [NSMutableString string];
@@ -57,5 +67,6 @@
     }
     return [NSString stringWithString:d];
 }
+
 
 @end

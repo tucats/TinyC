@@ -11,10 +11,13 @@
 #import "TCError.h"
 #import "TCValue.h"
 #import "TCSymbolTable.h"
-
+#import "TCStorage.h"   
 
 @interface TCContext : NSObject
 
+{
+    TCStorage* _storage;
+}
 
 @property TCSyntaxNode * module;
 @property TCSyntaxNode *block;
@@ -28,6 +31,7 @@
 @property TCSymbol * lastSymbol;
 @property NSMutableArray * importedArguments;
 
+-(instancetype) initWithStorage:(TCStorage*) storage;
 -(TCValue*) execute:(TCSyntaxNode*) tree withSymbols:(TCSymbolTable *) symbols;
 -(TCValue*) execute:(TCSyntaxNode*) tree;
 -(TCValue *) execute:(TCSyntaxNode *)tree entryPoint:(NSString*) entryName;

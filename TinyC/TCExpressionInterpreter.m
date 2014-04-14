@@ -65,6 +65,11 @@ extern TCContext* activeContext;
                 _error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF withArgument:node.spelling];
                 return nil;
             }
+
+            // Do we have real storage now?
+            if( _storage != nil )
+                return [_storage getValue:targetSymbol.address ofType:targetSymbol.type];
+            
             return targetSymbol.initialValue;
             
         }

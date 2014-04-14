@@ -16,6 +16,8 @@
 
 TCContext* activeContext;
 
+#pragma mark - Utilities
+
 TCValue* coerceType(TCValue* value, TokenType theType)
 {
     TCValueType newType;
@@ -39,6 +41,20 @@ TCValue* coerceType(TCValue* value, TokenType theType)
 }
 
 @implementation TCContext
+
+#pragma mark - Initialization
+
+-(instancetype)initWithStorage:(TCStorage*) storage
+{
+    if(( self = [super init])) {
+        
+        _storage = storage;
+    }
+    
+    return self;
+}
+
+#pragma mark - Execution
 
 -(TCValue*)execute:(TCSyntaxNode *)tree withSymbols:(TCSymbolTable *)symbols
 {
@@ -67,11 +83,11 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         activeContext = self;
     
     TCValue * result = [[TCValue alloc]initWithInteger:0];
-   
+    
     if(_debug) {
         if( entryName != nil)
             NSLog(@"Searching MODULE for entrypoint %@", entryName);
-            
+        
     }
     
     // If there is an entry name, we have work to do to find the entry point,
@@ -88,13 +104,14 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     // Execute a statement or a block.
     
     switch( tree.nodeType) {
-        
+            
             // Most common case, a call to a function with no result or an assignment
             
         case LANGUAGE_EXPRESSION:
         {
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
             expInt.debug = _debug;
+            expInt.storage = _storage;
             
             [expInt evaluate:tree withSymbols:_symbols];  // Note we don't care about result either
             if(expInt.error) {
@@ -114,7 +131,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             // The first subnode is the return type; squirrel that away.
             
             self.returnInfo = tree.subNodes[0];
-
+            
             // The next ones are the argument list; the count must match and then we
             // assign the values to the local variable initializer field.
             
@@ -142,7 +159,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             return [self execute:tree];
             
         }
-           
+            
             // A group of statements executed sequentially
         case LANGUAGE_BLOCK:
         {
@@ -192,6 +209,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCSyntaxNode * exp = tree.subNodes[1];
             TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
             expInt.debug = _debug;
+            expInt.storage = _storage;
             
             TCValue * value = [expInt evaluate:exp withSymbols:_symbols];
             if( expInt.error) {
@@ -211,6 +229,9 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 return nil;
             }
             targetValue.initialValue = value;
+            if( _storage) {
+                [_storage setValue:value at:targetValue.address];
+            }
             result = value;
         }
             break;
@@ -267,38 +288,16 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
             for( ix = 0; ix < tree.subNodes.count; ix++) {
                 TCSyntaxNode * declaration = tree.subNodes[ix];
-                _lastSymbol = [[TCSymbol alloc]init];
-                _lastSymbol.spelling = declaration.spelling;
-                
-                switch( declaration.action) {
-                        
-                    case TOKEN_DECL_INT:
-                        _lastSymbol.type = TCVALUE_INTEGER;
-                        _lastSymbol.size = sizeof(int);
-                        break;
-                        
-                    case TOKEN_DECL_DOUBLE:
-                        _lastSymbol.type = TCVALUE_DOUBLE;
-                        _lastSymbol.size = sizeof(double);
-                        break;
-                        
-                    case TOKEN_DECL_FLOAT:
-                        _lastSymbol.type = TCVALUE_FLOAT;
-                        _lastSymbol.size = sizeof(float);
-                        break;
-                        
-                    case TOKEN_DECL_CHAR:
-                        _lastSymbol.type = TCVALUE_STRING;
-                        _lastSymbol.size = 1;
-                        break;
-                        
-                    default:
-                        _lastSymbol.type = TCVALUE_UNDEFINED;
+                if(_storage) {
+                    _lastSymbol = [_symbols newSymbol:declaration.spelling ofType:declaration.action storage:_storage];
                 }
-                _lastSymbol.allocated = YES;
-                _lastSymbol.initialValue = (TCValue*)declaration.argument;
-            
-                [self.symbols.symbols setObject:_lastSymbol forKey:declaration.spelling];
+                else
+                    NSLog(@"FATAL ERROR - NO STORAGE AVAILABLE");
+                if( declaration.argument && _storage)
+                    [_lastSymbol setValue: (TCValue*)declaration.argument storage:_storage];
+                else
+                    NSLog(@"FATAL: declaration initializer with no storage allocation");
+                // [self.symbols.symbols setObject:_lastSymbol forKey:declaration.spelling];
                 if( _debug) {
                     if( _lastSymbol.initialValue)
                         NSLog(@"Created new variable %@ with initial value %@", _lastSymbol, _lastSymbol.initialValue);
@@ -327,7 +326,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         return nil;
     
     TCSyntaxNode * tree = activeContext.module;
-
+    
     // Start by finding the location of the entrypoint in the tree we were given.
     if( tree.nodeType == LANGUAGE_MODULE) {
         for( int ix = 0; ix < tree.subNodes.count; ix++) {
@@ -340,6 +339,6 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         }
     }
     return nil;
-
+    
 }
 @end
