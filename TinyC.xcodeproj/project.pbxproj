@@ -28,6 +28,7 @@
 		E262FE1018F8481000DFC135 /* TinyC.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE0F18F8481000DFC135 /* TinyC.m */; };
 		E262FE1618F8645300DFC135 /* NSString+NSStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */; };
 		E262FE1718FADCB400DFC135 /* TinyC in CopyFiles */ = {isa = PBXBuildFile; fileRef = E262FDC918F8478400DFC135 /* TinyC */; };
+		E262FE1B18FC2BE700DFC135 /* TCStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE1A18FC2BE700DFC135 /* TCStorage.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -86,6 +87,8 @@
 		E262FE0F18F8481000DFC135 /* TinyC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TinyC.m; sourceTree = "<group>"; };
 		E262FE1418F8645300DFC135 /* NSString+NSStringFormatting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+NSStringFormatting.h"; sourceTree = "<group>"; };
 		E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSStringFormatting.m"; sourceTree = "<group>"; };
+		E262FE1918FC2BE700DFC135 /* TCStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCStorage.h; path = ../TCStorage.h; sourceTree = "<group>"; };
+		E262FE1A18FC2BE700DFC135 /* TCStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TCStorage.m; path = ../TCStorage.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +184,8 @@
 		E262FE1218F848C400DFC135 /* Interpreter */ = {
 			isa = PBXGroup;
 			children = (
+				E262FE1918FC2BE700DFC135 /* TCStorage.h */,
+				E262FE1A18FC2BE700DFC135 /* TCStorage.m */,
 				E262FDDE18F847BA00DFC135 /* TCContext.h */,
 				E262FDDF18F847BA00DFC135 /* TCContext.m */,
 				E262FDE218F847BA00DFC135 /* TCError.h */,
@@ -281,6 +286,7 @@
 				E262FE1618F8645300DFC135 /* NSString+NSStringFormatting.m in Sources */,
 				E262FE0618F847BA00DFC135 /* TCParser.m in Sources */,
 				E262FE0A18F847BA00DFC135 /* TCSyntaxNode.m in Sources */,
+				E262FE1B18FC2BE700DFC135 /* TCStorage.m in Sources */,
 				E262FE0218F847BA00DFC135 /* TCExpressionInterpreter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
