@@ -152,9 +152,9 @@ extern TCContext* activeContext;
             
             switch(node.action) {
                 case TOKEN_BOOLEAN_AND:
-                    return [[TCValue alloc]initWithInteger:([left getInteger] && [right getInteger])];
+                    return [[TCValue alloc]initWithInteger:([left getLong] && [right getLong])];
                 case TOKEN_BOOLEAN_OR:
-                    return [[TCValue alloc]initWithInteger:([left getInteger] || [right getInteger])];
+                    return [[TCValue alloc]initWithInteger:([left getLong] || [right getLong])];
                 case TOKEN_ADD :
                     return [left addValue:right];
                 case TOKEN_MULTIPLY:
@@ -295,9 +295,9 @@ extern TCContext* activeContext;
             TCValue * x = (TCValue*) arguments[i];
             
             if( x.getType == TCVALUE_BOOLEAN)
-                [valueArgs addObject:[NSNumber numberWithBool:x.getInteger]];
-            if( x.getType == TCVALUE_INTEGER)
-                [valueArgs addObject:[NSNumber numberWithLong:x.getInteger]];
+                [valueArgs addObject:[NSNumber numberWithBool:x.getLong]];
+            if( x.getType == TCVALUE_INT)
+                [valueArgs addObject:[NSNumber numberWithLong:x.getLong]];
             if( x.getType == TCVALUE_DOUBLE)
                 [valueArgs addObject:[NSNumber numberWithDouble:x.getDouble]];
             

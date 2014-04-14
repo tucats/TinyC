@@ -52,7 +52,7 @@
     array, then call a new invocation of TCContext to run it, creating a new
     scope and storage area.
     
-15. Rather than storing the value in the symbol table, we must have a storage area
+15. [DONE] Rather than storing the value in the symbol table, we must have a storage area
     of real memory that variables are allocated from.  This will be required before
     pointers can work.  The DECLARE module will need to allocate storage and
     save those allocated values in the table, which will be offsets into the storage
@@ -65,6 +65,9 @@
     
     This also supports function invocations with no return code (expression whose value
     is discarded) and assignments within if statement condition expressions.
-    
+
+17. "int" and "long" are comingled as data types incorrectly in both TCValue and the
+    expression interpreter -- need to clean that up.
+
 
     

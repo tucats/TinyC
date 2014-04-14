@@ -11,14 +11,14 @@
 
 typedef enum {
     TCVALUE_UNDEFINED,
-    TCVALUE_INTEGER,
     TCVALUE_FLOAT,
     TCVALUE_DOUBLE,
     TCVALUE_STRING,
     TCVALUE_BOOLEAN,
     TCVALUE_INT,
     TCVALUE_LONG,
-    TCVALUE_CHAR
+    TCVALUE_CHAR,
+    TCVALUE_POINTER = 16384
 } TCValueType;
 
 @interface TCValue : NSValue
@@ -43,7 +43,8 @@ typedef enum {
 -(TCValue*) booleanNot;
 
 -(int)getType;
--(long)getInteger;
+-(long)getLong;
+-(int)getInt;
 -(double)getDouble;
 -(NSString*) getString;
 -(char) getChar;

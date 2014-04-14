@@ -10,6 +10,31 @@
 #import "TCExpressionParser.h"
 #import "TCExpressionInterpreter.h"
 #import "TCStatement.h"
+#import "TCToken.h"
+
+TCValueType tokenToType( TokenType tok )
+{
+
+    switch( tok ) {
+        case TOKEN_DECL_CHAR:
+            return TCVALUE_CHAR;
+        case TOKEN_DECL_INT:
+            return TCVALUE_INT;
+        case TOKEN_DECL_LONG:
+            return TCVALUE_LONG;
+        case TOKEN_DECL_FLOAT:
+            return TCVALUE_FLOAT;
+        case TOKEN_DECL_DOUBLE:
+            return TCVALUE_DOUBLE;
+        case TOKEN_DECL_POINTER:
+            return TCVALUE_UNDEFINED;
+            
+        default:
+            NSLog(@"FATAL - attempt to map unresolvable token type %d", tok);
+            return -1;
+    }
+}
+
 
 @implementation TCDeclarationParser
 
@@ -22,7 +47,7 @@
     if( [parser isNextToken:TOKEN_DECL_INT]) {
         decl = [[TCSyntaxNode alloc]init];
         decl.nodeType = LANGUAGE_DECLARE;
-        decl.action = TOKEN_DECL_INT;
+        decl.action = TCVALUE_INT;
         // NSLog(@"PARSE declaration");
         while(TRUE) {
             
@@ -39,7 +64,7 @@
             varData = [[TCSyntaxNode alloc]init];
             varData.nodeType =  LANGUAGE_NAME;
             
-            varData.action = isPointer ? TOKEN_DECL_POINTER : TOKEN_DECL_INT;
+            varData.action = isPointer ? TCVALUE_UNDEFINED : TCVALUE_INT;
             varData.spelling = [parser lastSpelling];
             
             

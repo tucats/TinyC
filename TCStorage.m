@@ -9,6 +9,31 @@
 #import "TCStorage.h"
 #import "TCValue.h"
 
+const char * typeName( TCValueType t )
+{
+    switch(t) {
+        case TCVALUE_BOOLEAN:
+            return "TCVALUE_BOOLEAN";
+        case TCVALUE_CHAR:
+            return "TCVALUE_CHAR";
+        case TCVALUE_DOUBLE:
+            return "TCVALUE_DOUBLE";
+        case TCVALUE_FLOAT:
+            return "TCVALUE_FLOAT";
+        case TCVALUE_INT:
+            return "TCVALUE_INT";
+        case TCVALUE_LONG:
+            return "TCVALUE_LONG";
+        case TCVALUE_POINTER:
+            return "TCVALUE_POINTER";
+        case TCVALUE_STRING:
+            return "TCVALUE_STRING!!!";
+        case TCVALUE_UNDEFINED:
+            return "TCVALUE_UNDEFINED!!!";
+        default:
+            return "undefined type";
+    }
+}
 @implementation TCStorage
 
 #pragma mark - Initialization
@@ -82,7 +107,7 @@
     
     TCValue * v = nil;
     if(_debug)
-        NSLog(@"STORAGE: Access value of type %d at %ld", type, address);
+        NSLog(@"STORAGE: Access value of type %s at %ld", typeName(type), address);
 
     switch(type) {
         case TCVALUE_DOUBLE:
@@ -108,20 +133,23 @@
 -(void) setValue:(TCValue *)value at:(long)address
 {
     if(_debug)
-        NSLog(@"STORAGE: store value %@ of type %d at %ld", value, value.getType, address);
+        NSLog(@"STORAGE: store value %@ of type %s at %ld", value, typeName(value.getType), address);
 
     switch( value.getType) {
         case TCVALUE_INT:
-            [self setInt:(int)value.getInteger at:address];
+            [self setInt:(int)value.getLong at:address];
             break;
         case TCVALUE_LONG:
-            [self setLong:value.getInteger at:address];
+            [self setLong:value.getLong at:address];
             break;
         case TCVALUE_DOUBLE:
             [self setDouble:value.getDouble at:address];
             break;
         case TCVALUE_CHAR:
             [self setChar:value.getChar at:address];
+            
+        default:
+            NSLog(@"FATAL - storage setValue type %s %d not implemented", typeName(value.getType), value.getType);
     }
 }
 

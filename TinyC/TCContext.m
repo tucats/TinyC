@@ -24,7 +24,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     
     switch( theType) {
         case TOKEN_DECL_INT:
-            newType = TCVALUE_INTEGER;
+            newType = TCVALUE_INT;
             break;
         case TOKEN_DECL_DOUBLE:
             newType = TCVALUE_DOUBLE;
@@ -228,6 +228,10 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                     NSLog(@"%@", _error);
                 return nil;
             }
+            if(!targetValue.allocated) {
+                NSLog(@"FATAL: attempt to write to unallocated variable %@", targetValue);
+            }
+            value = [value castTo:targetValue.type];
             targetValue.initialValue = value;
             if( _storage) {
                 [_storage setValue:value at:targetValue.address];
@@ -245,7 +249,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             expInt.debug = _debug;
             
             TCValue * condValue = [expInt evaluate:condition withSymbols:_symbols];
-            if( condValue.getInteger ) {
+            if( condValue.getLong ) {
                 if(_debug)
                     NSLog(@"Condition value %@, execute true branch", condValue);
                 result = [self execute:ifTrue withSymbols:_symbols];
@@ -295,9 +299,10 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                     NSLog(@"FATAL ERROR - NO STORAGE AVAILABLE");
                 if( declaration.argument && _storage)
                     [_lastSymbol setValue: (TCValue*)declaration.argument storage:_storage];
-                else
+                else if( !_storage)
                     NSLog(@"FATAL: declaration initializer with no storage allocation");
-                // [self.symbols.symbols setObject:_lastSymbol forKey:declaration.spelling];
+
+                
                 if( _debug) {
                     if( _lastSymbol.initialValue)
                         NSLog(@"Created new variable %@ with initial value %@", _lastSymbol, _lastSymbol.initialValue);

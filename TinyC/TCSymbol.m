@@ -41,6 +41,8 @@
     _initialValue = value;
     if( _allocated )
         [storage setValue:value at:_address];
+    else
+        NSLog(@"FATAL: attempt to store value with no storage allocated");
     
 }
 -(NSString*)description
@@ -50,7 +52,7 @@
     [d appendFormat:@"\"%@\" ", self.spelling];
     
     switch( self.type ) {
-        case SYMBOL_INTEGER:
+        case SYMBOL_INT:
             [d appendFormat:@" integer*%d ", self.size];
             break;
             
@@ -65,6 +67,8 @@
             [d appendString:@" unknown type "];
             
     }
+    if( _allocated)
+        [d appendString:[NSString stringWithFormat:@" @%ld", _address]];
     return [NSString stringWithString:d];
 }
 
