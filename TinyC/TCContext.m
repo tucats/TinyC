@@ -18,13 +18,57 @@ TCContext* activeContext;
 
 #pragma mark - Utilities
 
+char * typeMap(TokenType theType)
+{
+    static char horrible_static[8];
+    
+    switch ((int)theType) {
+        case TCVALUE_INT:
+        case TOKEN_DECL_INT:
+            return "int";
+            break;
+            
+        case TCVALUE_LONG:
+        case TOKEN_DECL_LONG:
+            return "long";
+            break;
+            
+        case TCVALUE_FLOAT:
+
+        case TOKEN_DECL_FLOAT:
+            return "float";
+            break;
+            
+        case TCVALUE_DOUBLE:
+        case TOKEN_DECL_DOUBLE:
+            return "double";
+            break;
+            
+        case TCVALUE_CHAR:
+        case TOKEN_DECL_CHAR:
+            return "char";
+            break;
+            
+        default:
+            sprintf(horrible_static, "Type %d", theType);
+            return horrible_static;
+    }
+}
+
+
 TCValue* coerceType(TCValue* value, TokenType theType)
 {
     TCValueType newType;
     
+    // Assuming we actually got a token type, convert that to the
+    // appropriate corresponding value specification.
+    
     switch( theType) {
         case TOKEN_DECL_INT:
             newType = TCVALUE_INT;
+            break;
+        case TOKEN_DECL_LONG:
+            newType = TCVALUE_LONG;
             break;
         case TOKEN_DECL_DOUBLE:
             newType = TCVALUE_DOUBLE;
@@ -34,7 +78,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             break;
             
         default:
-            newType = value.getType;
+            newType = (TCValueType)theType;
     }
     
     return [value castTo:newType];
@@ -275,8 +319,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             }
             
             if( _returnInfo ) {
-                if( _debug ) {
-                    NSLog(@"Return type should be coerced to %d", _returnInfo.action);
+                if(_debug) {
+                    NSLog(@"Return type coerced to %s", typeMap(_returnInfo.action));
                 }
                 result = coerceType(result, _returnInfo.action);
             }

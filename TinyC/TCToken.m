@@ -42,7 +42,7 @@
     };
     
     if( type <= TOKEN_EOS )
-        return [[NSString alloc] initWithFormat:@"%-8s \"%@\"", typeNames[type], _spelling];
+        return [[NSString alloc] initWithFormat:@"%-8s \"%@\"", typeNames[type-128], _spelling];
     else
         return [[NSString alloc] initWithFormat:@"TOK(%3d) \"%@\"", type, _spelling];
     

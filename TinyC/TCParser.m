@@ -19,6 +19,7 @@
 -(instancetype) initFromFile:(NSString*) fileName
 {
     if(self = [super init]) {
+        _spellingTable = [NSMutableDictionary dictionary];
         if( fileName ) {
             persistantFileName = fileName;
             NSArray *tempDict = [[NSArray alloc] initWithContentsOfFile:fileName ];
@@ -79,6 +80,8 @@
         [self addSpelling:@"return" forToken:TOKEN_RETURN];
         [self addSpelling:@"{" forToken:TOKEN_OPEN_BRACE];
         [self addSpelling:@"}" forToken:TOKEN_CLOSE_BRACE];
+        [self addSpelling:@"for" forToken:TOKEN_FOR];
+        [self addSpelling:@"while" forToken:TOKEN_WHILE];
         
         [self doNotPersist];
 
@@ -155,6 +158,8 @@
 -(void) addSpelling:(NSString*)theSpelling forToken:(TokenType) code {
     
     [_dictionary setObject:[[TCToken alloc] initWithSpelling:theSpelling ofType:code atPosition:0] forKey:theSpelling];
+    [_spellingTable setObject:theSpelling forKey:[NSNumber numberWithInt:code]];
+     
     _dictionaryChanged = YES;
 }
 

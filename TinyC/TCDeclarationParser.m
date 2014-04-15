@@ -44,10 +44,26 @@ TCValueType tokenToType( TokenType tok )
     parser.error = nil;
     TCSyntaxNode* varData = nil;
     
-    if( [parser isNextToken:TOKEN_DECL_INT]) {
+    if( [parser isNextToken:TOKEN_DECL_INT] ||
+       [parser isNextToken:TOKEN_DECL_DOUBLE]) {
+        
         decl = [[TCSyntaxNode alloc]init];
         decl.nodeType = LANGUAGE_DECLARE;
-        decl.action = TCVALUE_INT;
+        
+        switch(parser.lastTokenType) {
+            case TOKEN_DECL_DOUBLE:
+                decl.action = TCVALUE_DOUBLE;
+                break;
+                
+            case TOKEN_DECL_INT:
+                decl.action = TCVALUE_INT;
+                break;
+                
+            default:
+                decl.action = [parser lastTokenType];
+
+        }
+        
         // NSLog(@"PARSE declaration");
         while(TRUE) {
             
@@ -64,7 +80,7 @@ TCValueType tokenToType( TokenType tok )
             varData = [[TCSyntaxNode alloc]init];
             varData.nodeType =  LANGUAGE_NAME;
             
-            varData.action = isPointer ? TCVALUE_UNDEFINED : TCVALUE_INT;
+            varData.action = isPointer ? TCVALUE_UNDEFINED : decl.action;
             varData.spelling = [parser lastSpelling];
             
             

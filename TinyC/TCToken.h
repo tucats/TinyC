@@ -9,7 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 typedef  enum TOKEN_TYPE {
-	TOKEN_INTEGER,
+	TOKEN_INTEGER = 128,  // This ensures that token types and value types never collide.
 	TOKEN_DOUBLE,
     TOKEN_FLOAT,
 	TOKEN_STRING, 
@@ -48,6 +48,8 @@ typedef  enum TOKEN_TYPE {
     TOKEN_IF,
     TOKEN_ELSE,
     TOKEN_RETURN,
+    TOKEN_FOR,
+    TOKEN_WHILE,
     TOKEN__MAXVALUE
 } TokenType;
 

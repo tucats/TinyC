@@ -68,7 +68,7 @@ int main(int argc, const char * argv[])
             program = @"\
             int main( ) \
             { \
-            int bob;\
+            double bob;\
             bob = 3;\
             int age = 54;\
             return bob * age;\

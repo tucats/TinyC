@@ -25,6 +25,7 @@
 	long charPos;
 	NSScanner * scanner;
 	NSMutableDictionary *_dictionary;
+    NSMutableDictionary *_spellingTable;
 }
 
 @property (readonly) int dictionaryVersion;
