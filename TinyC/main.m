@@ -19,7 +19,7 @@ int main(int argc, const char * argv[])
         NSString * program = nil;
         NSString * path = nil;
         
-        TCDebugFlag df = TCDebugStorage;
+        TCDebugFlag df = TCDebugNone;
         
         for( int ax = 1; ax < argc; ax++ ) {
             if( strcmp(argv[ax], "-p") == 0) {
