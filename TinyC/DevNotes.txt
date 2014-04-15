@@ -58,7 +58,7 @@
     save those allocated values in the table, which will be offsets into the storage
     domain.  Need a separate class that is storage management.
     
-16. Need to note that an assignment is really a part of the expression processor, and
+16. [DONE]Need to note that an assignment is really a part of the expression processor, and
     is an operator that means store lvalue in rvalue.  This will be easier to support
     when references in an expression uniformly generate an address followed by a fetch
     or store as needed.
@@ -66,7 +66,7 @@
     This also supports function invocations with no return code (expression whose value
     is discarded) and assignments within if statement condition expressions.
 
-17. "int" and "long" are comingled as data types incorrectly in both TCValue and the
+17. [DONE] "int" and "long" are comingled as data types incorrectly in both TCValue and the
     expression interpreter -- need to clean that up.
 
 

@@ -84,7 +84,7 @@ extern TCContext* activeContext;
             
             switch( node.action) {
                 case TOKEN_INTEGER:
-                    return [[TCValue alloc]initWithInteger:[node.spelling integerValue]];
+                    return [[TCValue alloc]initWithInt:(int) [node.spelling integerValue]];
                     
                 case TOKEN_DOUBLE:
                     return [[TCValue alloc]initWithDouble:[node.spelling doubleValue]];
@@ -152,9 +152,9 @@ extern TCContext* activeContext;
             
             switch(node.action) {
                 case TOKEN_BOOLEAN_AND:
-                    return [[TCValue alloc]initWithInteger:([left getLong] && [right getLong])];
+                    return [[TCValue alloc]initWithLong:([left getLong] && [right getLong])];
                 case TOKEN_BOOLEAN_OR:
-                    return [[TCValue alloc]initWithInteger:([left getLong] || [right getLong])];
+                    return [[TCValue alloc]initWithLong:([left getLong] || [right getLong])];
                 case TOKEN_ADD :
                     return [left addValue:right];
                 case TOKEN_MULTIPLY:
@@ -176,42 +176,42 @@ extern TCContext* activeContext;
                     TCValue * left = [self evaluate:node.subNodes[0] withSymbols:symbols];
                     TCValue * right = [self evaluate:node.subNodes[1] withSymbols:symbols];
                     
-                    return [[TCValue alloc]initWithInteger:[left compareToValue:right] > 0];
+                    return [[TCValue alloc]initWithLong:[left compareToValue:right] > 0];
                 }
                 case TOKEN_GREATER_OR_EQUAL:
                 {
                     TCValue * left = [self evaluate:node.subNodes[0] withSymbols:symbols];
                     TCValue * right = [self evaluate:node.subNodes[1] withSymbols:symbols];
                     
-                    return [[TCValue alloc]initWithInteger:[left compareToValue:right] >= 0];
+                    return [[TCValue alloc]initWithLong:[left compareToValue:right] >= 0];
                 }
                 case TOKEN_LESS:
                 {
                     TCValue * left = [self evaluate:node.subNodes[0] withSymbols:symbols];
                     TCValue * right = [self evaluate:node.subNodes[1] withSymbols:symbols];
                     
-                    return [[TCValue alloc]initWithInteger:[left compareToValue:right] < 0];
+                    return [[TCValue alloc]initWithLong:[left compareToValue:right] < 0];
                 }
                 case TOKEN_LESS_OR_EQUAL:
                 {
                     TCValue * left = [self evaluate:node.subNodes[0] withSymbols:symbols];
                     TCValue * right = [self evaluate:node.subNodes[1] withSymbols:symbols];
                     
-                    return [[TCValue alloc]initWithInteger:[left compareToValue:right] <= 0];
+                    return [[TCValue alloc]initWithLong:[left compareToValue:right] <= 0];
                 }
                 case TOKEN_EQUAL:
                 {
                     TCValue * left = [self evaluate:node.subNodes[0] withSymbols:symbols];
                     TCValue * right = [self evaluate:node.subNodes[1] withSymbols:symbols];
                     
-                    return [[TCValue alloc]initWithInteger:[left compareToValue:right] == 0];
+                    return [[TCValue alloc]initWithLong:[left compareToValue:right] == 0];
                 }
                 case TOKEN_NOT_EQUAL:
                 {
                     TCValue * left = [self evaluate:node.subNodes[0] withSymbols:symbols];
                     TCValue * right = [self evaluate:node.subNodes[1] withSymbols:symbols];
                     
-                    return [[TCValue alloc]initWithInteger:[left compareToValue:right] != 0];
+                    return [[TCValue alloc]initWithLong:[left compareToValue:right] != 0];
                 }
                     
                 default:
@@ -285,7 +285,7 @@ extern TCContext* activeContext;
         
         if( arguments == nil || arguments.count == 0 ) {
             _error = nil;
-            return [[TCValue alloc]initWithInteger:0];
+            return [[TCValue alloc]initWithLong:0];
         }
         NSMutableArray * valueArgs = [NSMutableArray array];
         TCValue* formatValue = (TCValue*) arguments[0];
@@ -306,7 +306,7 @@ extern TCContext* activeContext;
         NSString *newString = [buffer stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
 
         int bytesPrinted = printf("%s", [newString UTF8String]);
-        return [[TCValue alloc]initWithInteger: bytesPrinted];
+        return [[TCValue alloc]initWithInt: bytesPrinted];
     }
     
     // not found!

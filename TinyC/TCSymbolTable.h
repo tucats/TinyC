@@ -21,6 +21,6 @@
 //-(TCSymbol*) newSymbol: (NSString*) name ofType:(TCSymbolType)type;
 -(TCSymbol*) findSymbol: (NSString*) name;
 -(TCValue * ) valueOfSymbol: (NSString*) name;
--(TCSymbol*) newSymbol:(NSString *)name ofType:(TCSymbolType)type storage:(TCStorage*) storage;
+-(TCSymbol*) newSymbol:(NSString *)name ofType:(TCValueType)type storage:(TCStorage*) storage;
 
 @end

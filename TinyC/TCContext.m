@@ -82,7 +82,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     if( !activeContext)
         activeContext = self;
     
-    TCValue * result = [[TCValue alloc]initWithInteger:0];
+    TCValue * result = [[TCValue alloc]initWithInt:0];
     
     if(_debug) {
         if( entryName != nil)
@@ -132,19 +132,16 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
             self.returnInfo = tree.subNodes[0];
             
-            // The next ones are the argument list; the count must match and then we
-            // assign the values to the local variable initializer field.
+            // The next ones are the argument list; the count not be less
+            // than number of arguments provided. Assign the values to the
+            //local variable initializer field.
             
-            if( arguments && (tree.subNodes.count == 2)) {
-                _error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
-                return nil;
-            }
-            if( arguments.count != (tree.subNodes.count - 2)) {
+             if( arguments.count < (tree.subNodes.count - 2)) {
                 _error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
                 return nil;
             }
             
-            if( arguments ) {
+            if( tree.subNodes.count > 2 ) {
                 _importedArguments = [NSMutableArray array];
                 for( int ix = 0; ix < arguments.count; ix++ ) {
                     TCSyntaxNode* localArg = tree.subNodes[ix+1];

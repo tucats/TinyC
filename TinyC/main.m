@@ -60,17 +60,12 @@ int main(int argc, const char * argv[])
         }
         
         if( path == nil && program == nil) {
-            program = @"  \
-            int main( int argc ) \
+            program = @"\
+            int main( ) \
             { \
-            int bob; \
-            bob = 100; \
-            printf(\"Hello\t%@\n\", bob); \
-            return bob+argc;\
-            } \
-            int getinfo( int v ) \
-            { \
-            return v*100;\
+            int bob;\
+            bob = 3;\
+            return bob;\
             } ";
             
             printf("No source given, using internal test code\n");

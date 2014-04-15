@@ -21,7 +21,7 @@
  @param size the symbol size or offset value
  @returns the newly created node.
  */
--(instancetype) initWithName:(NSString*) name withType:(TCSymbolType) type withSize:(int) size
+-(instancetype) initWithName:(NSString*) name withType:(TCValueType) type withSize:(int) size
 {
     if((self = [super init])){
         
@@ -52,14 +52,17 @@
     [d appendFormat:@"\"%@\" ", self.spelling];
     
     switch( self.type ) {
-        case SYMBOL_INT:
+        case TCVALUE_INT:
+        case TCVALUE_LONG:
             [d appendFormat:@" integer*%d ", self.size];
             break;
             
-        case SYMBOL_FLOAT:
+        case TCVALUE_FLOAT:
+        case TCVALUE_DOUBLE:
             [d appendFormat:@" double*%d ", self.size];
             break;
-        case SYMBOL_STRING:
+            
+        case TCVALUE_STRING:
             [d appendFormat:@" string*%d ", self.size];
             break;
             

@@ -24,14 +24,16 @@ typedef enum {
 @interface TCValue : NSValue
 
 {
-    long        intValue;
+    int         intValue;
+    long        longValue;
     double      doubleValue;
     NSString *  stringValue;
     int         type;
 }
 -(instancetype)initWithDouble:(double) value;
 -(instancetype)initWithString:(NSString*) value;
--(instancetype)initWithInteger:(long) value;
+-(instancetype)initWithInt:(int) value;
+-(instancetype)initWithLong:(long) value;
 -(int)compareToValue:(TCValue*) value;
 -(TCValue*) castTo:(TCValueType)newType;
 -(TCValue*) addValue:(TCValue*) value;

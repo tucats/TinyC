@@ -116,11 +116,11 @@ const char * typeName( TCValueType t )
     
         case TCVALUE_BOOLEAN:
         case TCVALUE_CHAR:
-            v = [[TCValue alloc]initWithInteger:(long)[self getChar:address]];
+            v = [[TCValue alloc]initWithInt:(int)[self getChar:address]];
             break;
             
         case TCVALUE_INT:
-            v = [[TCValue alloc]initWithInteger:(long)[self getInt:address]];
+            v = [[TCValue alloc]initWithInt:(int)[self getInt:address]];
             break;
             
         default:

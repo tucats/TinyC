@@ -73,7 +73,7 @@
         
         functionResult = [execution execute:tree
                                  entryPoint:@"main"
-                              withArguments:@[ [[TCValue alloc]initWithInteger:10] ]];
+                              withArguments:@[ [[TCValue alloc]initWithInt:10] ]];
         return [execution error];
     }
 

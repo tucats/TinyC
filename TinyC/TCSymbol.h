@@ -10,21 +10,11 @@
 #import "TCValue.h"
 #import "TCStorage.h"
 
-typedef enum {
-    SYMBOL_INT = TCVALUE_INT,
-    SYMBOL_LONG = TCVALUE_LONG,
-    SYMBOL_STRING = TCVALUE_STRING,
-    SYMBOL_FLOAT = TCVALUE_FLOAT,
-    SYMBOL_DOUBLE = TCVALUE_DOUBLE,
-    SYMBOL_CHAR = TCVALUE_CHAR,
-    SYMBOL_POINTER = 100,
-    SYMBOL_OFFSET
-} TCSymbolType;
 
 @interface TCSymbol : NSObject
 
 @property NSString * spelling;
-@property TCSymbolType type;
+@property TCValueType type;
 @property int size;
 @property BOOL allocated;
 @property TCValue * initialValue;
