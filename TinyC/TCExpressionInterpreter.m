@@ -252,6 +252,8 @@ extern TCContext* activeContext;
     NSMutableArray * arguments = [NSMutableArray array];
     
     for( int ix = 0; ix < node.subNodes.count; ix++ ) {
+        if(_debug)
+            NSLog(@"Evaluate argument %d", ix);
         TCSyntaxNode * exp = (TCSyntaxNode*) node.subNodes[ix];
         TCValue * argValue = [self evaluate:exp withSymbols:symbols];
         [arguments addObject:argValue];
@@ -262,12 +264,21 @@ extern TCContext* activeContext;
     TCSyntaxNode * entry =[activeContext findEntryPoint:node.spelling];
     if( entry != nil) {
         if(_debug)
-            NSLog(@"Found entry point at %@", entry);
-        TCContext * newContext = [[TCContext alloc]init];
+            NSLog(@"Found entry point at %@, creating new frame", entry);
+        TCContext * savedContext = activeContext;
+        TCContext * newContext = [[TCContext alloc]initWithStorage:self.storage];
+        // Push (and later pop) not needed as the function call will always have
+        // a basic block that will take care of this for us.
+        // [self.storage pushStorage];
+        activeContext = newContext;
+        
         newContext.symbols = symbols;
         result = [newContext execute:entry entryPoint:nil withArguments:arguments];
         if(newContext.error)
             _error = newContext.error;
+        //[self.storage popStorage];
+        activeContext = savedContext;
+        newContext = nil;
         return result;
     }
     

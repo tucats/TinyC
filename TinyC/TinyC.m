@@ -67,7 +67,8 @@
             [tree dumpTree];
         }
         TCStorage * storage = [[TCStorage alloc]initWithStorage:65536];
-        storage.debug = YES;
+        storage.debug = self.debugStorage;
+        
         TCContext * execution = [[TCContext alloc]initWithStorage:storage];
         execution.debug = self.debugTrace;
         
@@ -88,9 +89,15 @@
 {
     return (debugFlags & TCDebugTokens)? YES : NO;
 }
+
 -(BOOL) debugTrace
 {
     return (debugFlags & TCDebugTrace)? YES : NO;
+}
+
+-(BOOL) debugStorage
+{
+    return (debugFlags & TCDebugStorage)? YES : NO;
 }
 
 -(void) setDebug:(TCDebugFlag)debugFlag

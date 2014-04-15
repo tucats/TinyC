@@ -17,6 +17,7 @@
 @property NSMutableArray * stack;
 @property long size;
 @property BOOL debug;
+@property int frameCount;
 
 -(instancetype) initWithStorage:(long) size;
 -(long) pushStorage;

@@ -47,7 +47,6 @@ TCValue* coerceType(TCValue* value, TokenType theType)
 -(instancetype)initWithStorage:(TCStorage*) storage
 {
     if(( self = [super init])) {
-        
         _storage = storage;
     }
     
@@ -167,6 +166,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             scopedSymbols.parent = self.symbols;
             self.symbols = scopedSymbols;
             self.error = nil;
+            [_storage pushStorage];  // Make a new storage frame
             
             if( _importedArguments ) {
                 if( _debug)
@@ -197,6 +197,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             // Now release the scoped block
             self.symbols = scopedSymbols.parent;
             scopedSymbols = nil;
+            [_storage popStorage];
         }
             break;
             
@@ -279,7 +280,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 }
                 result = coerceType(result, _returnInfo.action);
             }
-            
+            //[_storage popStorage];
             return result;
         }
             

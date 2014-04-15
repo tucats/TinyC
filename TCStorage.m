@@ -63,26 +63,33 @@ const char * typeName( TCValueType t )
 
 -(long) pushStorage;
 {
+    _frameCount++;
     if(_debug)
-        NSLog(@"STORAGE: push new storage frame at %ld", _current);
+        NSLog(@"STORAGE: push new storage frame #%d at %ld", _frameCount, _current);
     [_stack addObject:[NSNumber numberWithLong:_base]];
+    [_stack addObject:[NSNumber numberWithLong:_current]];
     _base = _current;
     return _base;
 }
 
 -(long) popStorage
 {
-    if( _stack.count == 0 )
+    if( _frameCount < 0 ) {
+        NSLog(@"STORAGE: FATAL, too many stack frames popped");
         return 0;
+    }
     long idx =_stack.count-1;
+    long frameSize = _current - _base;
     
+    NSNumber *oldCurrent = [_stack objectAtIndex:idx];
     NSNumber *oldBase = [_stack objectAtIndex:idx];
-    _base = _current = oldBase.longValue;
+    _base = oldBase.longValue;
+    _current = oldCurrent.longValue;
     
     [_stack removeObjectAtIndex:idx];
     if(_debug)
-        NSLog(@"STORAGE: pop old storage frame at %ld", _current);
-
+        NSLog(@"STORAGE: pop old storage frame #%d at %ld, discarding %ld bytes", _frameCount, _current, frameSize);
+    _frameCount--;
     return _base;
 }
 
@@ -155,19 +162,21 @@ const char * typeName( TCValueType t )
 
 -(char) getChar:(long)address
 {
-    if( address < 0L || address > _current) {
-        NSLog(@"Address fault %08lX", address);
+    if( address < 0 || address > _current) {
+        NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0;
     }
+    char result = _buffer[address];
     if(_debug)
-        NSLog(@"STORAGE: read char from %ld", address);
+        NSLog(@"STORAGE: read char %d from %ld", result, address);
 
-    return _buffer[address];
+    return result;
 }
+
 -(void) setChar:(char)value at:(long)address
 {
-    if( address < 0L || address > _current) {
-        NSLog(@"Address fault %08lX", address);
+    if( address < 0 || address > _current) {
+        NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
     _buffer[address] = value;
@@ -175,19 +184,20 @@ const char * typeName( TCValueType t )
 
 -(int) getInt:(long)address
 {
-    if( address < 0L || address > _current) {
-        NSLog(@"Address fault %08lX", address);
+    if( address < 0 || address > _current) {
+        NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0;
     }
+    int result = *(int*)&( _buffer[address]);
     if(_debug)
-        NSLog(@"STORAGE: read int from %ld", address);
-    return *(int*)&( _buffer[address]);
+        NSLog(@"STORAGE: read int %d from %ld", result, address);
+    return result;
 }
 
 -(void) setInt:(int)value at:(long)address
 {
-    if( address < 0L || address > _current) {
-        NSLog(@"Address fault %08lX", address);
+    if( address < 0 || address > _current) {
+        NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
     *(int*)&( _buffer[address]) = value;
@@ -196,20 +206,21 @@ const char * typeName( TCValueType t )
 
 -(long) getLong:(long)address
 {
-    if( address < 0L || address > _current) {
-        NSLog(@"Address fault %08lX", address);
+    if( address < 0 || address > _current) {
+        NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0;
     }
+    long result = *(long*)&( _buffer[address]);
     if(_debug)
-        NSLog(@"STORAGE: read long from %ld", address);
+        NSLog(@"STORAGE: read long %ld from %ld", result, address);
 
-    return *(long*)&( _buffer[address]);
+    return result;
 }
 
 -(void) setLong:(long)value at:(long)address
 {
-    if( address < 0L || address > _current) {
-        NSLog(@"Address fault %08lX", address);
+    if( address < 0 || address > _current) {
+        NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
     *(long*)&( _buffer[address]) = value;
@@ -217,21 +228,22 @@ const char * typeName( TCValueType t )
 
 -(double) getDouble:(long)address
 {
-    if( address < 0L || address > _current) {
-        NSLog(@"Address fault %08lX", address);
+    if( address < 0 || address > _current) {
+        NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0.0;
     }
+    double result = *(double*)&( _buffer[address]);
     if(_debug)
-        NSLog(@"STORAGE: read double from %ld", address);
+        NSLog(@"STORAGE: read double %f from %ld", result, address);
 
-   return *(double*)&( _buffer[address]);
+   return result ;
 }
 
 
 -(void) setDouble:(double) value at:(long)address
 {
-    if( address < 0L || address > _current) {
-        NSLog(@"Address fault %08lX", address);
+    if( address < 0 || address > _current) {
+        NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
     *(double*)&( _buffer[address]) = value = value;

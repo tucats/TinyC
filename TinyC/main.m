@@ -19,7 +19,7 @@ int main(int argc, const char * argv[])
         NSString * program = nil;
         NSString * path = nil;
         
-        TCDebugFlag df = TCDebugNone;
+        TCDebugFlag df = TCDebugStorage;
         
         for( int ax = 1; ax < argc; ax++ ) {
             if( strcmp(argv[ax], "-p") == 0) {
@@ -33,6 +33,10 @@ int main(int argc, const char * argv[])
             }
             if( strcmp(argv[ax], "-x") == 0) {
                 df |= TCDebugTrace;
+                continue;
+            }
+            if( strcmp(argv[ax], "-s") == 0) {
+                df |= TCDebugStorage;
                 continue;
             }
             if( strcmp(argv[ax], "-") == 0) {
@@ -52,6 +56,7 @@ int main(int argc, const char * argv[])
                 printf("    -t   Dump token queue\n");
                 printf("    -p   Dump parse tree\n");
                 printf("    -x   Trace execution\n");
+                printf("    -s   Trace storage\n");
                 return -3;
             }
             path = [NSString stringWithCString:argv[ax] encoding:NSUTF8StringEncoding];
@@ -65,11 +70,12 @@ int main(int argc, const char * argv[])
             { \
             int bob;\
             bob = 3;\
-            return bob;\
+            int age = 54;\
+            return bob * age;\
             } ";
             
             printf("No source given, using internal test code\n");
-            df = TCDebugParse | TCDebugTrace;
+            df = TCDebugParse | TCDebugTrace | TCDebugStorage;
         }
         TCError * error = nil;
         TinyC * tinyC = [[TinyC alloc]init];
