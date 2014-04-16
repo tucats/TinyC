@@ -53,6 +53,23 @@ extern TCContext* activeContext;
         case LANGUAGE_EXPRESSION:
             return [self evaluate:node.subNodes[0] withSymbols:symbols];
             
+            // A cast operation?
+        case LANGUAGE_CAST:
+        {
+            // Process the source expression
+            TCValue * result = [self evaluate:node.subNodes[1] withSymbols:symbols];
+            
+            // Cast to the target type.  NOTE THIS ONLY SUPPORTS SIMPLE TYPES
+            // AT THIS POINT.  No user types allowed yet.
+            TCSyntaxNode * castInfo = (TCSyntaxNode*)node.subNodes[0];
+            
+            //if( _debug)
+                NSLog(@"Cast %@ to type %d", result, castInfo.action);
+            result = [result castTo:castInfo.action];
+            return result;
+        }
+            
+            
             // A simple symbol reference
             
         case LANGUAGE_REFERENCE:
@@ -84,9 +101,13 @@ extern TCContext* activeContext;
             
             switch( node.action) {
                 case TOKEN_INTEGER:
+                    if(_debug)
+                        NSLog(@"Load integer %@", node.spelling);
                     return [[TCValue alloc]initWithInt:(int) [node.spelling integerValue]];
                     
                 case TOKEN_DOUBLE:
+                    if(_debug)
+                        NSLog(@"Load double %@", node.spelling);
                     return [[TCValue alloc]initWithDouble:[node.spelling doubleValue]];
                     
                 case TOKEN_STRING: {
@@ -103,6 +124,8 @@ extern TCContext* activeContext;
                     escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\\""     // Double quote
                                                                              withString:@"\""];
                     
+                    if(_debug)
+                        NSLog(@"Load string %@", escapedString);
                     return [[TCValue alloc] initWithString:escapedString];
                 }
 
@@ -265,18 +288,19 @@ extern TCContext* activeContext;
     if( entry != nil) {
         if(_debug)
             NSLog(@"Found entry point at %@, creating new frame", entry);
+ 
+
         TCContext * savedContext = activeContext;
         TCContext * newContext = [[TCContext alloc]initWithStorage:self.storage];
-        // Push (and later pop) not needed as the function call will always have
-        // a basic block that will take care of this for us.
-        // [self.storage pushStorage];
+        newContext.debug = activeContext.debug;
+        
         activeContext = newContext;
         
         newContext.symbols = symbols;
         result = [newContext execute:entry entryPoint:nil withArguments:arguments];
         if(newContext.error)
             _error = newContext.error;
-        //[self.storage popStorage];
+
         activeContext = savedContext;
         newContext = nil;
         return result;

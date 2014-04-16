@@ -65,6 +65,10 @@
             return @"Expected function argument not found";
         case TCERROR_UNINIT_VALUE:
             return @"Illegal read from uninitialized value";
+        case TCERROR_EXP_FUNC:
+            return @"Expected function declaration not found";
+        case TCERROR_EXP_EXPRESSION:
+            return @"Expected expression not found";
         case TCERROR_BREAK:
             return @"!BREAK";
         case TCERROR_RETURN:

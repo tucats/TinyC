@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 #import "TCParser.h"
-#import "TCError.h"
 #import "TCSyntaxNode.h"
 
 @interface TCExpressionParser : NSObject

@@ -47,7 +47,10 @@ NSString * nodeSpelling( int nodeType ) {
             return @"MODULE";
         case LANGUAGE_ENTRYPOINT:
             return @"ENTRYPOINT";
-            
+        case LANGUAGE_TYPE:
+            return @"TYPE";
+        case LANGUAGE_CAST:
+            return @"CAST";
         default:
             return [[NSString alloc]initWithFormat:@"%d", nodeType];
     }

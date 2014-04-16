@@ -7,6 +7,10 @@
 //
 
 #import "TCExpressionParser.h"
+#import "TCError.h"
+#import "TCTypeParser.h"
+
+
 
 @implementation TCExpressionParser
 
@@ -95,15 +99,58 @@
         return [self parseIdentifier:parser];
     }
     
-    //  Is this a (subexpression)?  If so, parse the parenthesis and
-    //  start expression processing again from the top of the order
-    //  hierarchy. Requires a closing parenthesis after the expression.
+    //  Is this a (subexpression) or a (cast)?  If so, parse the parenthesis
+    //  and see what follows.  First, try parsing a type definition, and if
+    //  that doesnt' work then start expression processing again from the
+    //  top of the precidence hierarchy. Either case requires a closing
+    //  parenthesis after the expression.
     
     if([parser isNextToken:TOKEN_PAREN_LEFT]) {
-        TCSyntaxNode * subExpression = [self parseAssignment:parser];
-        if(![parser isNextToken:TOKEN_PAREN_RIGHT]) {
-            [parser error:TCERROR_PARENMISMATCH];
-            return nil;
+        
+        TCSyntaxNode * subExpression = nil;
+        
+        subExpression = [[[TCTypeParser alloc]init] parse:parser];
+        
+        // If it is a TYPE then this is a cast.  Create a CAST node
+        // with the subnode being the type data.
+        
+        if( subExpression != nil ) {
+            TCSyntaxNode * cast = subExpression;
+            
+            subExpression = [[TCSyntaxNode alloc]init];
+    
+            subExpression.nodeType = LANGUAGE_CAST;
+            subExpression.subNodes = [NSMutableArray arrayWithArray:@[cast]];
+        }
+        
+        // It wasn't a cast, see if it is a top-level expression which starts
+        // at the assignment parse.
+        
+        if( subExpression == nil ) {
+            subExpression = [self parseAssignment:parser];
+        }
+        
+        // If we have something (either a cast or an expression) then we
+        // must find a closing parenthesis
+        
+        if( subExpression != nil ) {
+            if(![parser isNextToken:TOKEN_PAREN_RIGHT]) {
+                [parser error:TCERROR_PARENMISMATCH];
+                return nil;
+            }
+        }
+        
+        // If it was a cast, then it is followed by another expression which is
+        // made the other subnode of the CAST operation
+        
+        if( subExpression.nodeType == LANGUAGE_CAST) {
+            TCSyntaxNode * sourceExpression = [[TCSyntaxNode alloc]init];
+            sourceExpression = [self parseAssignment:parser];
+            if( sourceExpression == nil) {
+                parser.error = [[TCError alloc]initWithCode:TCERROR_EXP_EXPRESSION withArgument:nil];
+                return nil;
+            }
+            [subExpression.subNodes addObject:sourceExpression];
         }
         return subExpression;
     }

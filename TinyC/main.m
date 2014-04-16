@@ -66,13 +66,11 @@ int main(int argc, const char * argv[])
         
         if( path == nil && program == nil) {
             program = @"\
-            int main( ) \
+            int main( int argc ) \
             { \
             double bob;\
-            bob = 3;\
-            int age = 54;\
-            return bob * age;\
-            } ";
+            bob = (double) 5;\
+            }";
             
             printf("No source given, using internal test code\n");
             df = TCDebugParse | TCDebugTrace | TCDebugStorage;

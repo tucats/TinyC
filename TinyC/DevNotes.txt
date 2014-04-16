@@ -73,4 +73,9 @@
     to the Storage-managed global storage area, and replace references with references
     to char* items.  This assumes char* is working.
 
+19. Need to refactor out the parsing of type information from the Declaration parser so 
+    types used for entry points, casting, etc. are independantly parsed from storage
+    declarations.  Change module parsing to expect a type prefix for the entry point, not
+    a special version of declaration as it is now.
+
     

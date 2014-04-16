@@ -38,7 +38,7 @@
 -(NSString*) description {
     
     static char * typeNames[] = {
-        "INTEGER", "DOUBLE", "STRING", "IDENTIFIER", "SPECIAL", "EOS"
+        "INTEGER", "DOUBLE", "FLOAT", "STRING", "IDENTIFIER", "SPECIAL", "EOS"
     };
     
     if( type <= TOKEN_EOS )

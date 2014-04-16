@@ -29,6 +29,7 @@
 		E262FE1618F8645300DFC135 /* NSString+NSStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */; };
 		E262FE1718FADCB400DFC135 /* TinyC in CopyFiles */ = {isa = PBXBuildFile; fileRef = E262FDC918F8478400DFC135 /* TinyC */; };
 		E262FE1B18FC2BE700DFC135 /* TCStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE1A18FC2BE700DFC135 /* TCStorage.m */; };
+		E297A57818FEBC92009C7EDC /* TCTypeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E297A57718FEBC92009C7EDC /* TCTypeParser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -89,6 +90,8 @@
 		E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSStringFormatting.m"; sourceTree = "<group>"; };
 		E262FE1918FC2BE700DFC135 /* TCStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCStorage.h; path = ../TCStorage.h; sourceTree = "<group>"; };
 		E262FE1A18FC2BE700DFC135 /* TCStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TCStorage.m; path = ../TCStorage.m; sourceTree = "<group>"; };
+		E297A57618FEBC92009C7EDC /* TCTypeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCTypeParser.h; sourceTree = "<group>"; };
+		E297A57718FEBC92009C7EDC /* TCTypeParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCTypeParser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -169,6 +172,8 @@
 				E262FDDD18F847BA00DFC135 /* TCAssignmentParser.m */,
 				E262FDE018F847BA00DFC135 /* TCDeclarationParser.h */,
 				E262FDE118F847BA00DFC135 /* TCDeclarationParser.m */,
+				E297A57618FEBC92009C7EDC /* TCTypeParser.h */,
+				E297A57718FEBC92009C7EDC /* TCTypeParser.m */,
 				E262FDE818F847BA00DFC135 /* TCExpressionParser.h */,
 				E262FDE918F847BA00DFC135 /* TCExpressionParser.m */,
 				E262FDEC18F847BA00DFC135 /* TCModuleParser.h */,
@@ -270,6 +275,7 @@
 			files = (
 				E262FDFD18F847BA00DFC135 /* TCAssignmentParser.m in Sources */,
 				E262FE0018F847BA00DFC135 /* TCError.m in Sources */,
+				E297A57818FEBC92009C7EDC /* TCTypeParser.m in Sources */,
 				E262FE0118F847BA00DFC135 /* TCExpression.m in Sources */,
 				E262FDD018F8478400DFC135 /* main.m in Sources */,
 				E262FE1018F8481000DFC135 /* TinyC.m in Sources */,
@@ -401,6 +407,7 @@
 				E262FDD918F8478400DFC135 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

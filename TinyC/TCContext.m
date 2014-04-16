@@ -189,8 +189,15 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 for( int ix = 0; ix < arguments.count; ix++ ) {
                     TCSyntaxNode* localArg = tree.subNodes[ix+1];
                     TCSyntaxNode* localArgName = localArg.subNodes[0];
+                    
+                    // @NOTE : probably need to look at casting each argument to the type
+                    // of the caller so we don't read storage values incorrectly!!
+                    
                     localArgName.argument = (TCValue*) arguments[ix];
                     [_importedArguments addObject:localArg ];
+                    
+                    if(_debug)
+                        NSLog(@"Prep arg #%d %@ of type %d",ix, localArgName.spelling, localArg.action);
                 }
             }
             // The final subnode is the code block to execute. Fetch that out and let's run it.
