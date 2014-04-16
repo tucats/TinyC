@@ -33,5 +33,26 @@
     return result;
 }
 
+/**
+ Reformat the string contents to remove "escaped" characters common to the C programming
+ language.
+ 
+ @returns a new string with the escapes converted.
+ 
+ */
+- (NSString*) escapeString
+{
+    NSString * escapedString = self;
+    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\n"      // Newline
+                                                             withString:@"\n"];
+    
+    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\t"      // Tab
+                                                             withString:@"\t"];
+    
+    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\\""     // Double quote
+                                                             withString:@"\""];
+    return escapedString;
+}
+
 
 @end

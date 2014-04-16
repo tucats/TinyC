@@ -11,5 +11,6 @@
 @interface NSString (NSStringFormatting)
 
 + (id)stringWithFormat:(NSString *)format array:(NSArray*) arguments;
+- (NSString*) escapeString;
 
 @end

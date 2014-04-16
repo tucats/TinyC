@@ -65,7 +65,7 @@ extern TCContext* activeContext;
             // AT THIS POINT.  No user types allowed yet.
             TCSyntaxNode * castInfo = (TCSyntaxNode*)node.subNodes[0];
             
-            //if( _debug)
+            if( _debug)
                 NSLog(@"EXPRESS: Cast %@ to type %s", result, typeMap(castInfo.action));
             result = [result castTo:castInfo.action];
             return result;
@@ -112,16 +112,7 @@ extern TCContext* activeContext;
                 case TOKEN_STRING: {
                     // Do a little extra work here to handle escapes.
                     
-                    NSString * escapedString = node.spelling;
-                    
-                    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\n"      // Newline
-                                                                             withString:@"\n"];
-                    
-                    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\t"      // Tab
-                                                                             withString:@"\t"];
-
-                    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\\""     // Double quote
-                                                                             withString:@"\""];
+                    NSString * escapedString = [node.spelling escapeString];
                     
                     if(_debug)
                         NSLog(@"EXPRESS: Load string %@", escapedString);

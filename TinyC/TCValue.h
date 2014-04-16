@@ -18,6 +18,7 @@ typedef enum {
     TCVALUE_FLOAT,
     TCVALUE_DOUBLE,
     TCVALUE_STRING,
+    TCVALUE_USER,
     TCVALUE_POINTER = 16384
 } TCValueType;
 
