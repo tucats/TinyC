@@ -14,6 +14,8 @@
 #import "TCContext.h"
 #import "NSString+NSStringFormatting.h"
 
+char* typeMap(TCValueType);
+
 extern TCContext* activeContext;
 
 @implementation TCExpressionInterpreter
@@ -64,7 +66,7 @@ extern TCContext* activeContext;
             TCSyntaxNode * castInfo = (TCSyntaxNode*)node.subNodes[0];
             
             //if( _debug)
-                NSLog(@"Cast %@ to type %d", result, castInfo.action);
+                NSLog(@"EXPRESS: Cast %@ to type %s", result, typeMap(castInfo.action));
             result = [result castTo:castInfo.action];
             return result;
         }
@@ -75,7 +77,7 @@ extern TCContext* activeContext;
         case LANGUAGE_REFERENCE:
         {
             if(_debug)
-                NSLog(@"Locate reference to %@", node.spelling);
+                NSLog(@"EXPRESS: Locate reference to %@", node.spelling);
             
             TCSymbol * targetSymbol = [symbols findSymbol:node.spelling];
             if( targetSymbol == nil ){
@@ -96,18 +98,15 @@ extern TCContext* activeContext;
             
         case LANGUAGE_SCALAR:
         {
-            if(_debug)
-                NSLog(@"SCALAR action %d", node.action);
-            
             switch( node.action) {
                 case TOKEN_INTEGER:
                     if(_debug)
-                        NSLog(@"Load integer %@", node.spelling);
+                        NSLog(@"EXPRESS: Load integer %@", node.spelling);
                     return [[TCValue alloc]initWithInt:(int) [node.spelling integerValue]];
                     
                 case TOKEN_DOUBLE:
                     if(_debug)
-                        NSLog(@"Load double %@", node.spelling);
+                        NSLog(@"EXPRESS: Load double %@", node.spelling);
                     return [[TCValue alloc]initWithDouble:[node.spelling doubleValue]];
                     
                 case TOKEN_STRING: {
@@ -125,7 +124,7 @@ extern TCContext* activeContext;
                                                                              withString:@"\""];
                     
                     if(_debug)
-                        NSLog(@"Load string %@", escapedString);
+                        NSLog(@"EXPRESS: Load string %@", escapedString);
                     return [[TCValue alloc] initWithString:escapedString];
                 }
 
@@ -142,7 +141,7 @@ extern TCContext* activeContext;
             
             TCValue * target = [self evaluate:node.subNodes[0] withSymbols:symbols];
             if(_debug)
-                NSLog(@"Monadic action %d on %@", node.action, target);
+                NSLog(@"EXPRESS: Monadic action %d on %@", node.action, target);
             switch(node.action) {
                 case TOKEN_SUBTRACT:
                     return [target negate];
@@ -171,7 +170,7 @@ extern TCContext* activeContext;
             }
 
             if( _debug)
-                NSLog(@"Diadic action %d on %@, %@", node.action, left, right);
+                NSLog(@"EXPRESS: Diadic action %d on %@, %@", node.action, left, right);
             
             switch(node.action) {
                 case TOKEN_BOOLEAN_AND:
@@ -268,7 +267,7 @@ extern TCContext* activeContext;
     
     
     if( _debug)
-        NSLog(@"Attempt to call function %@", node.spelling);
+        NSLog(@"EXPRESS: Attempt to call function %@", node.spelling);
     
     // Build an argument list array
     
@@ -276,7 +275,7 @@ extern TCContext* activeContext;
     
     for( int ix = 0; ix < node.subNodes.count; ix++ ) {
         if(_debug)
-            NSLog(@"Evaluate argument %d", ix);
+            NSLog(@"EXPRESS: Evaluate argument %d", ix);
         TCSyntaxNode * exp = (TCSyntaxNode*) node.subNodes[ix];
         TCValue * argValue = [self evaluate:exp withSymbols:symbols];
         [arguments addObject:argValue];
@@ -287,7 +286,7 @@ extern TCContext* activeContext;
     TCSyntaxNode * entry =[activeContext findEntryPoint:node.spelling];
     if( entry != nil) {
         if(_debug)
-            NSLog(@"Found entry point at %@, creating new frame", entry);
+            NSLog(@"EXPRESS: Found entry point at %@, creating new frame", entry);
  
 
         TCContext * savedContext = activeContext;

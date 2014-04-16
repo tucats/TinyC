@@ -129,7 +129,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     
     if(_debug) {
         if( entryName != nil)
-            NSLog(@"Searching MODULE for entrypoint %@", entryName);
+            NSLog(@"LANGPRC: Searching MODULE for entrypoint %@", entryName);
         
     }
     
@@ -168,7 +168,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
         {
             if( _debug)
-                NSLog(@"Beginning execution of entrypoint %@", tree.spelling);
+                NSLog(@"LANGPRC: Beginning execution of entrypoint %@", tree.spelling);
             
             
             // The first subnode is the return type; squirrel that away.
@@ -193,11 +193,17 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                     // @NOTE : probably need to look at casting each argument to the type
                     // of the caller so we don't read storage values incorrectly!!
                     
-                    localArgName.argument = (TCValue*) arguments[ix];
+                    TCValue* argValue = (TCValue*) arguments[ix];
+                    if( argValue.getType != localArg.action) {
+                        if( _debug)
+                            NSLog(@"LANGPRC: Casting function parm #%d to %s", ix+1, typeMap(localArg.action));
+                        argValue = [argValue castTo:localArg.action];
+                    }
+                    localArgName.argument = argValue;
                     [_importedArguments addObject:localArg ];
                     
                     if(_debug)
-                        NSLog(@"Prep arg #%d %@ of type %d",ix, localArgName.spelling, localArg.action);
+                        NSLog(@"LANGPRC: Add arg #%d %@ of type %s to arglist",ix, localArgName.spelling, typeMap(localArg.action));
                 }
             }
             // The final subnode is the code block to execute. Fetch that out and let's run it.
@@ -221,7 +227,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
             if( _importedArguments ) {
                 if( _debug)
-                    NSLog(@"Importing %d arguments to local symbol table",
+                    NSLog(@"LANGPRC: Importing %d arguments to local symbol table",
                           (int)_importedArguments.count);
                 for( int ix = 0; ix < _importedArguments.count; ix ++ ) {
                     TCSyntaxNode * argDecl = (TCSyntaxNode*) _importedArguments[ix];
@@ -270,15 +276,15 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             // targets other than simple ADDRESS
             TCSymbol * targetValue = [_symbols findSymbol:target.spelling];
             if( _debug )
-                NSLog(@"Assign %@ to %@", value, target.spelling);
+                NSLog(@"LANGPRC: Assign %@ to %@", value, target.spelling);
             if( targetValue == nil ) {
                 _error = [[TCError alloc]initWithCode:TCERROR_UNK_IDENTIFIER withArgument:target.spelling];
                 if( _debug )
-                    NSLog(@"%@", _error);
+                    NSLog(@"C_ERROR: %@", _error);
                 return nil;
             }
             if(!targetValue.allocated) {
-                NSLog(@"FATAL: attempt to write to unallocated variable %@", targetValue);
+                NSLog(@"C_ERROR: attempt to write to unallocated variable %@", targetValue);
             }
             value = [value castTo:targetValue.type];
             targetValue.initialValue = value;
@@ -300,14 +306,14 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCValue * condValue = [expInt evaluate:condition withSymbols:_symbols];
             if( condValue.getLong ) {
                 if(_debug)
-                    NSLog(@"Condition value %@, execute true branch", condValue);
+                    NSLog(@"LANGPRC: Condition value %@, execute true branch", condValue);
                 result = [self execute:ifTrue withSymbols:_symbols];
             } else if( tree.subNodes.count > 2) {
                 if(_debug)
-                    NSLog(@"Condition value %@, execute false branch", condValue);
+                    NSLog(@"LANGPRC: Condition value %@, execute false branch", condValue);
                 result = [self execute:tree.subNodes[2] withSymbols:_symbols];
             } else if(_debug)
-                NSLog(@"Condition value %@, nothing executed", condValue);
+                NSLog(@"LANGPRC: Condition value %@, nothing executed", condValue);
         }
             break;
             
@@ -322,12 +328,12 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 return nil;
             }
             if( _debug) {
-                NSLog(@"Returning block value %@", result);
+                NSLog(@"LANGPRC: Returning block value %@", result);
             }
             
             if( _returnInfo ) {
                 if(_debug) {
-                    NSLog(@"Return type coerced to %s", typeMap(_returnInfo.action));
+                    NSLog(@"LANGPRC: Return type coerced to %s", typeMap(_returnInfo.action));
                 }
                 result = coerceType(result, _returnInfo.action);
             }
@@ -349,14 +355,14 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 if( declaration.argument && _storage)
                     [_lastSymbol setValue: (TCValue*)declaration.argument storage:_storage];
                 else if( !_storage)
-                    NSLog(@"FATAL: declaration initializer with no storage allocation");
+                    NSLog(@"C_ERROR: declaration initializer with no storage allocation");
 
                 
                 if( _debug) {
                     if( _lastSymbol.initialValue)
-                        NSLog(@"Created new variable %@ with initial value %@", _lastSymbol, _lastSymbol.initialValue);
+                        NSLog(@"LANGPRC: Created new variable %@ with initial value %@", _lastSymbol, _lastSymbol.initialValue);
                     else
-                        NSLog(@"Created new variable %@", _lastSymbol);
+                        NSLog(@"LANGPRC: Created new variable %@", _lastSymbol);
                 }
             }
             
