@@ -36,10 +36,19 @@ typedef struct {
 -(long)getLong
 {
     
+    // If we are really a pointer of some kind, return the address value from the long
+    if( type > TCVALUE_POINTER) {
+        return longValue;
+    }
+    
+    // Otherwise, cast ourselves to the right type.
+    
     switch([self getType]) {
         case TCVALUE_INT:
-        case TCVALUE_LONG:
             return intValue;
+            
+        case TCVALUE_LONG:
+            return longValue;
             
         case TCVALUE_FLOAT:
         case TCVALUE_DOUBLE:
@@ -47,6 +56,7 @@ typedef struct {
             
         case TCVALUE_STRING:
             return [stringValue intValue];
+            
         default:
             return 0;
     }
@@ -139,6 +149,18 @@ typedef struct {
 }
 
 #pragma mark - Conversions
+
+/**
+ Whatever type this Value is, mark it as a pointer to that type.
+ @returns the value, but with the type extended as a pointer operation.
+ */
+
+-(TCValue*) makePointer:(TCValueType) ofType
+{
+    type = ofType + TCVALUE_POINTER;
+    return self;
+}
+
 
 -(TCValue*) castTo:(TCValueType)newType
 {

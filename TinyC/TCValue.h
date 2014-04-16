@@ -42,6 +42,8 @@ typedef enum {
 -(TCValue*) divideValue:(TCValue*) value;
 -(TCValue*) multiplyValue:(TCValue*) value;
 
+-(TCValue *) makePointer:(TCValueType)ofType;
+
 -(TCValue*) negate;
 -(TCValue*) booleanNot;
 

@@ -148,6 +148,29 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     
     switch( tree.nodeType) {
             
+        case LANGUAGE_ADDRESS:
+        {
+            // Find the address of a target.  Right now we only support a single name.
+            
+            TCSymbol * targetValue = [_symbols findSymbol:tree.spelling];
+            
+            if( targetValue == nil ) {
+                _error = [[TCError alloc]initWithCode:TCERROR_UNK_IDENTIFIER withArgument:tree.spelling];
+                if( _debug )
+                    NSLog(@"C_ERROR: %@", _error);
+                return nil;
+            }
+            if(!targetValue.allocated) {
+                NSLog(@"C_ERROR: attempt to write to unallocated variable %@", tree.spelling);
+                return nil;
+            }
+            if( _debug )
+                NSLog(@"LANGPRC: Locate address of %@, %ld", tree.spelling, targetValue.address);
+            result = [[[TCValue alloc]initWithLong:targetValue.address] makePointer:targetValue.type];
+            
+            return result;
+        }
+            
             // Most common case, a call to a function with no result or an assignment
             
         case LANGUAGE_EXPRESSION:
@@ -260,7 +283,13 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
         case LANGUAGE_ASSIGNMENT:
         {
+            // Step one, get the target expression.
             TCSyntaxNode * target = tree.subNodes[0];
+            TCValue * targetAddress = [self execute:target withSymbols:_symbols];
+            if( targetAddress == nil )
+                return nil;
+            
+            // Step two, get the expression to assign.
             TCSyntaxNode * exp = tree.subNodes[1];
             TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
             expInt.debug = _debug;
@@ -272,25 +301,19 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 return nil;
             }
             
-            // Simple assignment. This needs to be expanded later to handle
-            // targets other than simple ADDRESS
-            TCSymbol * targetValue = [_symbols findSymbol:target.spelling];
-            if( _debug )
-                NSLog(@"LANGPRC: Assign %@ to %@", value, target.spelling);
-            if( targetValue == nil ) {
-                _error = [[TCError alloc]initWithCode:TCERROR_UNK_IDENTIFIER withArgument:target.spelling];
-                if( _debug )
-                    NSLog(@"C_ERROR: %@", _error);
+            // Sanity check; the target address must be expressed with a type
+            // that includes the POINTER designation.
+            
+            TCValueType targetType = targetAddress.getType;
+            if( targetType <= TCVALUE_POINTER) {
+                _error = [[TCError alloc]initWithCode:TCERROR_INV_LVALUE withArgument:nil];
                 return nil;
             }
-            if(!targetValue.allocated) {
-                NSLog(@"C_ERROR: attempt to write to unallocated variable %@", targetValue);
-            }
-            value = [value castTo:targetValue.type];
-            targetValue.initialValue = value;
-            if( _storage) {
-                [_storage setValue:value at:targetValue.address];
-            }
+            
+            TCValueType actualType = targetType - TCVALUE_POINTER;
+            
+            value = [value castTo:actualType];
+            [_storage setValue:value at:targetAddress.getLong];
             result = value;
         }
             break;
@@ -321,6 +344,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         {
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
             expInt.debug = _debug;
+            expInt.storage = _storage;
             
             result = [expInt evaluate:tree.subNodes[0] withSymbols:_symbols];
             if( expInt.error) {

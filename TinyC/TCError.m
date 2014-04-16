@@ -69,6 +69,8 @@
             return @"Expected function declaration not found";
         case TCERROR_EXP_EXPRESSION:
             return @"Expected expression not found";
+        case TCERROR_INV_LVALUE:
+            return @"Invalid LVALUE address";
         case TCERROR_BREAK:
             return @"!BREAK";
         case TCERROR_RETURN:

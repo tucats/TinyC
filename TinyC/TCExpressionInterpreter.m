@@ -76,8 +76,6 @@ extern TCContext* activeContext;
             
         case LANGUAGE_REFERENCE:
         {
-            if(_debug)
-                NSLog(@"EXPRESS: Locate reference to %@", node.spelling);
             
             TCSymbol * targetSymbol = [symbols findSymbol:node.spelling];
             if( targetSymbol == nil ){
@@ -86,9 +84,15 @@ extern TCContext* activeContext;
             }
 
             // Do we have real storage now?
-            if( _storage != nil )
+            if( _storage != nil ) {
+                if(_debug)
+                    NSLog(@"EXPRESS: Reference load value of %@, at %ld", node.spelling, targetSymbol.address);
+                
                 return [_storage getValue:targetSymbol.address ofType:targetSymbol.type];
-            
+            }
+            if(_debug)
+                NSLog(@"EXPRESS: Reference load of %@ has no storage, using embedded value %@",
+                      targetSymbol.spelling, targetSymbol.initialValue);
             return targetSymbol.initialValue;
             
         }
@@ -118,7 +122,24 @@ extern TCContext* activeContext;
                         NSLog(@"EXPRESS: Load string %@", escapedString);
                     return [[TCValue alloc] initWithString:escapedString];
                 }
-
+                
+                case TCVALUE_CHAR + TCVALUE_POINTER:
+                {
+                    NSNumber* pointerObject = (NSNumber*) node.argument;
+                    
+                    long virtualAddress = pointerObject.longValue;
+                    if( virtualAddress < 0 || virtualAddress > _storage.current) {
+                        NSLog(@"ERROR: load of char* constant from illegal address");
+                        return nil;
+                    }
+                    char* stringPtr = (char*)( _storage.buffer + virtualAddress);
+                    
+                    NSString * cString = [NSString stringWithCString:stringPtr encoding:NSUTF8StringEncoding];
+                    if(_debug)
+                        NSLog(@"EXPRESS: load string literal %@ from char* pointer %ld", cString, virtualAddress);
+                    
+                    return [[TCValue alloc]initWithString:cString];
+                }
                     
                 default:
                     _error = [[TCError alloc] initWithCode:TCERROR_INTERP_BAD_SCALAR

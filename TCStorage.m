@@ -99,6 +99,17 @@ const char * typeName( TCValueType t )
         NSLog(@"Memory exhausted");
         return 0L;
     }
+    
+    // Adjust the pointer to be a multiple of the storage size
+    
+    long pad = _current % size;
+    if( pad ) {
+        _current = _current + (size-pad);
+        if(_debug)
+            NSLog(@"STORAGE: allocation padded by %d bytes", (int)(size-pad));
+    }
+    // Do the allocation
+    
     if(_debug)
         NSLog(@"STORAGE: alloc %ld bytes at %ld", size,  _current);
 
@@ -162,7 +173,7 @@ const char * typeName( TCValueType t )
 
 -(char) getChar:(long)address
 {
-    if( address < 0 || address > _current) {
+    if( address < 0 || address >= _current) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0;
     }
@@ -175,7 +186,7 @@ const char * typeName( TCValueType t )
 
 -(void) setChar:(char)value at:(long)address
 {
-    if( address < 0 || address > _current) {
+    if( address < 0 || address >= _current) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
@@ -184,11 +195,11 @@ const char * typeName( TCValueType t )
 
 -(int) getInt:(long)address
 {
-    if( address < 0 || address > _current) {
+    if( address < 0 || address >= _current) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0;
     }
-    int result = *(int*)&( _buffer[address]);
+    int result = *((int*)(&( _buffer[address])));
     if(_debug)
         NSLog(@"STORAGE: read int %d from %ld", result, address);
     return result;
@@ -196,7 +207,7 @@ const char * typeName( TCValueType t )
 
 -(void) setInt:(int)value at:(long)address
 {
-    if( address < 0 || address > _current) {
+    if( address < 0 || address >= _current) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
@@ -206,7 +217,7 @@ const char * typeName( TCValueType t )
 
 -(long) getLong:(long)address
 {
-    if( address < 0 || address > _current) {
+    if( address < 0 || address >= _current) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0;
     }
@@ -219,7 +230,7 @@ const char * typeName( TCValueType t )
 
 -(void) setLong:(long)value at:(long)address
 {
-    if( address < 0 || address > _current) {
+    if( address < 0 || address >= _current) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
@@ -228,7 +239,7 @@ const char * typeName( TCValueType t )
 
 -(double) getDouble:(long)address
 {
-    if( address < 0 || address > _current) {
+    if( address < 0 || address >= _current) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0.0;
     }
@@ -242,7 +253,7 @@ const char * typeName( TCValueType t )
 
 -(void) setDouble:(double) value at:(long)address
 {
-    if( address < 0 || address > _current) {
+    if( address < 0 || address >= _current) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }

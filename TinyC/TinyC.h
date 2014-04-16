@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "TCError.h"
 #import "TCValue.h"
+@class TCStorage;
 
 typedef enum {
     TCDebugNone = 0,
@@ -41,7 +42,7 @@ typedef enum {
 -(TCError*) execute;
 
 -(TCError*) executeReturningValue:(TCValue**) result;
-
+-(long) allocateScalarString:(TCSyntaxNode*) tree storage:(TCStorage*) storage;
 -(void) setDebug:(TCDebugFlag) debugFlag;
 -(BOOL) debugTokens;
 -(BOOL) debugParse;
