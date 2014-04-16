@@ -29,7 +29,7 @@
     adjustment to the relationship between blocks and statements and when a trailing
     ";" is required, particularly for if statements with blocks.
     
-8.  Add function entry point definition.  This may involve changing how
+8.  [DONE] Add function entry point definition.  This may involve changing how
     declarations are parsed, since a function can become a kind of declaration
     now. 
 
@@ -39,16 +39,16 @@
     
 10. [DONE] Implement RETURN statement thet returns a value from a block.
 
-11. [DONE]Change invocation to search for a function called "main" and execute that.
+11. [DONE] Change invocation to search for a function called "main" and execute that.
 
-12. [DONE]Function arguments must generate DECLARE objects in local block graph, with
+12. [DONE] Function arguments must generate DECLARE objects in local block graph, with
     specialized assignment operators that fetch argument list items.
 
-13. [DONE]You can execute a MODULE tree with an entry point name and it is searched
+13. [DONE] You can execute a MODULE tree with an entry point name and it is searched
     for an run.  Or you can start with a tree that is an ENTRYPOINT and it just
     runs that tree.
 
-14. [DONE]A new call to a routine must parse an argument list and create an argument
+14. [DONE] A new call to a routine must parse an argument list and create an argument
     array, then call a new invocation of TCContext to run it, creating a new
     scope and storage area.
     
@@ -58,7 +58,7 @@
     save those allocated values in the table, which will be offsets into the storage
     domain.  Need a separate class that is storage management.
     
-16. [DONE]Need to note that an assignment is really a part of the expression processor, and
+16. [DONE] Need to note that an assignment is really a part of the expression processor, and
     is an operator that means store lvalue in rvalue.  This will be easier to support
     when references in an expression uniformly generate an address followed by a fetch
     or store as needed.
@@ -73,9 +73,13 @@
     to the Storage-managed global storage area, and replace references with references
     to char* items.  This assumes char* is working.
 
-19. Need to refactor out the parsing of type information from the Declaration parser so 
+19. [DONE] Need to refactor out the parsing of type information from the Declaration parser so
     types used for entry points, casting, etc. are independantly parsed from storage
     declarations.  Change module parsing to expect a type prefix for the entry point, not
     a special version of declaration as it is now.
+
+20. [DONE] When calling a function, the arguments must be cast to the types of the
+    reciving arguments.
+
 
     
