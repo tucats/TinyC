@@ -114,7 +114,7 @@
         tree.action = TCVALUE_CHAR + TCVALUE_POINTER;
         tree.argument = [NSNumber numberWithLong:base];
         if(debugFlags & TCDebugStorage) {
-            NSLog(@"STORAGE: allocated %ld byte string constant for %@ at %@",
+            NSLog(@"STORAGE: copied %ld byte string constant \"%@\" to %@",
                   stringLength, tree.spelling, tree.argument);
         }
     }
