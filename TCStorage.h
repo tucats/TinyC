@@ -23,6 +23,7 @@
 -(long) pushStorage;
 -(long) popStorage;
 -(long) alloc:(long)size;
+-(long) allocUnpadded:(long)size;
 
 -(TCValue*) getValue:(long) address ofType:(TCValueType) type;
 -(void) setValue:(TCValue*) value at:(long) address;

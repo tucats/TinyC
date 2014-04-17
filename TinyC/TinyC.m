@@ -121,7 +121,7 @@
             inPool = YES;
         } else {
             // Allocate new space for the string
-            base = [storage alloc:stringLength];
+            base = [storage allocUnpadded:stringLength];
   
             // Copy it to the memory area.
             

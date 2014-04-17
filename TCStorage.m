@@ -93,6 +93,25 @@ const char * typeName( TCValueType t )
     return _base;
 }
 
+
+-(long) allocUnpadded:(long)size
+{
+    if( _current + size > _size) {
+        NSLog(@"Memory exhausted");
+        return 0L;
+    }
+    
+   // Do the allocation
+    
+    if(_debug)
+        NSLog(@"STORAGE: alloc %ld bytes at %ld", size,  _current);
+    
+    long newAddr = _current;
+    _current += size;
+    return newAddr;
+}
+
+
 -(long) alloc:(long)size
 {
     if( _current + size > _size) {
