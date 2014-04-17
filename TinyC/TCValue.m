@@ -22,6 +22,43 @@ typedef struct {
     return [self getString];
 }
 
+-(NSString*) getTypeName
+{
+    TCValueType t = self.getType;
+    int ptrDepth = t / TCVALUE_POINTER;
+    TCValueType baseT = t % TCVALUE_POINTER;
+    
+    
+    NSMutableString * s = [NSMutableString string];
+    
+    switch( baseT) {
+        case TCVALUE_CHAR:
+            [s appendString:@"char"];
+            break;
+        case TCVALUE_INT:
+            [s appendString:@"int"];
+            break;
+        case TCVALUE_FLOAT:
+            [s appendString:@"float"];
+            break;
+        case TCVALUE_LONG:
+            [s appendString:@"long"];
+            break;
+        case TCVALUE_DOUBLE:
+            [s appendString:@"double"];
+            break;
+            
+        default:
+            [s appendString:@"undefined"];
+            
+    }
+    
+    for( int idx = 0; idx < ptrDepth; idx++ )
+        [s appendString:@"*"];
+    return [NSString stringWithString:s];
+    
+}
+
 -(int)getType
 {
     return type;
@@ -85,7 +122,11 @@ typedef struct {
 -(NSString *)getString
 {
     
-    switch([self getType]) {
+    TCValueType t = self.getType;
+    if( t > TCVALUE_POINTER) {
+        return [NSString stringWithFormat:@"%@ @ %ld", self.getTypeName, longValue];
+    }
+    switch(t) {
         case TCVALUE_INT:
             return [NSString stringWithFormat:@"%d", intValue];
             

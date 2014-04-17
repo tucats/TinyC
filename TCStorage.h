@@ -36,4 +36,6 @@
 
 -(double) getDouble:(long) address;
 -(void) setDouble:(double) value at:(long) address;
+
+-(NSString*) getString:(long)address;
 @end

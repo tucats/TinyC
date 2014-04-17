@@ -279,4 +279,15 @@ const char * typeName( TCValueType t )
     *(double*)&( _buffer[address]) = value = value;
 }
 
+-(NSString*) getString:(long)address
+{
+    NSMutableString * result = [NSMutableString string];
+    for( long ix = address; ix < _current; ix++ ) {
+        char ch = _buffer[ix];
+        [result appendFormat:@"%c", ch];
+        if( ch == 0 )
+            break;
+    }
+    return [NSString stringWithString:result];
+}
 @end

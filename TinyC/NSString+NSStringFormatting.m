@@ -7,30 +7,79 @@
 //
 
 #import "NSString+NSStringFormatting.h"
+#import "TCValue.h"
 
 @implementation NSString (NSStringFormatting)
 
 
+/**
+ Given an array of TCValue objects, format each one for output.
+ 
+ @param format the NSString containing the standard C formatting string data
+ @param arguments an NSArray containing NSNumber or NSString values for formatting
+ @returns a new string created using the format string and arguments
+ */
 
 + (id)stringWithFormat:(NSString *)format array:(NSArray*) arguments
 {
-    
-#if 0  // Old version
-    NSRange range = NSMakeRange(0, [arguments count]);
-    NSMutableData* data = [NSMutableData dataWithLength:sizeof(id) * [arguments count]];
-    [arguments getObjects:(__unsafe_unretained id *)data.mutableBytes range:range];
-    NSString* result = [[NSString alloc] initWithFormat:format, data.mutableBytes];
-    return result;
-#endif // Old version
-    
-    __unsafe_unretained id  * argList = (__unsafe_unretained id  *) calloc(1UL, sizeof(id) * arguments.count);
-    for (NSInteger i = 0; i < arguments.count; i++) {
-        argList[i] = arguments[i];
+    NSMutableString * buffer = [NSMutableString string];
+
+    int ix;
+    int argp = 0;
+    for( ix = 0; ix < format.length; ix++ ) {
+        
+        char ch = [format characterAtIndex:ix];
+        if( ch != '%') {
+            [buffer appendFormat:@"%c", ch];
+            continue;
+        }
+        
+        // It's a format operator, capture the format
+        // string contents.
+        
+        int start = ix;
+        int length = 1;
+        for( ix = ix + 1 ; ix < format.length; ix++ ){
+            ch = [format characterAtIndex:ix];
+            length++;
+            if(ch == 'd' ||
+               ch == 'p' ||
+               ch == 's' ||
+               ch == 'x' ||
+               ch == 'X' ||
+               ch == 'f' ||
+               ch == '@')
+                break;
+        }
+        NSNumber * v = arguments[argp++];
+        NSString *f = [format substringWithRange:NSMakeRange(start, length)];
+        
+        //NSLog(@"DEBUG: Format value is %@, data is %@", f, v);
+        
+        switch (ch) {
+            case 'd':
+            case 'x':
+            case 'X':
+            case 'p':
+
+                [buffer appendString:[NSString stringWithFormat:f, v.integerValue]];
+                break;
+
+            case 'f':
+                [buffer appendString:[NSString stringWithFormat:f, v.integerValue]];
+                break;
+
+                case 's':
+                [buffer appendString:[NSString stringWithFormat:f, [(NSString*)v cStringUsingEncoding:NSUTF8StringEncoding]]];
+                break;
+                
+            default:
+                NSLog(@"FATAL: unusable format spec %@", [format substringWithRange:NSMakeRange(start, length)]);
+                break;
+        }
+        
     }
-    
-    NSString* result = [[NSString alloc] initWithFormat:format, *argList] ;//  arguments:(void *) argList];
-    free (argList);
-    return result;
+    return [NSString stringWithString:buffer];
 }
 
 /**

@@ -63,7 +63,7 @@ TCValueType tokenToType( TokenType tok )
         
         BOOL isPointer = NO;
         
-        if( [parser isNextToken:TOKEN_MULTIPLY])
+        if( [parser isNextToken:TOKEN_ASTERISK])
             isPointer = YES;
         
         if(![parser isNextToken:TOKEN_IDENTIFIER]) {

@@ -152,8 +152,18 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         {
             // Find the address of a target.  Right now we only support a single name.
             
-            TCSymbol * targetValue = [_symbols findSymbol:tree.spelling];
+            TCSymbol * targetValue = nil;
+            if( tree.spelling == nil ) {
+                TCSyntaxNode *addressTree = (TCSyntaxNode*) tree.subNodes[0];
+                result = [self execute:addressTree withSymbols:_symbols];
+                if( result.getType < TCVALUE_POINTER)
+                    result = [result makePointer:result.getType];
+                return result;
+            }
             
+            
+            targetValue = [_symbols findSymbol:tree.spelling];
+
             if( targetValue == nil ) {
                 _error = [[TCError alloc]initWithCode:TCERROR_UNK_IDENTIFIER withArgument:tree.spelling];
                 if( _debug )

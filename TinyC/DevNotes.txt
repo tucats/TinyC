@@ -81,5 +81,11 @@
 20. [DONE] When calling a function, the arguments must be cast to the types of the
     reciving arguments.
 
+21. [DONE] String allocator now keeps a dictionary of all the strings it has allocated so
+    it just re-uses the storage.  This is all assumed to be constant storage so multiple
+    pointers to the same string are allowed.
 
+22. Declaration of pointer types is not working yet; the DECLARE node has an ADDRESS and
+    a NAME subnode and the declaration processor does not handle it correctly.
+    
     

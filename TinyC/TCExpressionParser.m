@@ -94,6 +94,26 @@
         return nil;
     }
     
+    // See if this is an address-of operator
+    
+    if([parser isNextToken:TOKEN_AMPER]) {
+        
+        TCSyntaxNode * target = [[TCSyntaxNode alloc]init];
+        target.nodeType = LANGUAGE_ADDRESS;
+
+        /**
+         @NOTE need to handle complex & values instead of just
+         simple scalar ones.
+         */
+        if( ![parser isNextToken:TOKEN_IDENTIFIER]) {
+            _error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF withArgument:nil];
+            return nil;
+        }
+        target.spelling = [parser lastSpelling];
+        
+        return target;
+        
+    }
     // See if it is an identifier.  This requires extra processing.
     if([parser isNextToken:TOKEN_IDENTIFIER]) {
         return [self parseIdentifier:parser];
@@ -208,7 +228,7 @@
     if( !atom )
         return nil;
     
-    while( [parser isNextToken:TOKEN_MULTIPLY] ||
+    while( [parser isNextToken:TOKEN_ASTERISK] ||
           [parser isNextToken:TOKEN_DIVIDE]) {
         TokenType whichOperation = [parser lastTokenType];
         NSString * spelling = [parser lastSpelling];

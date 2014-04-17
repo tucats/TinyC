@@ -47,7 +47,7 @@
         // If we have a type then see if it is a pointer to that type
         
         if( decl.action != TCVALUE_UNDEFINED) {
-            if([parser isNextToken:TOKEN_MULTIPLY]) {
+            if([parser isNextToken:TOKEN_ASTERISK]) {
                 TCSyntaxNode * ptrData = [[TCSyntaxNode alloc]init];
                 ptrData.nodeType = LANGUAGE_ADDRESS;
                 decl.subNodes = [NSMutableArray arrayWithArray:@[ptrData]];

@@ -40,6 +40,49 @@ extern TCContext* activeContext;
     
     switch( node.nodeType) {
             
+            // A pointer
+            
+        case LANGUAGE_ADDRESS:
+        {
+            TCValue *targetAddress = nil;
+            TCSymbol * sym = nil;
+            
+            // IF this is a named address we want the shortcut of getting the address of this value
+            // from the symbol table.
+            
+            if( node.spelling) {
+                
+                sym = [symbols findSymbol:node.spelling];
+                
+                if( sym == nil ) {
+                    _error = [[TCError alloc]initWithCode:TCERROR_UNK_IDENTIFIER withArgument:node.spelling];
+                    if( _debug )
+                        NSLog(@"C_ERROR: %@", _error);
+                    return nil;
+                }
+                if(!sym.allocated) {
+                    NSLog(@"C_ERROR: attempt to write to unallocated variable %@", node.spelling);
+                    return nil;
+                }
+                targetAddress = [[[TCValue alloc]initWithLong:sym.address] makePointer:sym.type];
+                
+            }
+            
+            // Not a named item, but an expression. Process the expression to get the result.
+            else {
+                TCSyntaxNode * targetExpr = (TCSyntaxNode*)node.subNodes[0];
+                targetAddress = [self evaluate:targetExpr withSymbols:symbols];
+                if( targetAddress.getType < TCVALUE_POINTER)
+                    targetAddress = [targetAddress makePointer:targetAddress.getType];
+            }
+            
+            if( _debug )
+                NSLog(@"EXPRESS: Locate address of %@, %@", node.spelling, targetAddress);
+            
+            return targetAddress;
+            
+            
+        }
             // An assignment operator?
         case LANGUAGE_ASSIGNMENT:
             return [activeContext execute:node withSymbols:symbols];
@@ -82,7 +125,7 @@ extern TCContext* activeContext;
                 _error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF withArgument:node.spelling];
                 return nil;
             }
-
+            
             // Do we have real storage now?
             if( _storage != nil ) {
                 if(_debug)
@@ -122,7 +165,7 @@ extern TCContext* activeContext;
                         NSLog(@"EXPRESS: Load string %@", escapedString);
                     return [[TCValue alloc] initWithString:escapedString];
                 }
-                
+                    
                 case TCVALUE_CHAR + TCVALUE_POINTER:
                 {
                     NSNumber* pointerObject = (NSNumber*) node.argument;
@@ -175,12 +218,12 @@ extern TCContext* activeContext;
             TCValue * right = [self evaluate:node.subNodes[1] withSymbols:symbols];
             if( _error)
                 return nil;
-
+            
             if( left == nil || right == nil) {
                 _error = [[TCError alloc]initWithCode:TCERROR_UNINIT_VALUE withArgument:nil];
                 return nil;
             }
-
+            
             if( _debug)
                 NSLog(@"EXPRESS: Diadic action %d on %@, %@", node.action, left, right);
             
@@ -191,7 +234,7 @@ extern TCContext* activeContext;
                     return [[TCValue alloc]initWithLong:([left getLong] || [right getLong])];
                 case TOKEN_ADD :
                     return [left addValue:right];
-                case TOKEN_MULTIPLY:
+                case TOKEN_ASTERISK:
                     return [left multiplyValue:right];
                 case TOKEN_SUBTRACT:
                     return [left subtractValue:right];
@@ -299,8 +342,8 @@ extern TCContext* activeContext;
     if( entry != nil) {
         if(_debug)
             NSLog(@"EXPRESS: Found entry point at %@, creating new frame", entry);
- 
-
+        
+        
         TCContext * savedContext = activeContext;
         TCContext * newContext = [[TCContext alloc]initWithStorage:self.storage];
         newContext.debug = activeContext.debug;
@@ -311,7 +354,7 @@ extern TCContext* activeContext;
         result = [newContext execute:entry entryPoint:nil withArguments:arguments];
         if(newContext.error)
             _error = newContext.error;
-
+        
         activeContext = savedContext;
         newContext = nil;
         return result;
@@ -339,26 +382,36 @@ extern TCContext* activeContext;
         
         for( int i = 1; i < arguments.count; i++ ) {
             TCValue * x = (TCValue*) arguments[i];
-            
-            if( x.getType == TCVALUE_BOOLEAN)
+            if( x.getType == TCVALUE_CHAR + TCVALUE_POINTER) {
+                [valueArgs addObject:[_storage getString:x.getLong]];
+            } else if( x.getType == TCVALUE_STRING)
+                [valueArgs addObject:x.getString];
+            else if( x.getType == TCVALUE_BOOLEAN)
                 [valueArgs addObject:[NSNumber numberWithBool:x.getLong]];
-            if( x.getType == TCVALUE_INT)
+            else if( x.getType == TCVALUE_INT)
                 [valueArgs addObject:[NSNumber numberWithLong:x.getLong]];
-            if( x.getType == TCVALUE_DOUBLE)
+            else if( x.getType == TCVALUE_LONG)
+                [valueArgs addObject:[NSNumber numberWithLong:x.getLong]];
+            else if( x.getType == TCVALUE_DOUBLE)
                 [valueArgs addObject:[NSNumber numberWithDouble:x.getDouble]];
-            
+            else if( x.getType >= TCVALUE_POINTER)
+                [valueArgs addObject:[NSNumber numberWithLong:x.getLong]];
+            else {
+                NSLog(@"ERROR: unusable argument type %d cannot be added to arglist ", x.getType);
+                
+            }
         }
-        NSString * buffer = [NSString stringWithFormat:formatString array:valueArgs];
-        NSString *newString = [buffer stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
-
-        int bytesPrinted = printf("%s", [newString UTF8String]);
+        NSString * buffer = [[NSString stringWithFormat:formatString array:valueArgs] escapeString];
+        //NSString *newString = [buffer stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
+        
+        int bytesPrinted = printf("%s", [buffer UTF8String]);
         return [[TCValue alloc]initWithInt: bytesPrinted];
     }
     
     // not found!
     _error = [[TCError alloc]initWithCode:TCERROR_UNK_ENTRYPOINT withArgument:name];
     return nil;
-
+    
 }
 @end
 

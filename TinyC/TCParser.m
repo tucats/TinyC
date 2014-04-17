@@ -57,7 +57,7 @@
         [self addSpelling:@">" forToken:TOKEN_GREATER];
         [self addSpelling:@"<=" forToken:TOKEN_LESS_OR_EQUAL];
         [self addSpelling:@"<" forToken:TOKEN_LESS];
-        [self addSpelling:@"*" forToken:TOKEN_MULTIPLY];
+        [self addSpelling:@"*" forToken:TOKEN_ASTERISK];
         [self addSpelling:@"/" forToken:TOKEN_DIVIDE];
         [self addSpelling:@"+" forToken:TOKEN_ADD];
         [self addSpelling:@"-" forToken:TOKEN_SUBTRACT];
@@ -82,6 +82,7 @@
         [self addSpelling:@"}" forToken:TOKEN_CLOSE_BRACE];
         [self addSpelling:@"for" forToken:TOKEN_FOR];
         [self addSpelling:@"while" forToken:TOKEN_WHILE];
+        [self addSpelling:@"&" forToken:TOKEN_AMPER];
         
         [self doNotPersist];
 
