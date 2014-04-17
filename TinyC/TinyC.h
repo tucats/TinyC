@@ -43,7 +43,7 @@ typedef enum {
 -(TCError*) execute;
 
 -(TCError*) executeReturningValue:(TCValue**) result;
--(long) allocateScalarString:(TCSyntaxNode*) tree storage:(TCStorage*) storage;
+-(long) allocateScalarStrings:(TCSyntaxNode*) tree storage:(TCStorage*) storage;
 -(void) setDebug:(TCDebugFlag) debugFlag;
 -(BOOL) debugTokens;
 -(BOOL) debugParse;

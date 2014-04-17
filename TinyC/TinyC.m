@@ -79,7 +79,7 @@
         // Always start with an empty dictionary. After the allocation
         // we no longer need the dictionary and can free it up...
         _stringPool = [NSMutableDictionary dictionary];
-        [self allocateScalarString:tree storage: storage];
+        [self allocateScalarStrings:tree storage: storage];
         _stringPool = nil;
         
         // Create execution context and run
@@ -103,7 +103,7 @@
  @return count of nodes were found that need replacing
  */
 
--(long) allocateScalarString:(TCSyntaxNode *)tree storage:(TCStorage *)storage
+-(long) allocateScalarStrings:(TCSyntaxNode *)tree storage:(TCStorage *)storage
 {
     long count = 0;
     
@@ -149,7 +149,7 @@
     else if( tree.subNodes ) {
         for( int ix = 0; ix < tree.subNodes.count; ix++ ) {
             TCSyntaxNode * child = (TCSyntaxNode*) tree.subNodes[ix];
-            [self allocateScalarString:child storage:storage];
+            [self allocateScalarStrings:child storage:storage];
         }
     }
     return count;
