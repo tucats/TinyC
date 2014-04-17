@@ -69,7 +69,7 @@
 17. [DONE] "int" and "long" are comingled as data types incorrectly in both TCValue and the
     expression interpreter -- need to clean that up.
 
-18. Need to scan a module on startup to find all the C string constants and move them
+18. [DONE] Need to scan a module on startup to find all the C string constants and move them
     to the Storage-managed global storage area, and replace references with references
     to char* items.  This assumes char* is working.
 

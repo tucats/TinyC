@@ -76,8 +76,11 @@
         
         // Now that we have storage, search for string scalar values
         // that really need to be char* pointing to static storage.
-        
+        // Always start with an empty dictionary. After the allocation
+        // we no longer need the dictionary and can free it up...
+        _stringPool = [NSMutableDictionary dictionary];
         [self allocateScalarString:tree storage: storage];
+        _stringPool = nil;
         
         // Create execution context and run
         
@@ -105,16 +108,41 @@
     long count = 0;
     
     if( tree.nodeType == LANGUAGE_SCALAR && tree.action == TOKEN_STRING) {
+        
+        long base = 0L;
         long stringLength = tree.spelling.length + 1;
-        long base = [storage alloc:stringLength];
-        const char * data = [tree.spelling cStringUsingEncoding:NSUTF8StringEncoding];
-        for( int ix = 0; ix < stringLength; ix++)
-            storage.buffer[base+ix] = data[ix];
-        storage.buffer[base+stringLength] = 0;
+        BOOL inPool = NO;
+        
+        // Do we already have a copy of this same string?
+        
+        NSNumber * stringAddress = [_stringPool objectForKey:tree.spelling];
+        if( stringAddress) {
+            base = stringAddress.longValue;
+            inPool = YES;
+        } else {
+            // Allocate new space for the string
+            base = [storage alloc:stringLength];
+  
+            // Copy it to the memory area.
+            
+            const char * data = [tree.spelling cStringUsingEncoding:NSUTF8StringEncoding];
+            for( int ix = 0; ix < stringLength; ix++)
+                storage.buffer[base+ix] = data[ix];
+            storage.buffer[base+stringLength] = 0;
+            
+            // Add it to the pool for later possible re-use
+            [_stringPool setObject:[NSNumber numberWithLong:base] forKey:tree.spelling];
+            
+        }
+        
+        // Update the node to point to the string pool storage area assigned
+        
         tree.action = TCVALUE_CHAR + TCVALUE_POINTER;
         tree.argument = [NSNumber numberWithLong:base];
         if(debugFlags & TCDebugStorage) {
-            NSLog(@"STORAGE: copied %ld byte string constant \"%@\" to %@",
+            
+            NSLog(@"STORAGE: %@ %ld byte string constant \"%@\" @ %@",
+                  inPool ? @"re-used pooled" : @"copied",
                   stringLength, tree.spelling, tree.argument);
         }
     }
