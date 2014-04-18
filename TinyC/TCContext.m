@@ -142,7 +142,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         tree = [self findEntryPoint:entryName];
     }
     
-    int dataType = 0;
+    int baseType = 0;
     int ix = 0;
     // Execute a statement or a block.
     
@@ -377,7 +377,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
         case LANGUAGE_DECLARE:
             
-            dataType = tree.nodeAction;
+            baseType = tree.nodeAction;
             
             for( ix = 0; ix < tree.subNodes.count; ix++) {
                 TCSyntaxNode * declaration = tree.subNodes[ix];

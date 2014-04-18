@@ -50,8 +50,14 @@
     NSMutableString * d = [NSMutableString string];
     
     [d appendFormat:@"\"%@\" ", self.spelling];
+    BOOL isPointer = NO;
     
-    switch( self.type ) {
+    TCValueType t = self.type;
+    if( t > TCVALUE_POINTER) {
+        isPointer = YES;
+        t = t - TCVALUE_POINTER;
+    }
+    switch( t ) {
         case TCVALUE_INT:
         case TCVALUE_LONG:
             [d appendFormat:@" integer*%d ", self.size];
@@ -65,11 +71,20 @@
         case TCVALUE_STRING:
             [d appendFormat:@" string*%d ", self.size];
             break;
+        
+        case TCVALUE_POINTER:
+            [d appendFormat:@" void "];
+            isPointer = YES;
+            break;
             
         default:
-            [d appendString:@" unknown type "];
+            [d appendFormat:@" unknown type %d ", t];
             
     }
+    
+    if( isPointer)
+        [d appendString:@" pointer "];
+    
     if( _allocated)
         [d appendString:[NSString stringWithFormat:@" @%ld", _address]];
     return [NSString stringWithString:d];

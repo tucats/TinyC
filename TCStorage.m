@@ -11,28 +11,56 @@
 
 const char * typeName( TCValueType t )
 {
-    switch(t) {
+    NSMutableString * name = [NSMutableString string];
+    static char msgBuffer[80];
+    
+    TCValueType lt = t;
+    if( lt > TCVALUE_POINTER) {
+        [name appendString:@"TCVALUE_POINTER+"];
+        lt = lt - TCVALUE_POINTER;
+    }
+    switch(lt) {
         case TCVALUE_BOOLEAN:
-            return "TCVALUE_BOOLEAN";
+            [name appendString:@"TCVALUE_BOOLEAN"];
+            break;
+            
         case TCVALUE_CHAR:
-            return "TCVALUE_CHAR";
+            [name appendString: @"TCVALUE_CHAR"];
+            break;
+            
         case TCVALUE_DOUBLE:
-            return "TCVALUE_DOUBLE";
+            [name appendString: @"TCVALUE_DOUBLE"];
+            break;
+            
         case TCVALUE_FLOAT:
-            return "TCVALUE_FLOAT";
+            [name appendString: @"TCVALUE_FLOAT"];
+            break;
+            
         case TCVALUE_INT:
-            return "TCVALUE_INT";
+            [name appendString: @"TCVALUE_INT"];
+            break;
+            
         case TCVALUE_LONG:
-            return "TCVALUE_LONG";
+            [name appendString: @"TCVALUE_LONG"];
+            break;
+            
         case TCVALUE_POINTER:
-            return "TCVALUE_POINTER";
+            [name appendString: @"TCVALUE_POINTER"];
+            break;
+            
         case TCVALUE_STRING:
-            return "TCVALUE_STRING!!!";
+            [name appendString: @"TCVALUE_STRING!!!"];
+            break;
+            
         case TCVALUE_UNDEFINED:
-            return "TCVALUE_UNDEFINED!!!";
+            [name appendString: @"TCVALUE_UNDEFINED!!!"];
+            break;
+            
         default:
             return "undefined type";
     }
+    [name getCString:msgBuffer maxLength:78 encoding:NSUTF8StringEncoding];
+    return msgBuffer;
 }
 @implementation TCStorage
 
@@ -101,7 +129,7 @@ const char * typeName( TCValueType t )
         return 0L;
     }
     
-   // Do the allocation
+    // Do the allocation
     
     if(_debug)
         NSLog(@"STORAGE: alloc %ld bytes at %ld", size,  _current);
@@ -131,13 +159,13 @@ const char * typeName( TCValueType t )
     
     if(_debug)
         NSLog(@"STORAGE: alloc %ld bytes at %ld", size,  _current);
-
+    
     long newAddr = _current;
     _current += size;
     return newAddr;
 }
 
-#pragma mark - Memmory Accessors
+#pragma mark - Memory Accessors
 
 -(TCValue*) getValue:(long)address ofType:(TCValueType) type
 {
@@ -145,12 +173,12 @@ const char * typeName( TCValueType t )
     TCValue * v = nil;
     if(_debug)
         NSLog(@"STORAGE: Access value of type %s at %ld", typeName(type), address);
-
+    
     switch(type) {
         case TCVALUE_DOUBLE:
             v = [[TCValue alloc]initWithDouble:[self getDouble:address]];
             break;
-    
+            
         case TCVALUE_BOOLEAN:
         case TCVALUE_CHAR:
             v = [[TCValue alloc]initWithInt:(int)[self getChar:address]];
@@ -167,26 +195,40 @@ const char * typeName( TCValueType t )
     
     return v;
 }
+
+/**
+ Given a TCValue object, store it in the virtual memory area.  This can be a pointer (in
+ which case use the long value as it contains the underlying address) or it can be a
+ scalar object where the specific data type is written into storage.
+ 
+ @param value the TCValue containing data to be written
+ @param address the virtual address to write the data to
+ */
+
 -(void) setValue:(TCValue *)value at:(long)address
 {
     if(_debug)
         NSLog(@"STORAGE: store value %@ of type %s at %ld", value, typeName(value.getType), address);
-
-    switch( value.getType) {
-        case TCVALUE_INT:
-            [self setInt:(int)value.getLong at:address];
-            break;
-        case TCVALUE_LONG:
-            [self setLong:value.getLong at:address];
-            break;
-        case TCVALUE_DOUBLE:
-            [self setDouble:value.getDouble at:address];
-            break;
-        case TCVALUE_CHAR:
-            [self setChar:value.getChar at:address];
-            
-        default:
-            NSLog(@"FATAL - storage setValue type %s %d not implemented", typeName(value.getType), value.getType);
+    
+    if( value.getType >= TCVALUE_POINTER )
+        [self setLong:value.getLong at:address];
+    else {
+        switch( value.getType) {
+            case TCVALUE_INT:
+                [self setInt:(int)value.getInt at:address];
+                break;
+            case TCVALUE_LONG:
+                [self setLong:value.getLong at:address];
+                break;
+            case TCVALUE_DOUBLE:
+                [self setDouble:value.getDouble at:address];
+                break;
+            case TCVALUE_CHAR:
+                [self setChar:value.getChar at:address];
+                
+            default:
+                NSLog(@"FATAL - storage setValue type %s %d not implemented", typeName(value.getType), value.getType);
+        }
     }
 }
 
@@ -199,7 +241,7 @@ const char * typeName( TCValueType t )
     char result = _buffer[address];
     if(_debug)
         NSLog(@"STORAGE: read char %d from %ld", result, address);
-
+    
     return result;
 }
 
@@ -243,7 +285,7 @@ const char * typeName( TCValueType t )
     long result = *(long*)&( _buffer[address]);
     if(_debug)
         NSLog(@"STORAGE: read long %ld from %ld", result, address);
-
+    
     return result;
 }
 
@@ -265,8 +307,8 @@ const char * typeName( TCValueType t )
     double result = *(double*)&( _buffer[address]);
     if(_debug)
         NSLog(@"STORAGE: read double %f from %ld", result, address);
-
-   return result ;
+    
+    return result ;
 }
 
 

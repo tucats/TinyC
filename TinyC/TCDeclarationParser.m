@@ -58,6 +58,19 @@ TCValueType tokenToType( TokenType tok )
     
     decl.nodeType = LANGUAGE_DECLARE;
     
+    // Note that if we already think this is a pointer type, we parsed
+    // the "*" as part of the type itself.  If so, we need to back up
+    // a position in the tree and let the "*" be parsed by the declartion
+    // list of items.
+    
+    if( decl.subNodes[0]) {
+        TCSyntaxNode * addrNode = (TCSyntaxNode*) decl.subNodes[0];
+        if( addrNode && addrNode.nodeType == LANGUAGE_ADDRESS && parser.lastTokenType == TOKEN_ASTERISK) {
+            [decl.subNodes removeObjectAtIndex:0];
+            addrNode = nil;
+            parser.position = parser.position - 1;
+        }
+    }
     // NSLog(@"PARSE declaration");
     while(TRUE) {
         
@@ -74,7 +87,7 @@ TCValueType tokenToType( TokenType tok )
         varData = [[TCSyntaxNode alloc]init];
         varData.nodeType =  LANGUAGE_NAME;
         
-        varData.action = isPointer ? TCVALUE_UNDEFINED : decl.action;
+        varData.action = isPointer ? decl.action + TCVALUE_POINTER : decl.action;
         varData.spelling = [parser lastSpelling];
         
         
