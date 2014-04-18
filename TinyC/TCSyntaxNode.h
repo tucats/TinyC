@@ -46,6 +46,8 @@ typedef enum {
 @property NSObject * argument;
 @property NSMutableArray * subNodes;
 
++(instancetype) node;
+
 -(void) addNode: (TCSyntaxNode*) newNode;
 -(void) dumpTree;
 -(int) nodeAction;

@@ -13,7 +13,7 @@
 
 -(TCSyntaxNode*) parseLValue:(TCParser*)parser
 {
-    TCSyntaxNode * lvalue = [[TCSyntaxNode alloc]init];
+    TCSyntaxNode * lvalue = [TCSyntaxNode node];
 
     // Right now all we know about is simple identifiers
     

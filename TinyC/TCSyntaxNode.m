@@ -59,6 +59,13 @@ NSString * nodeSpelling( int nodeType ) {
 
 @implementation TCSyntaxNode
 
++(instancetype)node
+{
+    return [[TCSyntaxNode alloc]init];
+}
+
+
+
 -(NSString*) description
 {
     NSString *d = [NSString stringWithFormat:@"Node %@ %@ %@ %@", nodeSpelling(self.nodeType),

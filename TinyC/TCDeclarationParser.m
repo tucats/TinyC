@@ -84,7 +84,7 @@ TCValueType tokenToType( TokenType tok )
             return nil;
         }
         
-        varData = [[TCSyntaxNode alloc]init];
+        varData = [TCSyntaxNode node];
         varData.nodeType =  LANGUAGE_NAME;
         
         varData.action = isPointer ? decl.action + TCVALUE_POINTER : decl.action;

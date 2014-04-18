@@ -37,7 +37,7 @@
     if( [parser isNextToken:TOKEN_OPEN_BRACE]) {
         //NSLog(@"PARSE Basic block");
         
-        tree = [[TCSyntaxNode alloc]init];
+        tree = [TCSyntaxNode node];
         tree.nodeType = LANGUAGE_BLOCK;
         
         while(1) {
@@ -63,7 +63,7 @@
     if( tree == nil ) {
         if( [parser isNextToken:TOKEN_RETURN]) {
             TCExpressionParser * expr = [[TCExpressionParser alloc]init];
-            TCSyntaxNode * ret = [[TCSyntaxNode alloc]init];
+            TCSyntaxNode * ret = [TCSyntaxNode node];
             ret.nodeType = LANGUAGE_RETURN;
             ret.subNodes = [NSMutableArray arrayWithArray:@[[expr parse:parser]]];
             if(parser.error)
