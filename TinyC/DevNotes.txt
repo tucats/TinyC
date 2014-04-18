@@ -95,4 +95,12 @@
 
 25. [DONE] Implement builtins for malloc() and free().
 
+26. [DONE] Prequalify the tree before execution by checking for errors.  Initially this
+    means just checking for CALL nodes that cannot be resolved to a user-provided function
+    or a known built-in.
+
+27. [DONE] Allow array declarations; i.e. int foo[10].  This generates a call to _array() at
+    runtime to allocate storage during the DECLARE phase, after which foo is a pointer to
+    the storage, and sized by the base type.  The array storage is aligned by the base type.
+
     

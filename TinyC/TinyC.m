@@ -79,7 +79,7 @@
         
         TCContext * execution = [[TCContext alloc]initWithStorage:storage];
         execution.debug = self.debugTrace;
-        
+        [execution module:tree];
         if([execution hasUnresolvedNames:tree]) {
             return execution.error;
         }

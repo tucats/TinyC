@@ -89,8 +89,49 @@ TCValueType tokenToType( TokenType tok )
         varData.action = isPointer ? decl.action + TCVALUE_POINTER : decl.action;
         varData.spelling = [parser lastSpelling];
         
+        // See if this is an array declaration. This would be followed by
+        // "[", expression, "]".  In this case, we convert the type to a
+        // pointer, but preallocate the space it points to based on the
+        // array size.
         
-        if([parser isNextToken:TOKEN_ASSIGNMENT]) {
+        if([parser isNextToken:TOKEN_BRACKET_LEFT]) {
+            
+            // We need an initializer here, which can be parsed
+            // as a constant literal.
+            
+            TCExpressionParser * initExpression = [[TCExpressionParser alloc]init];
+            TCSyntaxNode * expression = [initExpression parse:parser];
+            if( expression == nil)
+                return nil;
+            TCExpressionInterpreter * initInterp = [[TCExpressionInterpreter alloc]init];
+            TCValue * initValue = [initInterp evaluate:expression withSymbols:nil];
+            if( initValue == nil)
+                return nil;
+            
+            long arraySize = initValue.getLong;
+            // Generate a tree containing a call to _array with the right size.
+            // Create two arguments, the size and the type code to pass as
+            // parameters.
+            
+            TCSyntaxNode * allocator = [TCSyntaxNode node:LANGUAGE_CALL];
+            allocator.spelling  = @"_array";
+            TCSyntaxNode * arg1 = [TCSyntaxNode node:LANGUAGE_SCALAR];
+            arg1.action = TOKEN_INTEGER;
+            arg1.spelling = [NSString stringWithFormat:@"%ld", arraySize];
+            TCSyntaxNode * arg2 = [TCSyntaxNode node:LANGUAGE_SCALAR];
+            arg2.action = TOKEN_INTEGER;
+            arg2.spelling = [NSString stringWithFormat:@"%d", decl.action];
+            allocator.subNodes = [NSMutableArray arrayWithArray:@[arg1, arg2]];
+            varData.action = decl.action + TCVALUE_POINTER;
+            varData.subNodes = [NSMutableArray arrayWithArray: @[allocator]];
+            
+            if(![parser isNextToken:TOKEN_BRACKET_RIGHT]) {
+                parser.error = [[TCError alloc]initWithCode:TCERROR_BRACKETMISMATCH withArgument:nil];
+                return nil;
+            }
+            
+        }
+        else if([parser isNextToken:TOKEN_ASSIGNMENT]) {
             
             // We need an initializer here, which can be parsed
             // as a constant literal string.

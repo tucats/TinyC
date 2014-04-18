@@ -32,6 +32,7 @@
 -(long) allocateDynamic:(long)size;
 -(long) allocUnpadded:(long)size;
 -(long) free:(long) address;
+-(void) align:(long)size;
 
 -(BOOL) isFault:(long) address;
 -(TCValue*) getValue:(long) address ofType:(TCValueType) type;

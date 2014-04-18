@@ -11,6 +11,7 @@
 		E2609A7D1901A18D001EF080 /* TCmallocFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E2609A7C1901A18D001EF080 /* TCmallocFunction.m */; };
 		E2609A811901A34E001EF080 /* TCfreeFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E2609A801901A34E001EF080 /* TCfreeFunction.m */; };
 		E2609A841901A3B0001EF080 /* TCprintfFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E2609A831901A3B0001EF080 /* TCprintfFunction.m */; };
+		E2609A891901B13E001EF080 /* TC_arrayFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E2609A881901B13E001EF080 /* TC_arrayFunction.m */; };
 		E262FDCD18F8478400DFC135 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E262FDCC18F8478400DFC135 /* Foundation.framework */; };
 		E262FDD018F8478400DFC135 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDCF18F8478400DFC135 /* main.m */; };
 		E262FDFD18F847BA00DFC135 /* TCAssignmentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDDD18F847BA00DFC135 /* TCAssignmentParser.m */; };
@@ -58,6 +59,8 @@
 		E2609A801901A34E001EF080 /* TCfreeFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCfreeFunction.m; sourceTree = "<group>"; };
 		E2609A821901A3B0001EF080 /* TCprintfFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCprintfFunction.h; sourceTree = "<group>"; };
 		E2609A831901A3B0001EF080 /* TCprintfFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCprintfFunction.m; sourceTree = "<group>"; };
+		E2609A871901B13E001EF080 /* TC_arrayFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TC_arrayFunction.h; sourceTree = "<group>"; };
+		E2609A881901B13E001EF080 /* TC_arrayFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TC_arrayFunction.m; sourceTree = "<group>"; };
 		E262FDC918F8478400DFC135 /* TinyC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TinyC; sourceTree = BUILT_PRODUCTS_DIR; };
 		E262FDCC18F8478400DFC135 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E262FDCF18F8478400DFC135 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -127,10 +130,38 @@
 				E2609A7C1901A18D001EF080 /* TCmallocFunction.m */,
 				E2609A821901A3B0001EF080 /* TCprintfFunction.h */,
 				E2609A831901A3B0001EF080 /* TCprintfFunction.m */,
+				E2609A871901B13E001EF080 /* TC_arrayFunction.h */,
+				E2609A881901B13E001EF080 /* TC_arrayFunction.m */,
 				E2609A7F1901A34E001EF080 /* TCfreeFunction.h */,
 				E2609A801901A34E001EF080 /* TCfreeFunction.m */,
 			);
 			name = Functions;
+			sourceTree = "<group>";
+		};
+		E2609A851901A980001EF080 /* Expressions */ = {
+			isa = PBXGroup;
+			children = (
+				E262FDE418F847BA00DFC135 /* TCExpression.h */,
+				E262FDE518F847BA00DFC135 /* TCExpression.m */,
+				E262FDE618F847BA00DFC135 /* TCExpressionInterpreter.h */,
+				E262FDE718F847BA00DFC135 /* TCExpressionInterpreter.m */,
+				E262FDFA18F847BA00DFC135 /* TCValue.h */,
+				E262FDFB18F847BA00DFC135 /* TCValue.m */,
+				E262FE1418F8645300DFC135 /* NSString+NSStringFormatting.h */,
+				E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */,
+			);
+			name = Expressions;
+			sourceTree = "<group>";
+		};
+		E2609A861901A994001EF080 /* Symbols */ = {
+			isa = PBXGroup;
+			children = (
+				E262FDF218F847BA00DFC135 /* TCSymbol.h */,
+				E262FDF318F847BA00DFC135 /* TCSymbol.m */,
+				E262FDF418F847BA00DFC135 /* TCSymbolTable.h */,
+				E262FDF518F847BA00DFC135 /* TCSymbolTable.m */,
+			);
+			name = Symbols;
 			sourceTree = "<group>";
 		};
 		E262FDC018F8478400DFC135 = {
@@ -193,8 +224,12 @@
 		E262FE1118F8489B00DFC135 /* Semantic Parsing */ = {
 			isa = PBXGroup;
 			children = (
-				E262FDEA18F847BA00DFC135 /* TCIfParser.h */,
+				E262FDF618F847BA00DFC135 /* TCSyntaxNode.h */,
+				E262FDF718F847BA00DFC135 /* TCSyntaxNode.m */,
+				E262FDF018F847BA00DFC135 /* TCStatement.h */,
+				E262FDF118F847BA00DFC135 /* TCStatement.m */,
 				E262FDEB18F847BA00DFC135 /* TCIfParser.m */,
+				E262FDEA18F847BA00DFC135 /* TCIfParser.h */,
 				E262FDDC18F847BA00DFC135 /* TCAssignmentParser.h */,
 				E262FDDD18F847BA00DFC135 /* TCAssignmentParser.m */,
 				E262FDE018F847BA00DFC135 /* TCDeclarationParser.h */,
@@ -205,10 +240,6 @@
 				E262FDE918F847BA00DFC135 /* TCExpressionParser.m */,
 				E262FDEC18F847BA00DFC135 /* TCModuleParser.h */,
 				E262FDED18F847BA00DFC135 /* TCModuleParser.m */,
-				E262FDF018F847BA00DFC135 /* TCStatement.h */,
-				E262FDF118F847BA00DFC135 /* TCStatement.m */,
-				E262FDF618F847BA00DFC135 /* TCSyntaxNode.h */,
-				E262FDF718F847BA00DFC135 /* TCSyntaxNode.m */,
 			);
 			name = "Semantic Parsing";
 			sourceTree = "<group>";
@@ -216,25 +247,15 @@
 		E262FE1218F848C400DFC135 /* Interpreter */ = {
 			isa = PBXGroup;
 			children = (
+				E2609A861901A994001EF080 /* Symbols */,
 				E2609A7E1901A323001EF080 /* Functions */,
+				E2609A851901A980001EF080 /* Expressions */,
 				E262FE1918FC2BE700DFC135 /* TCStorage.h */,
 				E262FE1A18FC2BE700DFC135 /* TCStorage.m */,
 				E262FDDE18F847BA00DFC135 /* TCContext.h */,
 				E262FDDF18F847BA00DFC135 /* TCContext.m */,
 				E262FDE218F847BA00DFC135 /* TCError.h */,
 				E262FDE318F847BA00DFC135 /* TCError.m */,
-				E262FDE418F847BA00DFC135 /* TCExpression.h */,
-				E262FDE518F847BA00DFC135 /* TCExpression.m */,
-				E262FDE618F847BA00DFC135 /* TCExpressionInterpreter.h */,
-				E262FDE718F847BA00DFC135 /* TCExpressionInterpreter.m */,
-				E262FDF218F847BA00DFC135 /* TCSymbol.h */,
-				E262FDF318F847BA00DFC135 /* TCSymbol.m */,
-				E262FDF418F847BA00DFC135 /* TCSymbolTable.h */,
-				E262FDF518F847BA00DFC135 /* TCSymbolTable.m */,
-				E262FDFA18F847BA00DFC135 /* TCValue.h */,
-				E262FDFB18F847BA00DFC135 /* TCValue.m */,
-				E262FE1418F8645300DFC135 /* NSString+NSStringFormatting.h */,
-				E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */,
 			);
 			name = Interpreter;
 			sourceTree = "<group>";
@@ -317,6 +338,7 @@
 				E262FE0718F847BA00DFC135 /* TCStatement.m in Sources */,
 				E262FE0418F847BA00DFC135 /* TCIfParser.m in Sources */,
 				E262FE0318F847BA00DFC135 /* TCExpressionParser.m in Sources */,
+				E2609A891901B13E001EF080 /* TC_arrayFunction.m in Sources */,
 				E262FE0518F847BA00DFC135 /* TCModuleParser.m in Sources */,
 				E262FDFE18F847BA00DFC135 /* TCContext.m in Sources */,
 				E262FDFF18F847BA00DFC135 /* TCDeclarationParser.m in Sources */,

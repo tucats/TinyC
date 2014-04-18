@@ -14,6 +14,7 @@
 #import "TCStorage.h"
 #import "TCFunction.h"
 
+int typeSize(int t );
 
 @interface TCContext : NSObject
 
@@ -33,6 +34,7 @@
 @property TCSymbol * lastSymbol;
 @property NSMutableArray * importedArguments;
 
+
 -(instancetype) initWithStorage:(TCStorage*) storage;
 -(TCValue*) execute:(TCSyntaxNode*) tree withSymbols:(TCSymbolTable *) symbols;
 -(TCValue*) execute:(TCSyntaxNode*) tree;
@@ -41,5 +43,6 @@
 -(TCSyntaxNode*) findEntryPoint:(NSString*)entryName;
 -(TCFunction*) findBuiltin:(NSString*)entryName;
 -(BOOL) hasUnresolvedNames:(TCSyntaxNode*) node;
+-(void) module:(TCSyntaxNode*) tree;
 
 @end

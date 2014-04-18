@@ -34,13 +34,13 @@
     
     // See if this is a basic block
     
-    if( [parser isNextToken:TOKEN_OPEN_BRACE]) {
+    if( [parser isNextToken:TOKEN_BRACE_LEFT]) {
         //NSLog(@"PARSE Basic block");
         
         tree = [TCSyntaxNode node:LANGUAGE_BLOCK];
         
         while(1) {
-            if([parser isNextToken:TOKEN_CLOSE_BRACE])
+            if([parser isNextToken:TOKEN_BRACE_RIGHT])
                 break;
             
             TCSyntaxNode * stmt = [self parse:parser error:error];

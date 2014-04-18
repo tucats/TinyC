@@ -66,7 +66,7 @@ int main(int argc, const char * argv[])
         
         if( path == nil && program == nil) {
             program = @"int main(int argc ) {\
-            char * p; p = fred(); \
+            char c; int p [10]; return 0; \
             }";
             
             printf("No source given, using internal test code\n");

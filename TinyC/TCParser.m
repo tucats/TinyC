@@ -78,11 +78,13 @@
         [self addSpelling:@"if" forToken:TOKEN_IF];
         [self addSpelling:@"else" forToken:TOKEN_ELSE];
         [self addSpelling:@"return" forToken:TOKEN_RETURN];
-        [self addSpelling:@"{" forToken:TOKEN_OPEN_BRACE];
-        [self addSpelling:@"}" forToken:TOKEN_CLOSE_BRACE];
         [self addSpelling:@"for" forToken:TOKEN_FOR];
         [self addSpelling:@"while" forToken:TOKEN_WHILE];
         [self addSpelling:@"&" forToken:TOKEN_AMPER];
+        [self addSpelling:@"[" forToken:TOKEN_BRACKET_LEFT];
+        [self addSpelling:@"]" forToken:TOKEN_BRACKET_RIGHT];
+        [self addSpelling:@"{" forToken:TOKEN_BRACE_LEFT];
+        [self addSpelling:@"}" forToken:TOKEN_BRACE_RIGHT];
         
         [self doNotPersist];
 

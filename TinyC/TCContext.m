@@ -20,6 +20,29 @@ TCContext* activeContext;
 
 #pragma mark - Utilities
 
+int typeSize(int t )
+{
+    switch(t) {
+        case TCVALUE_CHAR:
+        case TOKEN_DECL_CHAR:
+            return sizeof(char);
+        case TCVALUE_DOUBLE:
+        case TOKEN_DECL_DOUBLE:
+            return sizeof(double);
+        case TCVALUE_INT:
+        case TOKEN_DECL_INT:
+            return sizeof(int);
+        case TCVALUE_LONG:
+        case TOKEN_DECL_LONG:
+            return sizeof(long);
+        case TCVALUE_FLOAT:
+        case TOKEN_DECL_FLOAT:
+            return sizeof(float);
+            
+        default:
+            return 1;
+    }
+}
 char * typeMap(TokenType theType)
 {
     static char horrible_static[8];
@@ -78,6 +101,9 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         case TOKEN_DECL_FLOAT:
             newType = TCVALUE_FLOAT;
             break;
+        case TOKEN_DECL_CHAR:
+            newType = TCVALUE_CHAR;
+            break;
             
         default:
             newType = (TCValueType)theType;
@@ -98,6 +124,13 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     
     return self;
 }
+
+-(void) module:(TCSyntaxNode *)tree
+{
+    activeContext = self;
+    activeContext.module = tree;
+}
+
 
 #pragma mark - Execution
 
@@ -234,7 +267,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                     TCSyntaxNode* localArg = tree.subNodes[ix+1];
                     TCSyntaxNode* localArgName = localArg.subNodes[0];
                     
-                    // @NOTE : probably need to look at casting each argument to the type
+                    // See if we need to cast each argument to the type
                     // of the caller so we don't read storage values incorrectly!!
                     
                     TCValue* argValue = (TCValue*) arguments[ix];
@@ -397,11 +430,38 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 }
                 else
                     NSLog(@"FATAL ERROR - NO STORAGE AVAILABLE");
+                
+                // Is there a static initial value?
+                
                 if( declaration.argument && _storage)
                     [_lastSymbol setValue: (TCValue*)declaration.argument storage:_storage];
                 else if( !_storage)
                     NSLog(@"C_ERROR: declaration initializer with no storage allocation");
                 
+                // alternatively, there can be compiler-generated initialization code
+                // that yeilds a value.
+                
+                if( declaration.subNodes[0]) {
+
+                    TCSyntaxNode * initializer = declaration.subNodes[0];
+
+                    TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
+                    expInt.debug = _debug;
+                    expInt.storage = _storage;
+                    
+                    TCValue * initValue = [expInt evaluate:initializer withSymbols:_symbols];
+                    if(expInt.error) {
+                        _error = expInt.error;
+                        return nil;
+                    }
+                    // @NOTE; may need to do something here to set the symbol _size
+                    // property which ends up unhelpfully as a long when it should either
+                    // represent the total allocated size or the size of the base type.
+                    
+                    [_lastSymbol setValue:initValue storage:_storage];
+                    _lastSymbol.size = typeSize(baseType);
+                    
+                }
                 
                 if( _debug) {
                     if( _lastSymbol.initialValue)

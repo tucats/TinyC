@@ -242,13 +242,17 @@ const char * typeName( TCValueType t )
     return 0;
 }
 
--(long) allocateAuto:(long)size
+/**
+ Force the storage to be aligned on the natural 'size' boundary.
+ @param size the natural alignment size.  If the current
+ storage boundary is already an even multiple of this size then
+ no further action is taken. Othewise, the pointer to the next
+ available storage is moved to match the required alignment, such
+ that the next allocation will be properly aligned.
+ */
+
+-(void) align:(long)size
 {
-    if( _current + size > _size) {
-        NSLog(@"Memory exhausted");
-        return 0L;
-    }
-    
     // Adjust the pointer to be a multiple of the storage size
     
     long pad = _current % size;
@@ -257,6 +261,19 @@ const char * typeName( TCValueType t )
         if(_debug)
             NSLog(@"STORAGE: allocation padded by %d bytes", (int)(size-pad));
     }
+}
+
+
+-(long) allocateAuto:(long)size
+{
+    if( _current + size > _size) {
+        NSLog(@"Memory exhausted");
+        return 0L;
+    }
+    
+    // Adjust the pointer to be a multiple of the storage size
+    [self align:size];
+
     // Do the allocation
     
     if(_debug)
