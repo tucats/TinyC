@@ -11,6 +11,10 @@
 
 @interface TCStorage : NSObject
 
+{
+    NSMutableArray * _freeList;
+    NSMutableArray * _allocList;
+}
 @property char * buffer;
 @property long base;
 @property long current;
@@ -18,13 +22,18 @@
 @property long size;
 @property BOOL debug;
 @property int frameCount;
+@property long dynamic;
+
 
 -(instancetype) initWithStorage:(long) size;
 -(long) pushStorage;
 -(long) popStorage;
--(long) alloc:(long)size;
+-(long) allocateAuto:(long)size;
+-(long) allocateDynamic:(long)size;
 -(long) allocUnpadded:(long)size;
+-(long) free:(long) address;
 
+-(BOOL) isFault:(long) address;
 -(TCValue*) getValue:(long) address ofType:(TCValueType) type;
 -(void) setValue:(TCValue*) value at:(long) address;
 

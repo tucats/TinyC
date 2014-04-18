@@ -323,7 +323,6 @@ extern TCContext* activeContext;
         return nil;
     }
     
-    
     if( _debug)
         NSLog(@"EXPRESS: Attempt to call function %@", node.spelling);
     
@@ -370,6 +369,38 @@ extern TCContext* activeContext;
 
 -(TCValue*) executeFunction:(NSString *)name withArguments:(NSArray *)arguments
 {
+    
+    // char * malloc(long size);
+    
+    if( [name isEqualToString:@"malloc"]) {
+        if( arguments.count != 1 ) {
+            _error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
+            return nil;
+        }
+        
+        TCValue * sizeArg = arguments[0];
+        long size = sizeArg.getLong;
+        
+        long address = [_storage allocateDynamic:size];
+        TCValue * addressPtr = [[TCValue alloc]initWithLong:address];
+        return [addressPtr makePointer:TCVALUE_CHAR];
+    }
+    
+    // void free(char* ptr)
+    
+    if( [name isEqualToString:@"free"]) {
+        if( arguments.count != 1 ) {
+            _error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
+            return nil;
+        }
+        
+        TCValue * addrV = arguments[0];
+        long addr = addrV.getLong;
+        return [[TCValue alloc]initWithLong:[_storage free:addr]];
+    }
+    
+    
+    // int printf( char * format-string, ...);
     
     if( [name isEqualToString:@"printf"]){
         

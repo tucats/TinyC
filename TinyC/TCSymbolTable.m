@@ -63,7 +63,7 @@
         default:
             symbol.size = sizeof(long);
     }
-    symbol.address = [storage alloc:symbol.size];
+    symbol.address = [storage allocateAuto:symbol.size];
     symbol.allocated = YES;
     [_symbols setObject:symbol forKey:name];
     return symbol;

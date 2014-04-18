@@ -90,4 +90,9 @@
 
 23. [DONE] Implement write through address in ASSIGNMENT operation, so *b=0 works.
 
+24. [DONE] Implement dynamic non-automatic storage in Storage class to support malloc, free, and
+    anything built on them.
+
+25. [DONE] Implement builtins for malloc() and free().
+
     

@@ -17,8 +17,9 @@
     TCSyntaxNode * decl = nil;
     long savedPosition = parser.position;
     
-    if( [parser isNextToken:TOKEN_DECL_INT] ||
-       [parser isNextToken:TOKEN_DECL_DOUBLE]) {
+    if([parser isNextToken:TOKEN_DECL_INT] ||
+       [parser isNextToken:TOKEN_DECL_DOUBLE] ||
+       [parser isNextToken:TOKEN_DECL_CHAR]) {
         
         decl = [TCSyntaxNode node:LANGUAGE_TYPE];
         decl.action = TCVALUE_UNDEFINED;
@@ -31,6 +32,10 @@
                 
             case TOKEN_DECL_INT:
                 decl.action = TCVALUE_INT;
+                break;
+            
+            case TOKEN_DECL_CHAR:
+                decl.action = TCVALUE_CHAR;
                 break;
                 
             default:

@@ -74,15 +74,45 @@ const char * typeName( TCValueType t )
 {
     
     if(( self = [super init])) {
+        
+        // Allocate the space for all tinyc runtime memory.
+        
         _buffer = malloc(size);
         if(! _buffer ) {
             return nil;
         }
         _debug = NO;
+        
+        // _size is the size of the entire virtual memory area
+        // _dynamic starts at the end of that area and grows towards
+        // zero as memory is allocated and freed dynamically by the
+        // runtime malloc() and free() calls.
         _size = size;
-        _base = 0L;
+        _dynamic = size - 4L;
+
+        // The first 8 bytes are filled with 0xFF as a trap to help
+        // locate uninitialized pointer references.  The base of
+        // actual allocated storage starts at byte 8
+        for( int i = 0; i < 8; i++)
+            _buffer[i] = 0xFF;
+        _base = 8L;
         _current = _base;
+        
+        // This is the stack frame; it keeps up with the automatic
+        // storage allocations from the runtime for each call
+        // frame, and can discard them as needed.
+        
         _stack = [NSMutableArray array];
+        
+        // This is the list of storage items that have been
+        // allocated by the user and then free'd, and area
+        // available to re-issue as needed. Each entry
+        // contains an NSRange indicating the start and
+        // length of each allocation.
+        
+        _freeList = [NSMutableArray array];
+        _allocList = [NSMutableArray array];
+
     }
     return self;
 }
@@ -139,8 +169,80 @@ const char * typeName( TCValueType t )
     return newAddr;
 }
 
+-(long) allocateDynamic:(long)size
+{
 
--(long) alloc:(long)size
+    // First, search list of free'd allocations to see if
+    // we already have one this size to give away.
+    
+    for( int ix = 0; ix < _freeList.count; ix++) {
+        NSValue * v = [_freeList objectAtIndex:ix];
+        NSRange r = v.rangeValue;
+        
+        if( r.length == size) {
+            [_freeList removeObjectAtIndex:ix];
+            [_allocList addObject:v];
+            if(_debug) {
+                NSLog(@"STORAGE: dynalloc %ld byte @ %ld free list #%d",
+                      size, r.location, ix);
+            }
+            return r.location;
+        }
+    }
+    
+    // No, we must allocate anew from the storage area
+    
+    if( _dynamic - size <= _current) {
+        NSLog(@"FATAL - dynamic memory exhausted");
+        return 0L;
+    }
+    
+    _dynamic = _dynamic - size;
+    [_allocList addObject:[NSValue valueWithRange:NSMakeRange(_dynamic, size)]];
+    if(_debug) {
+        NSLog(@"STORAGE: dynalloc %ld byte @ %ld alloc list #%ld",
+              size, _dynamic, _allocList.count-1);
+    }
+
+    return _dynamic;
+}
+
+/**
+ Free previously allocated memory
+ @param the address in virtual memory that was previously returned by an alloc() operation
+ @returns the number of bytes freed
+ */
+
+-(long) free:(long) address
+{
+    // Search the allocation list to find the matching
+    // allocation record.
+    
+    for( int ix = 0; ix < _allocList.count; ix++ ) {
+        NSValue *v = _allocList[ix];
+        NSRange r = v.rangeValue;
+        
+        if( r.location == address) {
+            
+            // Delete from the allocation list and put on free list
+            [_allocList removeObjectAtIndex:ix];
+            [_freeList addObject:v];
+            
+            if(_debug)
+                NSLog(@"STORAGE: free %ld bytes at %ld",
+                      r.length, r.location);
+            return r.length;
+            
+        }
+    }
+    
+    // Not an allocation we know about
+    if(_debug)
+        NSLog(@"STORAGE: attempt to free unallocated memory at %ld", address);
+    return 0;
+}
+
+-(long) allocateAuto:(long)size
 {
     if( _current + size > _size) {
         NSLog(@"Memory exhausted");
@@ -163,6 +265,15 @@ const char * typeName( TCValueType t )
     long newAddr = _current;
     _current += size;
     return newAddr;
+}
+
+-(BOOL) isFault:(long) address
+{
+   if( address < 0L || address > _size )
+       return YES;
+    if((address >= _current) && (address < _dynamic))
+        return YES;
+    return NO;
 }
 
 #pragma mark - Memory Accessors
@@ -242,7 +353,8 @@ const char * typeName( TCValueType t )
 
 -(char) getChar:(long)address
 {
-    if( address < 0 || address >= _current) {
+    
+    if([self isFault:address]) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0;
     }
@@ -255,7 +367,7 @@ const char * typeName( TCValueType t )
 
 -(void) setChar:(char)value at:(long)address
 {
-    if( address < 0 || address >= _current) {
+    if([self isFault:address]) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
@@ -264,7 +376,7 @@ const char * typeName( TCValueType t )
 
 -(int) getInt:(long)address
 {
-    if( address < 0 || address >= _current) {
+    if([self isFault:address]) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0;
     }
@@ -276,7 +388,7 @@ const char * typeName( TCValueType t )
 
 -(void) setInt:(int)value at:(long)address
 {
-    if( address < 0 || address >= _current) {
+    if([self isFault:address]) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
@@ -286,7 +398,7 @@ const char * typeName( TCValueType t )
 
 -(long) getLong:(long)address
 {
-    if( address < 0 || address >= _current) {
+    if([self isFault:address]) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0;
     }
@@ -299,7 +411,7 @@ const char * typeName( TCValueType t )
 
 -(void) setLong:(long)value at:(long)address
 {
-    if( address < 0 || address >= _current) {
+    if([self isFault:address]) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
@@ -308,7 +420,7 @@ const char * typeName( TCValueType t )
 
 -(double) getDouble:(long)address
 {
-    if( address < 0 || address >= _current) {
+    if([self isFault:address]) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return 0.0;
     }
@@ -322,7 +434,7 @@ const char * typeName( TCValueType t )
 
 -(void) setDouble:(double) value at:(long)address
 {
-    if( address < 0 || address >= _current) {
+    if([self isFault:address]) {
         NSLog(@"Address fault %08lX, _current = %ld", address, _current);
         return;
     }
@@ -331,8 +443,13 @@ const char * typeName( TCValueType t )
 
 -(NSString*) getString:(long)address
 {
+    if([self isFault:address]) {
+        NSLog(@"Address fault %08lX, _current = %ld", address, _current);
+        return nil;
+    }
+    
     NSMutableString * result = [NSMutableString string];
-    for( long ix = address; ix < _current; ix++ ) {
+    for( long ix = address; ix < _size; ix++ ) {
         char ch = _buffer[ix];
         [result appendFormat:@"%c", ch];
         if( ch == 0 )
