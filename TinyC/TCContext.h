@@ -11,7 +11,9 @@
 #import "TCError.h"
 #import "TCValue.h"
 #import "TCSymbolTable.h"
-#import "TCStorage.h"   
+#import "TCStorage.h"
+#import "TCFunction.h"
+
 
 @interface TCContext : NSObject
 
@@ -37,5 +39,7 @@
 -(TCValue *) execute:(TCSyntaxNode *)tree entryPoint:(NSString*) entryName;
 -(TCValue *) execute:(TCSyntaxNode *)tree entryPoint:(NSString*) entryName withArguments:(NSArray*) arguments;
 -(TCSyntaxNode*) findEntryPoint:(NSString*)entryName;
+-(TCFunction*) findBuiltin:(NSString*)entryName;
+-(BOOL) hasUnresolvedNames:(TCSyntaxNode*) node;
 
 @end

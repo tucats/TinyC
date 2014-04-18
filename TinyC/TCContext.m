@@ -13,6 +13,8 @@
 #import "TCValue.h"
 #import "TCToken.h"
 #import "TCExpressionInterpreter.h"
+#import "TCFunction.h"
+
 
 TCContext* activeContext;
 
@@ -34,7 +36,7 @@ char * typeMap(TokenType theType)
             break;
             
         case TCVALUE_FLOAT:
-
+            
         case TOKEN_DECL_FLOAT:
             return "float";
             break;
@@ -172,7 +174,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
             
             targetValue = [_symbols findSymbol:tree.spelling];
-
+            
             if( targetValue == nil ) {
                 _error = [[TCError alloc]initWithCode:TCERROR_UNK_IDENTIFIER withArgument:tree.spelling];
                 if( _debug )
@@ -221,7 +223,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             // than number of arguments provided. Assign the values to the
             //local variable initializer field.
             
-             if( arguments.count < (tree.subNodes.count - 2)) {
+            if( arguments.count < (tree.subNodes.count - 2)) {
                 _error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
                 return nil;
             }
@@ -399,7 +401,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                     [_lastSymbol setValue: (TCValue*)declaration.argument storage:_storage];
                 else if( !_storage)
                     NSLog(@"C_ERROR: declaration initializer with no storage allocation");
-
+                
                 
                 if( _debug) {
                     if( _lastSymbol.initialValue)
@@ -443,5 +445,42 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     }
     return nil;
     
+}
+
+
+-(TCFunction*) findBuiltin:(NSString*) name
+{
+    NSString * functionClassName = [NSString stringWithFormat:@"TC%@Function", name];
+    
+    TCFunction * f = [[NSClassFromString(functionClassName) alloc] init];
+    return f;
+}
+
+-(BOOL) hasUnresolvedNames:(TCSyntaxNode*) node
+{
+    
+    // If this is a CALL node, make sure the target is known as either
+    // an internal function or a user-written function.
+    
+    if( node.nodeType == LANGUAGE_CALL) {
+        
+        TCSyntaxNode * entryNode = [self findEntryPoint:node.spelling];
+        if( entryNode == nil ) {
+            TCFunction * f = [self findBuiltin:node.spelling];
+            if( f == nil ) {
+                _error = [[TCError alloc]initWithCode:TCERROR_UNK_ENTRYPOINT withArgument:node.spelling];
+                return YES;
+            }
+        }
+    }
+    
+    // Search any child nodes as well.
+    
+    for( int ix = 0; ix < node.subNodes.count; ix++ ) {
+        if( [self hasUnresolvedNames:node.subNodes[ix]])
+            return YES;
+    }
+    
+    return NO;
 }
 @end

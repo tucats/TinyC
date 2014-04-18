@@ -74,18 +74,27 @@
         TCStorage * storage = [[TCStorage alloc]initWithStorage:65536];
         storage.debug = self.debugStorage;
         
-        // Now that we have storage, search for string scalar values
+        // Create execution context and check to see if there are
+        // unresolved symbols
+        
+        TCContext * execution = [[TCContext alloc]initWithStorage:storage];
+        execution.debug = self.debugTrace;
+        
+        if([execution hasUnresolvedNames:tree]) {
+            return execution.error;
+        }
+        
+        // Now that we have storage and the tree is free of obvious
+        // errors, search for string scalar values
         // that really need to be char* pointing to static storage.
         // Always start with an empty dictionary. After the allocation
         // we no longer need the dictionary and can free it up...
+        
         _stringPool = [NSMutableDictionary dictionary];
         [self allocateScalarStrings:tree storage: storage];
         _stringPool = nil;
         
-        // Create execution context and run
-        
-        TCContext * execution = [[TCContext alloc]initWithStorage:storage];
-        execution.debug = self.debugTrace;
+        // Looks good, execute the symantic tree.
         
         functionResult = [execution execute:tree
                                  entryPoint:@"main"

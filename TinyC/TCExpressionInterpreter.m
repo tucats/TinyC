@@ -386,9 +386,7 @@ extern TCContext* activeContext;
     // First, see if it is a known class we can dynamically construct an instance
     // of to execute
     
-    NSString * functionClassName = [NSString stringWithFormat:@"TC%@Function", name];
-    
-    TCFunction * f = [[NSClassFromString(functionClassName) alloc] init];
+    TCFunction * f = [activeContext findBuiltin:name];
     
     if( f != nil ) {
         if(_debug)
