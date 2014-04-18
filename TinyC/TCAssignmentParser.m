@@ -13,14 +13,13 @@
 
 -(TCSyntaxNode*) parseLValue:(TCParser*)parser
 {
-    TCSyntaxNode * lvalue = [TCSyntaxNode node];
 
     // Right now all we know about is simple identifiers
     
     long savedPosition = parser.position;
     
     if( [parser isNextToken:TOKEN_IDENTIFIER]) {
-        lvalue.nodeType = LANGUAGE_ADDRESS;
+        TCSyntaxNode * lvalue = [TCSyntaxNode node:LANGUAGE_ADDRESS];
         lvalue.spelling = [parser lastSpelling];
         return lvalue;
     }
@@ -33,8 +32,7 @@
 
 -(TCSyntaxNode*) parse:(TCParser *)parser
 {
-    TCSyntaxNode * stmt = [[TCSyntaxNode alloc] init];
-    stmt.nodeType = LANGUAGE_ASSIGNMENT;
+    TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_ASSIGNMENT];
     
     long savedPosition = parser.position;
     

@@ -59,11 +59,39 @@ NSString * nodeSpelling( int nodeType ) {
 
 @implementation TCSyntaxNode
 
-+(instancetype)node
+/**
+ Class helper method to create a new instance of the given node type.
+ @param type the SyntaxNodeType to use, such as LANGUAGE_BLOCK or LANGUAGE_RETURN
+ @returns the newly created instance.
+ */
+
++(instancetype)node:(SyntaxNodeType) type
 {
-    return [[TCSyntaxNode alloc]init];
+    return [[TCSyntaxNode alloc]initWithType:type];
+    
 }
 
+-(instancetype)init
+{
+    NSLog(@"FATAL - called wrong initializer!");
+    return nil;
+}
+
+/**
+ Initializer method to create a new instance of the given node type. This is the
+ designated initializer.
+ 
+ @param type the SyntaxNodeType to use, such as LANGUAGE_BLOCK or LANGUAGE_RETURN
+ @returns the newly created instance.
+ */
+
+-(instancetype)initWithType:(SyntaxNodeType)type
+{
+    if( self = [super init]) {
+        _nodeType = type;
+    }
+    return self;
+}
 
 
 -(NSString*) description

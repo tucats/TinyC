@@ -14,14 +14,13 @@
 
 -(TCSyntaxNode*) parse:(TCParser*)parser
 {
-    TCSyntaxNode * decl = [TCSyntaxNode node];
+    TCSyntaxNode * decl = nil;
     long savedPosition = parser.position;
     
     if( [parser isNextToken:TOKEN_DECL_INT] ||
        [parser isNextToken:TOKEN_DECL_DOUBLE]) {
         
-        decl = [TCSyntaxNode node];
-        decl.nodeType = LANGUAGE_TYPE;
+        decl = [TCSyntaxNode node:LANGUAGE_TYPE];
         decl.action = TCVALUE_UNDEFINED;
         
         // Check for builtin types first.
@@ -48,8 +47,7 @@
         
         if( decl.action != TCVALUE_UNDEFINED) {
             if([parser isNextToken:TOKEN_ASTERISK]) {
-                TCSyntaxNode * ptrData = [TCSyntaxNode node];
-                ptrData.nodeType = LANGUAGE_ADDRESS;
+                TCSyntaxNode * ptrData = [TCSyntaxNode node:LANGUAGE_ADDRESS];
                 decl.subNodes = [NSMutableArray arrayWithArray:@[ptrData]];
             }
         }

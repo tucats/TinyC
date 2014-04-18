@@ -21,8 +21,7 @@
 -(TCSyntaxNode*) parse:(TCParser *)parser name:(NSString*) name
 {
     
-    TCSyntaxNode * module = [TCSyntaxNode node];
-    module.nodeType = LANGUAGE_MODULE;
+    TCSyntaxNode * module = [TCSyntaxNode node:LANGUAGE_MODULE];
     module.subNodes = [NSMutableArray array];
     module.spelling = name;
     
@@ -33,10 +32,9 @@
         // Each entry point starts with a type def
         
         TCTypeParser * typeDecl = [[TCTypeParser alloc]init];
-        TCSyntaxNode * decl = [TCSyntaxNode node];
-        TCSyntaxNode * varData = [TCSyntaxNode node];
+        TCSyntaxNode * decl = [typeDecl parse:parser];
+        
 
-        decl = [typeDecl parse:parser];
         if( decl == nil ) {
             parser.error = [[TCError alloc]initWithCode:TCERROR_EXP_FUNC withArgument:nil];
             return nil;
@@ -53,7 +51,7 @@
         
         if( decl.subNodes.count <= 1 && [parser isNextToken:TOKEN_PAREN_LEFT]) {
             
-            varData.nodeType = LANGUAGE_RETURN_TYPE;
+            TCSyntaxNode * varData = [TCSyntaxNode node:LANGUAGE_RETURN_TYPE];
             varData.action = decl.action;
             varData.subNodes = decl.subNodes;
             
