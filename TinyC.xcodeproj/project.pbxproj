@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E2609A7A1901A0F4001EF080 /* TCFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E2609A791901A0F4001EF080 /* TCFunction.m */; };
+		E2609A7D1901A18D001EF080 /* TCmallocFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E2609A7C1901A18D001EF080 /* TCmallocFunction.m */; };
+		E2609A811901A34E001EF080 /* TCfreeFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E2609A801901A34E001EF080 /* TCfreeFunction.m */; };
+		E2609A841901A3B0001EF080 /* TCprintfFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E2609A831901A3B0001EF080 /* TCprintfFunction.m */; };
 		E262FDCD18F8478400DFC135 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E262FDCC18F8478400DFC135 /* Foundation.framework */; };
 		E262FDD018F8478400DFC135 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDCF18F8478400DFC135 /* main.m */; };
 		E262FDFD18F847BA00DFC135 /* TCAssignmentParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FDDD18F847BA00DFC135 /* TCAssignmentParser.m */; };
@@ -46,6 +50,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		E2609A781901A0F4001EF080 /* TCFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCFunction.h; sourceTree = "<group>"; };
+		E2609A791901A0F4001EF080 /* TCFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCFunction.m; sourceTree = "<group>"; };
+		E2609A7B1901A18D001EF080 /* TCmallocFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCmallocFunction.h; sourceTree = "<group>"; };
+		E2609A7C1901A18D001EF080 /* TCmallocFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCmallocFunction.m; sourceTree = "<group>"; };
+		E2609A7F1901A34E001EF080 /* TCfreeFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCfreeFunction.h; sourceTree = "<group>"; };
+		E2609A801901A34E001EF080 /* TCfreeFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCfreeFunction.m; sourceTree = "<group>"; };
+		E2609A821901A3B0001EF080 /* TCprintfFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCprintfFunction.h; sourceTree = "<group>"; };
+		E2609A831901A3B0001EF080 /* TCprintfFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCprintfFunction.m; sourceTree = "<group>"; };
 		E262FDC918F8478400DFC135 /* TinyC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TinyC; sourceTree = BUILT_PRODUCTS_DIR; };
 		E262FDCC18F8478400DFC135 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E262FDCF18F8478400DFC135 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -106,6 +118,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E2609A7E1901A323001EF080 /* Functions */ = {
+			isa = PBXGroup;
+			children = (
+				E2609A781901A0F4001EF080 /* TCFunction.h */,
+				E2609A791901A0F4001EF080 /* TCFunction.m */,
+				E2609A7B1901A18D001EF080 /* TCmallocFunction.h */,
+				E2609A7C1901A18D001EF080 /* TCmallocFunction.m */,
+				E2609A821901A3B0001EF080 /* TCprintfFunction.h */,
+				E2609A831901A3B0001EF080 /* TCprintfFunction.m */,
+				E2609A7F1901A34E001EF080 /* TCfreeFunction.h */,
+				E2609A801901A34E001EF080 /* TCfreeFunction.m */,
+			);
+			name = Functions;
+			sourceTree = "<group>";
+		};
 		E262FDC018F8478400DFC135 = {
 			isa = PBXGroup;
 			children = (
@@ -189,6 +216,7 @@
 		E262FE1218F848C400DFC135 /* Interpreter */ = {
 			isa = PBXGroup;
 			children = (
+				E2609A7E1901A323001EF080 /* Functions */,
 				E262FE1918FC2BE700DFC135 /* TCStorage.h */,
 				E262FE1A18FC2BE700DFC135 /* TCStorage.m */,
 				E262FDDE18F847BA00DFC135 /* TCContext.h */,
@@ -273,7 +301,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E2609A7D1901A18D001EF080 /* TCmallocFunction.m in Sources */,
 				E262FDFD18F847BA00DFC135 /* TCAssignmentParser.m in Sources */,
+				E2609A811901A34E001EF080 /* TCfreeFunction.m in Sources */,
 				E262FE0018F847BA00DFC135 /* TCError.m in Sources */,
 				E297A57818FEBC92009C7EDC /* TCTypeParser.m in Sources */,
 				E262FE0118F847BA00DFC135 /* TCExpression.m in Sources */,
@@ -281,6 +311,7 @@
 				E262FE1018F8481000DFC135 /* TinyC.m in Sources */,
 				E262FE0C18F847BA00DFC135 /* TCValue.m in Sources */,
 				E262FE0B18F847BA00DFC135 /* TCToken.m in Sources */,
+				E2609A7A1901A0F4001EF080 /* TCFunction.m in Sources */,
 				E262FE0918F847BA00DFC135 /* TCSymbolTable.m in Sources */,
 				E262FE0818F847BA00DFC135 /* TCSymbol.m in Sources */,
 				E262FE0718F847BA00DFC135 /* TCStatement.m in Sources */,
@@ -290,6 +321,7 @@
 				E262FDFE18F847BA00DFC135 /* TCContext.m in Sources */,
 				E262FDFF18F847BA00DFC135 /* TCDeclarationParser.m in Sources */,
 				E262FE1618F8645300DFC135 /* NSString+NSStringFormatting.m in Sources */,
+				E2609A841901A3B0001EF080 /* TCprintfFunction.m in Sources */,
 				E262FE0618F847BA00DFC135 /* TCParser.m in Sources */,
 				E262FE0A18F847BA00DFC135 /* TCSyntaxNode.m in Sources */,
 				E262FE1B18FC2BE700DFC135 /* TCStorage.m in Sources */,

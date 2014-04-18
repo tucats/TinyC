@@ -13,6 +13,8 @@
 #import "TCSymbolTable.h"
 #import "TCContext.h"
 #import "NSString+NSStringFormatting.h"
+#import "TCFunction.h"
+
 
 char* typeMap(TCValueType);
 
@@ -367,82 +369,36 @@ extern TCContext* activeContext;
     return [self executeFunction:node.spelling withArguments:arguments];
 }
 
+/**
+ Try to execute a built-in function by name.  These are all subclasses of
+ the TCFunction class, and are identified as TCxxxxFunction where "xxxx"
+ is the name of the function. So printf() is TCprintfFunction, etc.
+ 
+ @param name the name of the function to locate
+ @param arguments the list of arguments expressed as TCValue items
+ @return a TCValue if the function executed correctly.  If the function
+ was not found or there was a runtime error, nil is returned.
+ */
+
 -(TCValue*) executeFunction:(NSString *)name withArguments:(NSArray *)arguments
 {
     
-    // char * malloc(long size);
+    // First, see if it is a known class we can dynamically construct an instance
+    // of to execute
     
-    if( [name isEqualToString:@"malloc"]) {
-        if( arguments.count != 1 ) {
-            _error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
-            return nil;
-        }
-        
-        TCValue * sizeArg = arguments[0];
-        long size = sizeArg.getLong;
-        
-        long address = [_storage allocateDynamic:size];
-        TCValue * addressPtr = [[TCValue alloc]initWithLong:address];
-        return [addressPtr makePointer:TCVALUE_CHAR];
+    NSString * functionClassName = [NSString stringWithFormat:@"TC%@Function", name];
+    
+    TCFunction * f = [[NSClassFromString(functionClassName) alloc] init];
+    
+    if( f != nil ) {
+        if(_debug)
+            NSLog(@"EXPRESS: dynamic execution of \"%@\" function", name);
+        f.storage = _storage;
+        TCValue * result = [f execute:arguments];
+        _error = f.error;
+        return result;
     }
     
-    // void free(char* ptr)
-    
-    if( [name isEqualToString:@"free"]) {
-        if( arguments.count != 1 ) {
-            _error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
-            return nil;
-        }
-        
-        TCValue * addrV = arguments[0];
-        long addr = addrV.getLong;
-        return [[TCValue alloc]initWithLong:[_storage free:addr]];
-    }
-    
-    
-    // int printf( char * format-string, ...);
-    
-    if( [name isEqualToString:@"printf"]){
-        
-        // Simplest case, no arguments and we have no work.
-        
-        if( arguments == nil || arguments.count == 0 ) {
-            _error = nil;
-            return [[TCValue alloc]initWithLong:0];
-        }
-        NSMutableArray * valueArgs = [NSMutableArray array];
-        TCValue* formatValue = (TCValue*) arguments[0];
-        NSString * formatString = [formatValue getString];
-        
-        for( int i = 1; i < arguments.count; i++ ) {
-            TCValue * x = (TCValue*) arguments[i];
-            if( x.getType == TCVALUE_CHAR + TCVALUE_POINTER) {
-                [valueArgs addObject:[_storage getString:x.getLong]];
-            } else if( x.getType == TCVALUE_STRING)
-                [valueArgs addObject:x.getString];
-            else if( x.getType == TCVALUE_BOOLEAN)
-                [valueArgs addObject:[NSNumber numberWithBool:x.getLong]];
-            else if( x.getType == TCVALUE_INT)
-                [valueArgs addObject:[NSNumber numberWithLong:x.getLong]];
-            else if( x.getType == TCVALUE_LONG)
-                [valueArgs addObject:[NSNumber numberWithLong:x.getLong]];
-            else if( x.getType == TCVALUE_DOUBLE)
-                [valueArgs addObject:[NSNumber numberWithDouble:x.getDouble]];
-            else if( x.getType >= TCVALUE_POINTER)
-                [valueArgs addObject:[NSNumber numberWithLong:x.getLong]];
-            else {
-                NSLog(@"ERROR: unusable argument type %d cannot be added to arglist ", x.getType);
-                
-            }
-        }
-        NSString * buffer = [[NSString stringWithFormat:formatString array:valueArgs] escapeString];
-        //NSString *newString = [buffer stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
-        
-        int bytesPrinted = printf("%s", [buffer UTF8String]);
-        return [[TCValue alloc]initWithInt: bytesPrinted];
-    }
-    
-    // not found!
     _error = [[TCError alloc]initWithCode:TCERROR_UNK_ENTRYPOINT withArgument:name];
     return nil;
     
