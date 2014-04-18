@@ -85,7 +85,9 @@
     it just re-uses the storage.  This is all assumed to be constant storage so multiple
     pointers to the same string are allowed.
 
-22. Declaration of pointer types is not working yet; the DECLARE node has an ADDRESS and
+22. [DONE] Declaration of pointer types is not working yet; the DECLARE node has an ADDRESS and
     a NAME subnode and the declaration processor does not handle it correctly.
-    
+
+23. [DONE] Implement write through address in ASSIGNMENT operation, so *b=0 works.
+
     

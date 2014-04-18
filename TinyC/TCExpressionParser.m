@@ -94,6 +94,20 @@
         return nil;
     }
     
+    // See if this is a pointer-dereference operator
+    
+    if([parser isNextToken:TOKEN_ASTERISK]) {
+        TCSyntaxNode * source = [self parseAtom:parser];
+        if( source == nil)
+            return nil;
+        TCSyntaxNode * deref = [[TCSyntaxNode alloc]init];
+        deref.nodeType = LANGUAGE_ADDRESS;
+        deref.argument = nil;
+        deref.action = 0;
+        deref.subNodes = [NSMutableArray arrayWithArray:@[source]];
+        return deref;
+        
+    }
     // See if this is an address-of operator
     
     if([parser isNextToken:TOKEN_AMPER]) {

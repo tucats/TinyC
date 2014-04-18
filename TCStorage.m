@@ -174,25 +174,33 @@ const char * typeName( TCValueType t )
     if(_debug)
         NSLog(@"STORAGE: Access value of type %s at %ld", typeName(type), address);
     
-    switch(type) {
-        case TCVALUE_DOUBLE:
-            v = [[TCValue alloc]initWithDouble:[self getDouble:address]];
-            break;
-            
-        case TCVALUE_BOOLEAN:
-        case TCVALUE_CHAR:
-            v = [[TCValue alloc]initWithInt:(int)[self getChar:address]];
-            break;
-            
-        case TCVALUE_INT:
-            v = [[TCValue alloc]initWithInt:(int)[self getInt:address]];
-            break;
-            
-        default:
-            v = nil;
-            break;
+    if( type > TCVALUE_POINTER) {
+        v = [[TCValue alloc]initWithLong:[self getLong:address]];
+    } else {
+        switch(type) {
+            case TCVALUE_DOUBLE:
+                v = [[TCValue alloc]initWithDouble:[self getDouble:address]];
+                break;
+                
+            case TCVALUE_BOOLEAN:
+            case TCVALUE_CHAR:
+                v = [[TCValue alloc]initWithInt:(int)[self getChar:address]];
+                break;
+                
+            case TCVALUE_INT:
+                v = [[TCValue alloc]initWithInt:(int)[self getInt:address]];
+                break;
+ 
+            case TCVALUE_LONG:
+                v = [[TCValue alloc]initWithLong:[self getLong:address]];
+                break;
+                
+            default:
+                NSLog(@"FATAL: Attempt to read unsupported value type %d from storage", type);
+                v = nil;
+                break;
+        }
     }
-    
     return v;
 }
 

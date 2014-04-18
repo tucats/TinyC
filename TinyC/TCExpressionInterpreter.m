@@ -119,6 +119,9 @@ extern TCContext* activeContext;
             
         case LANGUAGE_REFERENCE:
         {
+            // There are two kinds of REFERENCE nodes.  One contains a direct reference to
+            // a symbol value.  The other kind requires processing a sub-expression and then
+            // calculating a new address using that expression
             
             TCSymbol * targetSymbol = [symbols findSymbol:node.spelling];
             if( targetSymbol == nil ){

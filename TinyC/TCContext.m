@@ -148,6 +148,15 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     
     switch( tree.nodeType) {
             
+        case LANGUAGE_REFERENCE:
+        {
+            TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
+            expInt.storage = _storage;
+            expInt.debug = _debug;
+            
+            return [expInt evaluate:tree withSymbols:_symbols];
+        }
+            
         case LANGUAGE_ADDRESS:
         {
             // Find the address of a target.  Right now we only support a single name.
