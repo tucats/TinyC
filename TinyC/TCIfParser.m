@@ -38,20 +38,17 @@
                 return nil;
             }
             TCStatement * stmt = [[TCStatement alloc] init];
-            TCError * error = nil;
             
-            TCSyntaxNode * condStatement = [stmt parse:parser error:&error options:TCSTATEMENT_SUBSTATEMENT];
-            if( error != nil ) {
-                parser.error = error;
+            TCSyntaxNode * condStatement = [stmt parse:parser options:TCSTATEMENT_SUBSTATEMENT];
+            if( parser.error != nil ) {
                 return nil;
             }
             [tree.subNodes addObject:condStatement];
             if( [parser isNextToken:TOKEN_ELSE]) {
                 //NSLog(@"PARSE parse else");
 
-                condStatement = [stmt parse:parser error:&error options:TCSTATEMENT_SUBSTATEMENT];
-                if( error != nil ) {
-                    parser.error = error;
+                condStatement = [stmt parse:parser options:TCSTATEMENT_SUBSTATEMENT];
+                if( parser.error != nil ) {
                     return nil;
                 }
                 [tree.subNodes addObject:condStatement];

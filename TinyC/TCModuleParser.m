@@ -93,9 +93,8 @@
             // Now, need body of function
             
             TCStatement * block = [[TCStatement alloc]init];
-            TCError *error = nil;
             
-            TCSyntaxNode * blockTree = [block parse:parser error:&error];
+            TCSyntaxNode * blockTree = [block parse:parser];
             if( !blockTree || parser.error) {
                 return nil;
             }

@@ -17,7 +17,7 @@ typedef enum {
 
 @interface TCStatement : NSObject
 
--(TCSyntaxNode*) parse:(TCParser*)parser error:(TCError**)error options:(TCStatementOptions)options;
--(TCSyntaxNode*) parse:(TCParser*)parser error:(TCError**)error;
+-(TCSyntaxNode*) parse:(TCParser*)parser  options:(TCStatementOptions)options;
+-(TCSyntaxNode*) parse:(TCParser*)parser ;
 
 @end

@@ -17,13 +17,13 @@
 /**
  Helper function that doesn't require options - assumes none are given
  */
--(TCSyntaxNode*) parse:(TCParser*)parser error:(TCError**)error;
+-(TCSyntaxNode*) parse:(TCParser*)parser;
 {
-    return [self parse:parser error:error options:TCSTATEMENT_NONE];
+    return [self parse:parser options:TCSTATEMENT_NONE];
 }
 
 
--(TCSyntaxNode*) parse:(TCParser*)parser error:(TCError**)error options:(TCStatementOptions) options
+-(TCSyntaxNode*) parse:(TCParser*)parser options:(TCStatementOptions) options
 {
     TCSyntaxNode * tree = nil;
     
@@ -43,8 +43,8 @@
             if([parser isNextToken:TOKEN_BRACE_RIGHT])
                 break;
             
-            TCSyntaxNode * stmt = [self parse:parser error:error];
-            if( error != nil && (*error != nil) )
+            TCSyntaxNode * stmt = [self parse:parser];
+            if( parser.error != nil)
                 return nil;
             if( tree.subNodes == nil) {
                 tree.subNodes = [[NSMutableArray alloc]init];
@@ -75,8 +75,7 @@
     if( tree == nil ) {
         TCDeclarationParser * declaration = [[TCDeclarationParser alloc] init];
         tree = [declaration parse:parser];
-        if( parser.error != nil && error != nil) {
-            *error = parser.error;
+        if( parser.error != nil) {
             return nil;
         }
     }
@@ -86,8 +85,7 @@
         
         TCAssignmentParser * assignment = [[TCAssignmentParser alloc] init];
         tree = [assignment parse:parser];
-        if( parser.error != nil && error != nil) {
-            *error = parser.error;
+        if( parser.error != nil ) {
             return nil;
         }
     }
@@ -96,8 +94,7 @@
     if( tree == nil ) {
         TCIfParser * ifStatement = [[TCIfParser alloc] init];
         tree = [ifStatement parse:parser];
-        if( parser.error != nil && error != nil) {
-            *error = parser.error;
+        if( parser.error != nil) {
             return nil;
         }
         
@@ -120,8 +117,7 @@
         
         TCExpressionParser * exp = [[TCExpressionParser alloc]init];
         tree = [exp parse:parser];
-        if( parser.error != nil && error != nil) {
-            *error = parser.error;
+        if( parser.error != nil) {
             return nil;
         }
     }
@@ -141,12 +137,8 @@
         return tree;
     }
     
-    if( error != nil ) {
-        *error = [[TCError alloc]initWithCode:TCERROR_UNK_STATEMENT withArgument:[parser lastSpelling]];
-    }
-    
-    
-    return tree;
+    parser.error = [[TCError alloc]initWithCode:TCERROR_UNK_STATEMENT withArgument:[parser lastSpelling]];
+    return nil;
 }
 
 @end

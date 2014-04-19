@@ -103,4 +103,8 @@
     runtime to allocate storage during the DECLARE phase, after which foo is a pointer to
     the storage, and sized by the base type.  The array storage is aligned by the base type.
 
+28. Support array references; i.e. x = foo[i] or foo[j] = 3.  These will require multiplying
+    the index by the stride and adding to the base pointer value.  LValue and RValue will be
+    handled the same if possible; i.e. result in an ADDRESS calculation.
+    
     
