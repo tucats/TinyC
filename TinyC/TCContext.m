@@ -183,6 +183,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     
     switch( tree.nodeType) {
             
+        case LANGUAGE_ARRAY:
         case LANGUAGE_REFERENCE:
         {
             TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
@@ -191,6 +192,26 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
             return [expInt evaluate:tree withSymbols:_symbols];
         }
+            
+        case LANGUAGE_DEREFERENCE:
+        {
+            // Process the subnodes, which must result in a pointer.  Get the value
+            // of the pointer.
+            TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
+            expInt.storage = _storage;
+            expInt.debug = _debug;
+            TCValue * address = [expInt evaluate:tree.subNodes[0] withSymbols:_symbols];
+            if( address == nil ) {
+                _error = expInt.error;
+                return nil;
+            }
+            
+            // @NODE need the base type of what we are dereferencing here!
+            int baseType = TCVALUE_INT;
+            
+            return [_storage getValue:address.getLong ofType:baseType];
+        }
+            
             
         case LANGUAGE_ADDRESS:
         {

@@ -85,6 +85,26 @@ extern TCContext* activeContext;
             
             
         }
+            
+        case LANGUAGE_DEREFERENCE:
+        {
+            // Process the subnodes, which must result in a pointer.  Get the value
+            // of the pointer.
+            TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
+            expInt.storage = _storage;
+            expInt.debug = _debug;
+            TCValue * address = [expInt evaluate:node.subNodes[0] withSymbols:symbols];
+            if( address == nil ) {
+                _error = expInt.error;
+                return nil;
+            }
+            
+            // @NODE need the base type of what we are dereferencing here!
+            int baseType = TCVALUE_INT;
+            
+            return [_storage getValue:address.getLong ofType:baseType];
+        }
+            
             // An assignment operator?
         case LANGUAGE_ASSIGNMENT:
             return [activeContext execute:node withSymbols:symbols];
@@ -115,7 +135,36 @@ extern TCContext* activeContext;
             result = [result castTo:castInfo.action];
             return result;
         }
+    
+            // An array reference
             
+        case LANGUAGE_ARRAY:
+        {
+            // Find the symbolic name.  Fail if it doesn't exist
+            TCSymbol * targetSymbol = [symbols findSymbol:node.spelling];
+            if( targetSymbol == nil ){
+                _error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF withArgument:node.spelling];
+                return nil;
+            }
+            
+            // The offset is the stride (size of base type) times the index.  Get the
+            // stride from the symbol table's declaration
+            
+            int stride = targetSymbol.size;
+            
+            // Calculate the index by executing the index expression
+            
+            TCValue * indexValue = [self evaluate:node.subNodes[0] withSymbols:symbols];
+            
+            // Calculate the resulting address, and make it into a pointer to the base type
+            // of the appropriate address.
+            
+            long arrayBase = [_storage getLong:targetSymbol.address];
+            long address = arrayBase + (stride * indexValue.getLong);
+            TCValue * reference = [[TCValue alloc]initWithLong:address];
+            return [reference makePointer:(targetSymbol.type - TCVALUE_POINTER)];
+            
+        }
             
             // A simple symbol reference
             

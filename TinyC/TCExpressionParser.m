@@ -22,6 +22,23 @@
     // Let's check for cases other than the simplest reference
     // to a variable.
     
+    // Is it an array refernce?
+    
+    if([parser isNextToken:TOKEN_BRACKET_LEFT]) {
+        TCSyntaxNode * arrayExpression = [self parseRelations:parser];
+        if( arrayExpression == nil)
+            return nil;
+        if(![parser isNextToken:TOKEN_BRACKET_RIGHT]) {
+            parser.error = [[TCError alloc]initWithCode:TCERROR_BRACEMISMATCH withArgument:nil];
+            return nil;
+        }
+        TCSyntaxNode * deref = [TCSyntaxNode node:LANGUAGE_DEREFERENCE];
+        deref.spelling = atom.spelling;
+        deref.subNodes = [NSMutableArray arrayWithArray:@[atom]];
+        atom.nodeType = LANGUAGE_ARRAY;
+        atom.subNodes = [NSMutableArray arrayWithArray:@[arrayExpression]];
+        return deref;
+    }
     // Is it a function?
     
     if( [parser isNextToken:TOKEN_PAREN_LEFT]) {
@@ -124,9 +141,11 @@
         return target;
         
     }
-    // See if it is an identifier.  This requires extra processing.
+    // See if it is an identifier.  This requires extra processing, such as
+    // checking function or array references
+    
     if([parser isNextToken:TOKEN_IDENTIFIER]) {
-        return [self parseIdentifier:parser];
+            return [self parseIdentifier:parser];
     }
     
     //  Is this a (subexpression) or a (cast)?  If so, parse the parenthesis

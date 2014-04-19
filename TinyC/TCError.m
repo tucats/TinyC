@@ -35,8 +35,6 @@
             return @"expected operand not found";
         case TCERROR_SEMICOLON:
             return @"expected ';' not found";
-        case TCERROR_PARENMISMATCH:
-            return @"mismatched parenthesis";
         case TCERROR_INTERP_BAD_SCALAR:
             return @"Unrecognized SCALAR type %@";
         case TCERROR_INTERP_UNIMP_MODADIC:
@@ -71,6 +69,12 @@
             return @"Expected expression not found";
         case TCERROR_INV_LVALUE:
             return @"Invalid LVALUE address";
+        case TCERROR_BRACEMISMATCH:
+            return @"Mismatched {} braces";
+        case TCERROR_BRACKETMISMATCH:
+            return @"Mismatched [] brackets";
+        case TCERROR_PARENMISMATCH:
+            return @"Mismatched () parenthesis";
         case TCERROR_BREAK:
             return @"!BREAK";
         case TCERROR_RETURN:

@@ -21,6 +21,24 @@
     if( [parser isNextToken:TOKEN_IDENTIFIER]) {
         TCSyntaxNode * lvalue = [TCSyntaxNode node:LANGUAGE_ADDRESS];
         lvalue.spelling = [parser lastSpelling];
+        
+        // See if it is an array reference
+        if([parser isNextToken:TOKEN_BRACKET_LEFT]) {
+            TCExpressionParser * expParser = [[TCExpressionParser alloc]init];
+            TCSyntaxNode * arrayExpression = [expParser parse:parser];
+            if( parser.error) {
+                [parser setPosition:savedPosition];
+                return nil;
+            }
+            if( arrayExpression == nil)
+                return nil;
+            if(![parser isNextToken:TOKEN_BRACKET_RIGHT]) {
+                parser.error = [[TCError alloc]initWithCode:TCERROR_BRACEMISMATCH withArgument:nil];
+                return nil;
+            }
+            lvalue.nodeType = LANGUAGE_ARRAY;
+            lvalue.subNodes = [NSMutableArray arrayWithArray:@[arrayExpression]];
+        }
         return lvalue;
     }
     // No lvalue found, reset the parse position

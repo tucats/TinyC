@@ -51,6 +51,11 @@ NSString * nodeSpelling( int nodeType ) {
             return @"TYPE";
         case LANGUAGE_CAST:
             return @"CAST";
+        case LANGUAGE_ARRAY:
+            return @"ARRAY";
+        case LANGUAGE_DEREFERENCE:
+            return @"DEREFERENCE";
+            
         default:
             return [[NSString alloc]initWithFormat:@"%d", nodeType];
     }

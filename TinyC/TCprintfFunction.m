@@ -33,7 +33,7 @@
         else if( x.getType == TCVALUE_BOOLEAN)
             [valueArgs addObject:[NSNumber numberWithBool:x.getLong]];
         else if( x.getType == TCVALUE_INT)
-            [valueArgs addObject:[NSNumber numberWithLong:x.getLong]];
+            [valueArgs addObject:[NSNumber numberWithInteger:x.getInt]];
         else if( x.getType == TCVALUE_LONG)
             [valueArgs addObject:[NSNumber numberWithLong:x.getLong]];
         else if( x.getType == TCVALUE_DOUBLE)

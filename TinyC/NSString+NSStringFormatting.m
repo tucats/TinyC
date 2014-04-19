@@ -66,7 +66,7 @@
                 break;
 
             case 'f':
-                [buffer appendString:[NSString stringWithFormat:f, v.integerValue]];
+                [buffer appendString:[NSString stringWithFormat:f, v.doubleValue]];
                 break;
 
                 case 's':
