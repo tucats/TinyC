@@ -183,6 +183,26 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     
     switch( tree.nodeType) {
             
+#pragma mark > continue
+            
+            // CONTINUE does nothing
+        case LANGUAGE_CONTINUE:
+            if(_debug)
+                NSLog(@"LANGPRC: CONTINUE, restart basic block from beginning");
+            _error = [[TCError alloc]initWithCode:TCERROR_CONTINUE withArgument:nil];
+            return result;
+
+#pragma mark > break
+            // Break returns special return code
+        case LANGUAGE_BREAK:
+            if(_debug)
+                NSLog(@"LANGPRC: BREAK, exit basic block");
+            _error = [[TCError alloc]initWithCode:TCERROR_BREAK withArgument:nil];
+            return nil;
+            break;
+            
+#pragma mark > array and reference
+            
         case LANGUAGE_ARRAY:
         case LANGUAGE_REFERENCE:
         {
@@ -192,7 +212,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
             return [expInt evaluate:tree withSymbols:_symbols];
         }
-            
+#pragma mark > dereference
+
         case LANGUAGE_DEREFERENCE:
         {
             // Process the subnodes, which must result in a pointer.  Get the value
@@ -212,7 +233,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             return [_storage getValue:address.getLong ofType:baseType];
         }
             
-            
+#pragma mark > address
+
         case LANGUAGE_ADDRESS:
         {
             // Find the address of a target.  Right now we only support a single name.
@@ -247,7 +269,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         }
             
             // Most common case, a call to a function with no result or an assignment
-            
+#pragma mark > expression
+
         case LANGUAGE_EXPRESSION:
         {
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
@@ -261,7 +284,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             }
         }
             break;
-            
+#pragma mark > entrypoint
+
         case LANGUAGE_ENTRYPOINT:
             
         {
@@ -310,7 +334,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             return [self execute:tree];
             
         }
-            
+#pragma mark > block
+
             // A group of statements executed sequentially
         case LANGUAGE_BLOCK:
         {
@@ -337,6 +362,13 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 _blockPosition = ix;
                 result = [self execute:tree.subNodes[ix] withSymbols:self.symbols];
                 
+                if( self.error.isContinue) {
+                    // Resume at the start of the block
+                    ix = -1; // So increment puts us back at zero
+                    self.error = nil;
+                    continue;
+                }
+                
                 if( self.error.isBreak) {
                     break;
                 }
@@ -355,7 +387,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             [_storage popStorage];
         }
             break;
-            
+#pragma mark > assignment
+
         case LANGUAGE_ASSIGNMENT:
         {
             // Step one, get the target expression.
@@ -392,7 +425,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             result = value;
         }
             break;
-            
+#pragma mark > if
+
         case LANGUAGE_IF:
         {
             TCSyntaxNode * condition = tree.subNodes[0];
@@ -400,6 +434,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
             expInt.debug = _debug;
+            expInt.storage = _storage;
             
             TCValue * condValue = [expInt evaluate:condition withSymbols:_symbols];
             if( condValue.getLong ) {
@@ -415,6 +450,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         }
             break;
             
+#pragma mark > return
+
         case LANGUAGE_RETURN:
         {
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
@@ -439,7 +476,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             //[_storage popStorage];
             return result;
         }
-            
+#pragma mark > declare
+
         case LANGUAGE_DECLARE:
             
             baseType = tree.nodeAction;
@@ -493,7 +531,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             }
             
             break;
-            
+#pragma mark > for
+
             // for loop
         case LANGUAGE_FOR:
         {
@@ -511,18 +550,64 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             while(1) {
                 
                 condition = [self execute:termClause withSymbols:_symbols];
+                if( self.error)
+                    return nil;
+                
                 if( condition.getLong == 0)
                     break;
                 
                 // run the block of code
                 result = [self execute:block withSymbols:_symbols];
-                
+                if( self.error ) {
+                    if( self.error.code == TCERROR_BREAK) {
+                        self.error = nil;
+                        break;
+                    }
+                    if( self.error.code == TCERROR_NONE)
+                        continue;
+                }
                 // And then the incrementer
+                if( self.error)
+                    return nil;
                 [self execute:increment withSymbols:_symbols];
             }
             break;
         }
+#pragma mark > while
+
+            // while loop
+        case LANGUAGE_WHILE:
+        {
             
+            TCSyntaxNode * termClause = tree.subNodes[0];
+            TCSyntaxNode * block = tree.subNodes[1];
+            
+            
+            // As long as the termination clause is false, loop...
+            TCValue * condition = nil;
+            while(1) {
+                
+                condition = [self execute:termClause withSymbols:_symbols];
+                if( self.error)
+                    return nil;
+                if( condition.getLong == 0)
+                    break;
+                
+                // run the block of code
+                result = [self execute:block withSymbols:_symbols];
+                if( self.error ) {
+                    if( self.error.code == TCERROR_BREAK) {
+                        self.error = nil;
+                        break;
+                    }
+                    if( self.error.code == TCERROR_NONE)
+                        continue;
+                }
+                
+            }
+            break;
+        }
+
         default:
             self.error = [[TCError alloc]initWithCode:TCERROR_UNK_STATEMENT
                                          withArgument:[NSNumber numberWithInt:tree.nodeType]];

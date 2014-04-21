@@ -116,6 +116,9 @@
     
 31. [DONE] Implement basic FOR loop processing.  Each clause (init, term, increment) and a
     statement or block is added for a FOR node.  The loop execution interprets the block and
-    increment until the term is satisfie.d
-    
+    increment until the term is satisfied.
+
+32. [DONE] Implement BREAK and CONTINUE to affect for() and while() loop execution, using
+    non-error signals to unwind nested blocks, etc.
+        
     

@@ -81,6 +81,8 @@
             return @"!RETURN";
         case TCERROR_SIGNAL:
             return @"!SIGNAL";
+        case TCERROR_CONTINUE:
+            return @"!CONTINUE";
             
         default:
             return [NSString stringWithFormat:@"<error %d>", code];
@@ -137,6 +139,13 @@
 {
     return ((_code == TCERROR_RETURN));
 }
+
+
+-(BOOL) isContinue
+{
+    return ((_code == TCERROR_CONTINUE));
+}
+
 
 
 -(BOOL) isSignal

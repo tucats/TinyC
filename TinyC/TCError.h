@@ -12,6 +12,7 @@ typedef enum {
     TCERROR_BREAK=-100,     // Non-error signal values
     TCERROR_RETURN,
     TCERROR_SIGNAL,
+    TCERROR_CONTINUE,
     TCERROR_NONE = 0,       // No error
     TCERROR_ERROR = 1,      // Error signal values
     TCERROR_FATAL,
@@ -58,5 +59,6 @@ typedef enum {
 -(BOOL) isBreak;
 -(BOOL) isReturn;
 -(BOOL) isSignal;
+-(BOOL) isContinue;
 
 @end

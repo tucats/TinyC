@@ -85,7 +85,8 @@
         [self addSpelling:@"]" forToken:TOKEN_BRACKET_RIGHT];
         [self addSpelling:@"{" forToken:TOKEN_BRACE_LEFT];
         [self addSpelling:@"}" forToken:TOKEN_BRACE_RIGHT];
-        
+        [self addSpelling:@"break" forToken:TOKEN_BREAK];
+        [self addSpelling:@"continue" forToken:TOKEN_CONTINUE];
         [self doNotPersist];
 
     }

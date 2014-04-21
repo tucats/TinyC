@@ -53,6 +53,8 @@ typedef  enum TOKEN_TYPE {
     TOKEN_FOR,
     TOKEN_WHILE,
     TOKEN_AMPER,
+    TOKEN_BREAK,
+    TOKEN_CONTINUE,
     TOKEN__MAXVALUE
 } TokenType;
 

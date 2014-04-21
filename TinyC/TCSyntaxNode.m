@@ -57,6 +57,12 @@ NSString * nodeSpelling( int nodeType ) {
             return @"DEREFERENCE";
         case LANGUAGE_FOR:
             return @"FOR";
+        case LANGUAGE_WHILE:
+            return @"WHILE";
+        case LANGUAGE_BREAK:
+            return @"BREAK";
+        case LANGUAGE_CONTINUE:
+            return @"CONTINUE";
             
         default:
             return [[NSString alloc]initWithFormat:@"%d", nodeType];
@@ -128,7 +134,7 @@ NSString * nodeSpelling( int nodeType ) {
 
     if( self.subNodes) {
         for( TCSyntaxNode * t in self.subNodes)
-            [t dumpLevel:(level+1)];
+            [ t dumpLevel:(level+1)];
     }
 }
 

@@ -58,6 +58,21 @@
     
     // Try each kind of statement in turn.
     
+    // CONTINUE
+    if( tree == nil ) {
+        if([parser isNextToken:TOKEN_CONTINUE]) {
+            TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_CONTINUE];
+            return stmt;
+        }
+    }
+    
+    // BREAK
+    if( tree == nil ) {
+        if([parser isNextToken:TOKEN_BREAK]) {
+            TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_BREAK];
+            return stmt;
+        }
+    }
     // RETURN
     if( tree == nil ) {
         if( [parser isNextToken:TOKEN_RETURN]) {
@@ -139,6 +154,50 @@
                 }
             }
         }
+        
+        // If after all that, if we failed to parse the three clauses then we are not an IF statement.
+        
+        if( !tree) {
+            parser.position = savedPosition;
+        }
+    }
+    
+    // WHILE
+    // Note that this is really the same a FOR but without an initializer or increment clause.
+    if( tree == nil ) {
+        
+        long savedPosition = parser.position;
+        if([parser isNextToken:TOKEN_WHILE]) {
+            
+            if([parser isNextToken:TOKEN_PAREN_LEFT]) {
+                
+                // There is a single term clause and a body to process
+                parser.error = nil;
+                TCStatement * clause = [[TCStatement alloc]init];
+                TCSyntaxNode * termClause = nil;
+                TCSyntaxNode * block = nil;
+                
+                termClause = [clause parse:parser options:TCSTATEMENT_SUBSTATEMENT];
+                if( termClause == nil || parser.error) {
+                    tree = nil;
+                }
+                else {
+                    if( ![parser isNextToken:TOKEN_PAREN_RIGHT]) {
+                        parser.error = [[TCError alloc]initWithCode:TCERROR_PARENMISMATCH withArgument:nil];
+                    } else {
+                        block = [clause parse:parser options:TCSTATEMENT_NONE];
+                        if( block == nil || parser.error) {
+                            tree = nil;
+                        } else {
+                            tree = [TCSyntaxNode node:LANGUAGE_WHILE];
+                            tree.subNodes = [NSMutableArray arrayWithArray:@[termClause, block]];
+                            return tree;
+                        }
+                    }
+                }
+            }
+        }
+        
         
         // If after all that, if we failed to parse the three clauses then we are not an IF statement.
         
