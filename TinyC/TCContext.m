@@ -364,9 +364,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 
                 if( self.error.isContinue) {
                     // Resume at the start of the block
-                    ix = -1; // So increment puts us back at zero
-                    self.error = nil;
-                    continue;
+                    
+                    break;
                 }
                 
                 if( self.error.isBreak) {
@@ -563,8 +562,10 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                         self.error = nil;
                         break;
                     }
-                    if( self.error.code == TCERROR_NONE)
-                        continue;
+                    if( self.error.code == TCERROR_CONTINUE) {
+                        self.error = nil;
+                        // Fall through to run the incrementor
+                    }
                 }
                 // And then the incrementer
                 if( self.error)
@@ -600,8 +601,10 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                         self.error = nil;
                         break;
                     }
-                    if( self.error.code == TCERROR_NONE)
-                        continue;
+                }
+                if( self.error.code == TCERROR_CONTINUE) {
+                    self.error = nil;
+                    continue;
                 }
                 
             }
