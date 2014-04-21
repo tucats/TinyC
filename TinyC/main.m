@@ -65,11 +65,8 @@ int main(int argc, const char * argv[])
         }
         
         if( path == nil && program == nil) {
-            program = @"int main(int argc ) {\
-            int c; int p [10]; p[1] = 5; c = p[1]; printf(\"%d\\n\", c); return 0; \
-            }";
-            
-            printf("No source given, using internal test code\n");
+            path = @"/Users/tom/test.c";
+            printf("No source given, using test code\n");
             df = TCDebugParse | TCDebugTrace | TCDebugStorage;
         }
         TCError * error = nil;

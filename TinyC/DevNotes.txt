@@ -114,5 +114,8 @@
 30. Use the REFERENCE operator to just load a pointer to a type on the value, and then add a
     DEREFERENCE to it so that the way we locate scalar and array addresses is the same.
     
+31. [DONE] Implement basic FOR loop processing.  Each clause (init, term, increment) and a
+    statement or block is added for a FOR node.  The loop execution interprets the block and
+    increment until the term is satisfie.d
     
     

@@ -90,6 +90,63 @@
         }
     }
     
+    // FOR
+    if( tree == nil ) {
+        
+        long savedPosition = parser.position;
+        if([parser isNextToken:TOKEN_FOR]) {
+            
+            if([parser isNextToken:TOKEN_PAREN_LEFT]) {
+                
+                // There are three statement groups separated by ";" characters
+                parser.error = nil;
+                TCStatement * clause = [[TCStatement alloc]init];
+                TCSyntaxNode * initClause = nil;
+                TCSyntaxNode * termClause = nil;
+                TCSyntaxNode * incrementClause = nil;
+                TCSyntaxNode * block = nil;
+                
+                // Initialization
+                initClause = [clause parse:parser options:TCSTATEMENT_NONE];
+                if( initClause == nil || parser.error) {
+                    tree = nil;
+                }
+                else {
+                    termClause = [clause parse:parser options:TCSTATEMENT_NONE];
+                    if( termClause == nil || parser.error) {
+                        tree = nil;
+                    }
+                    else {
+                        incrementClause = [clause parse:parser options:TCSTATEMENT_SUBSTATEMENT];
+                        if( incrementClause == nil || parser.error) {
+                            tree = nil;
+                        }
+                        else {
+                            if( ![parser isNextToken:TOKEN_PAREN_RIGHT]) {
+                                parser.error = [[TCError alloc]initWithCode:TCERROR_PARENMISMATCH withArgument:nil];
+                            } else {
+                                block = [clause parse:parser options:TCSTATEMENT_NONE];
+                                if( block == nil || parser.error) {
+                                    tree = nil;
+                                } else {
+                                    tree = [TCSyntaxNode node:LANGUAGE_FOR];
+                                    tree.subNodes = [NSMutableArray arrayWithArray:@[initClause, termClause, incrementClause, block]];
+                                    return tree;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        // If after all that, if we failed to parse the three clauses then we are not an IF statement.
+        
+        if( !tree) {
+            parser.position = savedPosition;
+        }
+    }
+    
     // IF [ELSE]
     if( tree == nil ) {
         TCIfParser * ifStatement = [[TCIfParser alloc] init];
@@ -106,12 +163,12 @@
         if( subNodeCount > 0 ) {
             TCSyntaxNode * lastNode = tree.subNodes[subNodeCount-1];
             if( lastNode.nodeType == LANGUAGE_BLOCK) {
-               // NSLog(@"if-statement ends in block; no ';' required");
+                // NSLog(@"if-statement ends in block; no ';' required");
                 return tree;
             }
         }
     }
- 
+    
     // How about a simple expression? Which can include function calls with discarded result values
     if( tree == nil ) {
         
@@ -124,7 +181,7 @@
     
     if(tree != nil) {
         if(!(options & TCSTATEMENT_SUBSTATEMENT)) {
-           // NSLog(@"PARSE require ';'");
+            // NSLog(@"PARSE require ';'");
             
             if(![parser isNextToken:TOKEN_SEMICOLON]) {
                 

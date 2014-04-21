@@ -55,6 +55,8 @@ NSString * nodeSpelling( int nodeType ) {
             return @"ARRAY";
         case LANGUAGE_DEREFERENCE:
             return @"DEREFERENCE";
+        case LANGUAGE_FOR:
+            return @"FOR";
             
         default:
             return [[NSString alloc]initWithFormat:@"%d", nodeType];
@@ -102,10 +104,10 @@ NSString * nodeSpelling( int nodeType ) {
 -(NSString*) description
 {
     NSString *d = [NSString stringWithFormat:@"Node %@ %@ %@ %@", nodeSpelling(self.nodeType),
-          self.action ? [NSNumber numberWithInt:self.action] : @"",
-          self.argument,
-          self.spelling ? [[NSString alloc]initWithFormat:@"\"%@\"", self.spelling]: @""
-          ];
+        self.action ? [NSNumber numberWithInt:self.action] : @"",
+        self.argument ? [NSString stringWithFormat:@" = %@", self.argument] : @"",
+        self.spelling ? [[NSString alloc]initWithFormat:@"\"%@\"", self.spelling]: @""
+        ];
     return d;
 
 }
@@ -120,7 +122,7 @@ NSString * nodeSpelling( int nodeType ) {
     
     NSLog(@"%@ Node %@ %@ %@ %@", indent, nodeSpelling(self.nodeType),
           self.action ? [NSNumber numberWithInt:self.action] : @"",
-          self.argument,
+          self.argument ? [NSString stringWithFormat:@"= %@", self.argument] : @"",
           self.spelling ? [[NSString alloc]initWithFormat:@"\"%@\"", self.spelling]: @""
           );
 

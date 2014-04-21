@@ -254,7 +254,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             expInt.debug = _debug;
             expInt.storage = _storage;
             
-            [expInt evaluate:tree withSymbols:_symbols];  // Note we don't care about result either
+            result = [expInt evaluate:tree withSymbols:_symbols];  // Note we don't care about result either
             if(expInt.error) {
                 _error = expInt.error;
                 return nil;
@@ -494,6 +494,34 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
             break;
             
+            // for loop
+        case LANGUAGE_FOR:
+        {
+            
+            TCSyntaxNode * initClause = tree.subNodes[0];
+            TCSyntaxNode * termClause = tree.subNodes[1];
+            TCSyntaxNode * increment = tree.subNodes[2];
+            TCSyntaxNode * block = tree.subNodes[3];
+            
+            // Execute the initializer once
+            [self execute:initClause withSymbols:_symbols];
+            
+            // As long as the termination clause is false, loop...
+            TCValue * condition = nil;
+            while(1) {
+                
+                condition = [self execute:termClause withSymbols:_symbols];
+                if( condition.getLong == 0)
+                    break;
+                
+                // run the block of code
+                result = [self execute:block withSymbols:_symbols];
+                
+                // And then the incrementer
+                [self execute:increment withSymbols:_symbols];
+            }
+            break;
+        }
             
         default:
             self.error = [[TCError alloc]initWithCode:TCERROR_UNK_STATEMENT

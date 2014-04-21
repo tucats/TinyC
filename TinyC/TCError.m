@@ -201,7 +201,7 @@
         
         for( long dx = (long) line.location; dx < [_sourceText length]; dx++) {
             if([_sourceText characterAtIndex:dx] == '\n') {
-                line.length = dx;
+                line.length = (dx - line.location) + 1;
                 break;
             }
         }

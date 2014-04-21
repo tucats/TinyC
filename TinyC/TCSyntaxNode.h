@@ -37,6 +37,7 @@ typedef enum {
     LANGUAGE_CAST,
     LANGUAGE_ARRAY,
     LANGUAGE_DEREFERENCE,
+    LANGUAGE_FOR,
     LANGUAGE_MODULE
 } SyntaxNodeType;
 
