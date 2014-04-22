@@ -44,8 +44,8 @@
 -(int) getInt:(long) address;
 -(void) setInt:(int) value at:(long) address;
 
--(int) getLong:(long) address;
--(void) setLong:(int) value at:(long) address;
+-(long) getLong:(long) address;
+-(void) setLong:(long) value at:(long) address;
 
 -(double) getDouble:(long) address;
 -(void) setDouble:(double) value at:(long) address;

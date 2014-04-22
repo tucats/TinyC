@@ -350,6 +350,9 @@ const char * typeName( TCValueType t )
         [self setLong:value.getLong at:address];
     else {
         switch( value.getType) {
+            case TCVALUE_CHAR:
+                [self setChar:value.getChar at:address];
+                break;
             case TCVALUE_INT:
                 [self setInt:(int)value.getInt at:address];
                 break;
@@ -359,9 +362,7 @@ const char * typeName( TCValueType t )
             case TCVALUE_DOUBLE:
                 [self setDouble:value.getDouble at:address];
                 break;
-            case TCVALUE_CHAR:
-                [self setChar:value.getChar at:address];
-                
+
             default:
                 NSLog(@"FATAL - storage setValue type %s %d not implemented", typeName(value.getType), value.getType);
         }

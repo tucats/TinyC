@@ -37,6 +37,7 @@
         deref.subNodes = [NSMutableArray arrayWithArray:@[atom]];
         atom.nodeType = LANGUAGE_ARRAY;
         atom.subNodes = [NSMutableArray arrayWithArray:@[arrayExpression]];
+        
         return deref;
     }
     // Is it a function?
