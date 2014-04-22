@@ -71,7 +71,11 @@
         }
   
         // Allocate the storage manager we will use.
-        TCStorage * storage = [[TCStorage alloc]initWithStorage:65536];
+        
+        if( _memorySize == 0 )
+            _memorySize = 65536;
+        
+        TCStorage * storage = [[TCStorage alloc]initWithStorage:_memorySize];
         storage.debug = self.debugStorage;
         
         // Create execution context and check to see if there are

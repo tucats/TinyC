@@ -35,6 +35,7 @@ typedef enum {
 @property TCValue* result;
 @property NSString * moduleName;
 @property NSMutableDictionary * stringPool;
+@property long memorySize;
 
 -(TCError*) compileString:(NSString*) source;
 

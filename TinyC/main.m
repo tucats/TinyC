@@ -13,18 +13,46 @@
 
 int main(int argc, const char * argv[])
 {
-
+    
     @autoreleasepool {
         
         NSString * program = nil;
         NSString * path = nil;
         
+        long memory = 65536L;
+        
         TCDebugFlag df = TCDebugNone;
         
         for( int ax = 1; ax < argc; ax++ ) {
+            if( strncmp(argv[ax], "-d", 2) == 0 ) {
+                for( int dp = 2; dp < strlen(argv[ax]); dp++) {
+                    char c = (argv[ax])[dp];
+                    switch (c) {
+                        case 'p':
+                            df |= TCDebugParse;
+                            break;
+                            
+                        case 't':
+                            df |= TCDebugTokens;
+                            break;
+                            
+                        case 'x':
+                            df |= TCDebugTrace;
+                            break;
+                            
+                        case 's':
+                            df |= TCDebugStorage;
+                            break;
+                            
+                        default:
+                            printf("Unrecognized -d option %c ignored\n", c);
+                            break;
+                    }
+                }
+                continue;
+            }
             if( strcmp(argv[ax], "-p") == 0) {
                 df |= TCDebugParse;
-                //printf("Enable debug flag\n");
                 continue;
             }
             if( strcmp(argv[ax], "-t") == 0) {
@@ -37,6 +65,33 @@ int main(int argc, const char * argv[])
             }
             if( strcmp(argv[ax], "-s") == 0) {
                 df |= TCDebugStorage;
+                continue;
+            }
+            if( strcmp(argv[ax], "-m") == 0 ) {
+                
+                long mult = 1;
+                char v[32];
+                strcpy(v, argv[++ax]);
+                int pos = (int) strlen(v) - 1;
+                if( pos > 0 ) {
+                    char l = tolower(v[pos]);
+                    if( !isdigit(l)) {
+                        switch(l) {
+                            case 'k':
+                                mult = 1024;
+                                break;
+                            case 'm':
+                                mult = 1024*1024;
+                                break;
+                            default:
+                                printf("Invalid memory size scaling factor '%c'\n", l);
+                                return -1;
+                        }
+                        v[pos] = 0;
+                    }
+                }
+                memory = atol(v) * mult;
+                printf("Creating runtime memory area of %ld bytes\n", memory);
                 continue;
             }
             if( strcmp(argv[ax], "-") == 0) {
@@ -52,11 +107,12 @@ int main(int argc, const char * argv[])
             
             if( *(argv[ax]) == '-') {
                 printf("Unrecognized command line option %s\n", argv[ax]);
-                printf("Usage:   tinyc  [-t][-p][-x] file\n");
-                printf("    -t   Dump token queue\n");
-                printf("    -p   Dump parse tree\n");
-                printf("    -x   Trace execution\n");
-                printf("    -s   Trace storage\n");
+                printf("Usage:   tinyc  [-d[tpxs]] [-m n] file\n");
+                printf("    -dt   Dump token queue\n");
+                printf("    -dp   Dump parse tree\n");
+                printf("    -dx   Trace execution\n");
+                printf("    -ds   Trace storage\n");
+                printf("    -m n  Allocate n bytes to runtime storage\n");
                 return -3;
             }
             path = [NSString stringWithCString:argv[ax] encoding:NSUTF8StringEncoding];
@@ -72,6 +128,7 @@ int main(int argc, const char * argv[])
         TCError * error = nil;
         TinyC * tinyC = [[TinyC alloc]init];
         [tinyC setDebug: df];
+        tinyC.memorySize = memory;
         
         if( path == nil )
             error = [tinyC compileString:program];

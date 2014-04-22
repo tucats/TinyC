@@ -277,7 +277,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             expInt.debug = _debug;
             expInt.storage = _storage;
             
-            result = [expInt evaluate:tree withSymbols:_symbols];  // Note we don't care about result either
+            result = [expInt evaluate:tree withSymbols:_symbols];
             if(expInt.error) {
                 _error = expInt.error;
                 return nil;
@@ -512,10 +512,6 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                         _error = expInt.error;
                         return nil;
                     }
-                    // @NOTE; may need to do something here to set the symbol _size
-                    // property which ends up unhelpfully as a long when it should either
-                    // represent the total allocated size or the size of the base type.
-                    
                     [_lastSymbol setValue:initValue storage:_storage];
                     _lastSymbol.size = typeSize(baseType);
                     
