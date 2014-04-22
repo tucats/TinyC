@@ -151,6 +151,9 @@ extern TCContext* activeContext;
             // stride from the symbol table's declaration
             
             int stride = targetSymbol.size;
+            if( targetSymbol.type > TCVALUE_POINTER) {
+                stride = [TCValue sizeOf:targetSymbol.type];
+            }
             
             // Calculate the index by executing the index expression
             

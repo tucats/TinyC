@@ -303,7 +303,7 @@ const char * typeName( TCValueType t )
         NSLog(@"STORAGE: Access value of type %s at %ld", typeName(type), address);
     
     if( type > TCVALUE_POINTER) {
-        v = [[TCValue alloc]initWithLong:[self getLong:address]];
+        v = [[[TCValue alloc]initWithLong:[self getLong:address]] makePointer:(type - TCVALUE_POINTER)];
     } else {
         switch(type) {
             case TCVALUE_DOUBLE:

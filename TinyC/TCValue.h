@@ -19,10 +19,16 @@ typedef enum {
     TCVALUE_DOUBLE,
     TCVALUE_STRING,
     TCVALUE_USER,
-    TCVALUE_POINTER = 16384
+    TCVALUE_POINTER = 16384,
+    TCVALUE_POINTER_CHAR = TCVALUE_POINTER + TCVALUE_CHAR,
+    TCVALUE_POINTER_INT = TCVALUE_POINTER + TCVALUE_INT,
+    TCVALUE_POINTER_LONG = TCVALUE_POINTER + TCVALUE_LONG,
+    TCVALUE_POINTER_FLOAT = TCVALUE_POINTER + TCVALUE_FLOAT,
+    TCVALUE_POINTER_DOUBLE = TCVALUE_POINTER + TCVALUE_DOUBLE
 } TCValueType;
 
 @interface TCValue : NSValue
+
 
 {
     int         intValue;
@@ -31,6 +37,9 @@ typedef enum {
     NSString *  stringValue;
     TCValueType type;
 }
+
++(int) sizeOf:(TCValueType)type;
+
 -(instancetype)initWithDouble:(double) value;
 -(instancetype)initWithString:(NSString*) value;
 -(instancetype)initWithInt:(int) value;

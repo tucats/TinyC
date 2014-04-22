@@ -41,28 +41,7 @@
     TCSymbol *symbol = [[TCSymbol alloc]init];
     symbol.spelling = name;
     symbol.type = type;
-    switch( type) {
-        case TCVALUE_INT:
-            symbol.size = sizeof(int);
-            break;
-        case TCVALUE_CHAR:
-            symbol.size = sizeof(char);
-            break;
-        case TCVALUE_DOUBLE:
-            symbol.size = sizeof(double);
-            break;
-        case TCVALUE_FLOAT:
-            symbol.size = sizeof(float);
-            break;
-        case TCVALUE_LONG:
-            symbol.size = sizeof(long);
-            break;
-        case TCVALUE_POINTER:
-            symbol.size = sizeof(char*);
-            break;
-        default:
-            symbol.size = sizeof(long);
-    }
+    symbol.size = [TCValue sizeOf:type];
     symbol.address = [storage allocateAuto:symbol.size];
     symbol.allocated = YES;
     [_symbols setObject:symbol forKey:name];

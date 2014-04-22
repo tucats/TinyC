@@ -15,6 +15,33 @@ typedef struct {
 
 @implementation TCValue
 
+#pragma mark - Class helper methods
+
++(int) sizeOf:(TCValueType)type
+{
+    TCValueType t = type;
+    if(t>TCVALUE_POINTER)
+        t=t-TCVALUE_POINTER;
+    switch(t) {
+        case TCVALUE_CHAR:
+            return sizeof(char);
+        case TCVALUE_DOUBLE:
+            return sizeof(double);
+        case TCVALUE_INT:
+            return sizeof(int);
+        case TCVALUE_FLOAT:
+            return sizeof(float);
+        case TCVALUE_LONG:
+            return sizeof(long);
+        case TCVALUE_POINTER:
+            return sizeof(char*);
+        default:
+            return 0;
+            
+    }
+}
+
+
 #pragma mark - Accessors
 
 -(NSString*) description
@@ -543,6 +570,5 @@ typedef struct {
             
     }
 }
-
 
 @end
