@@ -12,6 +12,7 @@
 #import "TCContext.h"
 #import "TCModuleParser.h"
 
+BOOL assertAbort = NO;
 
 @implementation TinyC
 
@@ -194,4 +195,8 @@
     debugFlags = debugFlag;
 }
 
+-(void) setSigAbort:(BOOL)flag
+{
+    assertAbort = flag;
+}
 @end

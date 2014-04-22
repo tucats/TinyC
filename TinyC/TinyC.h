@@ -51,4 +51,6 @@ typedef enum {
 -(BOOL) debugTrace;
 -(BOOL) debugStorage;
 
+-(void) setSigAbort:(BOOL) flag;
+
 @end

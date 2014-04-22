@@ -128,6 +128,7 @@ typedef struct {
 {
     
     TCValueType t = self.getType;
+    
     if( t > TCVALUE_POINTER) {
         return [NSString stringWithFormat:@"%@ @ %ld", self.getTypeName, longValue];
     }

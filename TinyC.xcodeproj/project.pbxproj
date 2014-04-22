@@ -34,6 +34,7 @@
 		E262FE1618F8645300DFC135 /* NSString+NSStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */; };
 		E262FE1718FADCB400DFC135 /* TinyC in CopyFiles */ = {isa = PBXBuildFile; fileRef = E262FDC918F8478400DFC135 /* TinyC */; };
 		E262FE1B18FC2BE700DFC135 /* TCStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE1A18FC2BE700DFC135 /* TCStorage.m */; };
+		E275AF441906C967004BFE38 /* TCassertFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E275AF431906C967004BFE38 /* TCassertFunction.m */; };
 		E297A57818FEBC92009C7EDC /* TCTypeParser.m in Sources */ = {isa = PBXBuildFile; fileRef = E297A57718FEBC92009C7EDC /* TCTypeParser.m */; };
 /* End PBXBuildFile section */
 
@@ -105,6 +106,8 @@
 		E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSStringFormatting.m"; sourceTree = "<group>"; };
 		E262FE1918FC2BE700DFC135 /* TCStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCStorage.h; path = ../TCStorage.h; sourceTree = "<group>"; };
 		E262FE1A18FC2BE700DFC135 /* TCStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TCStorage.m; path = ../TCStorage.m; sourceTree = "<group>"; };
+		E275AF421906C967004BFE38 /* TCassertFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCassertFunction.h; sourceTree = "<group>"; };
+		E275AF431906C967004BFE38 /* TCassertFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCassertFunction.m; sourceTree = "<group>"; };
 		E297A57618FEBC92009C7EDC /* TCTypeParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCTypeParser.h; sourceTree = "<group>"; };
 		E297A57718FEBC92009C7EDC /* TCTypeParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCTypeParser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -128,6 +131,8 @@
 				E2609A791901A0F4001EF080 /* TCFunction.m */,
 				E2609A7B1901A18D001EF080 /* TCmallocFunction.h */,
 				E2609A7C1901A18D001EF080 /* TCmallocFunction.m */,
+				E275AF421906C967004BFE38 /* TCassertFunction.h */,
+				E275AF431906C967004BFE38 /* TCassertFunction.m */,
 				E2609A821901A3B0001EF080 /* TCprintfFunction.h */,
 				E2609A831901A3B0001EF080 /* TCprintfFunction.m */,
 				E2609A871901B13E001EF080 /* TC_arrayFunction.h */,
@@ -339,6 +344,7 @@
 				E262FE0418F847BA00DFC135 /* TCIfParser.m in Sources */,
 				E262FE0318F847BA00DFC135 /* TCExpressionParser.m in Sources */,
 				E2609A891901B13E001EF080 /* TC_arrayFunction.m in Sources */,
+				E275AF441906C967004BFE38 /* TCassertFunction.m in Sources */,
 				E262FE0518F847BA00DFC135 /* TCModuleParser.m in Sources */,
 				E262FDFE18F847BA00DFC135 /* TCContext.m in Sources */,
 				E262FDFF18F847BA00DFC135 /* TCDeclarationParser.m in Sources */,

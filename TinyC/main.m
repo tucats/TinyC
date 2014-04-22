@@ -18,6 +18,7 @@ int main(int argc, const char * argv[])
         
         NSString * program = nil;
         NSString * path = nil;
+        BOOL sigAbort = NO;
         
         long memory = 65536L;
         
@@ -51,6 +52,11 @@ int main(int argc, const char * argv[])
                 }
                 continue;
             }
+            if( strcmp(argv[ax], "-a") == 0) {
+                sigAbort = YES;
+                continue;
+            }
+            
             if( strcmp(argv[ax], "-p") == 0) {
                 df |= TCDebugParse;
                 continue;
@@ -107,11 +113,12 @@ int main(int argc, const char * argv[])
             
             if( *(argv[ax]) == '-') {
                 printf("Unrecognized command line option %s\n", argv[ax]);
-                printf("Usage:   tinyc  [-d[tpxs]] [-m n] file\n");
+                printf("Usage:   tinyc  [-d[tpxs]] [-a] [-m n] file\n");
                 printf("    -dt   Dump token queue\n");
                 printf("    -dp   Dump parse tree\n");
                 printf("    -dx   Trace execution\n");
                 printf("    -ds   Trace storage\n");
+                printf("    -a    assert() abort\n");
                 printf("    -m n  Allocate n bytes to runtime storage\n");
                 return -3;
             }
@@ -129,6 +136,7 @@ int main(int argc, const char * argv[])
         TinyC * tinyC = [[TinyC alloc]init];
         [tinyC setDebug: df];
         tinyC.memorySize = memory;
+        tinyC.sigAbort = sigAbort;
         
         if( path == nil )
             error = [tinyC compileString:program];
