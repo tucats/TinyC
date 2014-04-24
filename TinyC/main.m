@@ -33,6 +33,10 @@ int main(int argc, const char * argv[])
                             df |= TCDebugParse;
                             break;
                             
+                        case 'm':
+                            df |= TCDebugMemory;
+                            break;
+                            
                         case 't':
                             df |= TCDebugTokens;
                             break;
@@ -57,22 +61,6 @@ int main(int argc, const char * argv[])
                 continue;
             }
             
-            if( strcmp(argv[ax], "-p") == 0) {
-                df |= TCDebugParse;
-                continue;
-            }
-            if( strcmp(argv[ax], "-t") == 0) {
-                df |= TCDebugTokens;
-                continue;
-            }
-            if( strcmp(argv[ax], "-x") == 0) {
-                df |= TCDebugTrace;
-                continue;
-            }
-            if( strcmp(argv[ax], "-s") == 0) {
-                df |= TCDebugStorage;
-                continue;
-            }
             if( strcmp(argv[ax], "-m") == 0 ) {
                 
                 long mult = 1;
@@ -97,7 +85,7 @@ int main(int argc, const char * argv[])
                     }
                 }
                 memory = atol(v) * mult;
-                printf("Creating runtime memory area of %ld bytes\n", memory);
+                //printf("Creating runtime memory area of %ld bytes\n", memory);
                 continue;
             }
             if( strcmp(argv[ax], "-") == 0) {
@@ -118,6 +106,7 @@ int main(int argc, const char * argv[])
                 printf("    -dp   Dump parse tree\n");
                 printf("    -dx   Trace execution\n");
                 printf("    -ds   Trace storage\n");
+                printf("    -dm   Summarize memory use\n");
                 printf("    -a    assert() abort\n");
                 printf("    -m n  Allocate n bytes to runtime storage\n");
                 return -3;

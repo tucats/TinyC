@@ -24,6 +24,10 @@
 @property int frameCount;
 @property long dynamic;
 
+@property long autoMark;
+@property long dynamicMark;
+@property long maxFrames;
+
 
 -(instancetype) initWithStorage:(long) size;
 -(long) pushStorage;

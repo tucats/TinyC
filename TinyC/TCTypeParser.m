@@ -23,6 +23,8 @@
         
         decl = [TCSyntaxNode node:LANGUAGE_TYPE];
         decl.action = TCVALUE_UNDEFINED;
+        decl.position = parser.tokenPosition;
+        
         
         // Check for builtin types first.
         switch(parser.lastTokenType) {
@@ -53,6 +55,8 @@
         if( decl.action != TCVALUE_UNDEFINED) {
             if([parser isNextToken:TOKEN_ASTERISK]) {
                 TCSyntaxNode * ptrData = [TCSyntaxNode node:LANGUAGE_ADDRESS];
+                ptrData.position = parser.tokenPosition;
+                
                 decl.subNodes = [NSMutableArray arrayWithArray:@[ptrData]];
             }
         }

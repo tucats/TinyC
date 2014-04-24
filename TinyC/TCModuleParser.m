@@ -24,6 +24,7 @@
     TCSyntaxNode * module = [TCSyntaxNode node:LANGUAGE_MODULE];
     module.subNodes = [NSMutableArray array];
     module.spelling = name;
+    module.position = parser.tokenPosition;
     
     while( 1 ) {
         if([parser isAtEnd])
@@ -52,6 +53,7 @@
         if( decl.subNodes.count <= 1 && [parser isNextToken:TOKEN_PAREN_LEFT]) {
             
             TCSyntaxNode * varData = [TCSyntaxNode node:LANGUAGE_RETURN_TYPE];
+            varData.position = parser.tokenPosition;
             varData.action = decl.action;
             varData.subNodes = decl.subNodes;
             
@@ -102,16 +104,6 @@
             [decl.subNodes addObject:blockTree];
             
         }
-
-#if 0  // Old way
-        TCSyntaxNode * entryPoint = [statementParser parse:parser error:&error options:TCSTATEMENT_SUBSTATEMENT];
-        if( entryPoint == nil )
-            return nil;
-        if( entryPoint.nodeType != LANGUAGE_ENTRYPOINT) {
-            parser.error = [[TCError alloc]initWithCode:TCERROR_EXP_ENTRYPOINT withArgument:nil];
-            return nil;
-        }
-#endif // Old way
 
         [module.subNodes addObject:decl];
     }

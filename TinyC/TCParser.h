@@ -68,6 +68,7 @@
 -(BOOL) isNextSpecial:(NSString*) spelling;
 
 -(TokenType) lastTokenType;
+-(long) tokenPosition;
 
 /**
  Get the spelling of the last token that was processed by the nextToken method.

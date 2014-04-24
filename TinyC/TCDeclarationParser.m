@@ -57,6 +57,7 @@ TCValueType tokenToType( TokenType tok )
     // type.
     
     decl.nodeType = LANGUAGE_DECLARE;
+    decl.position = parser.tokenPosition;
     
     // Note that if we already think this is a pointer type, we parsed
     // the "*" as part of the type itself.  If so, we need to back up
@@ -85,6 +86,7 @@ TCValueType tokenToType( TokenType tok )
         }
         
         varData = [TCSyntaxNode node:LANGUAGE_NAME];
+        varData.position = parser.tokenPosition;
         
         varData.action = isPointer ? decl.action + TCVALUE_POINTER : decl.action;
         varData.spelling = [parser lastSpelling];

@@ -18,6 +18,8 @@
 {
     TCSyntaxNode *atom = [TCSyntaxNode node:LANGUAGE_REFERENCE];
     atom.spelling = [parser lastSpelling];
+    atom.position = parser.tokenPosition;
+    
     
     // Let's check for cases other than the simplest reference
     // to a variable.
@@ -33,6 +35,7 @@
             return nil;
         }
         TCSyntaxNode * deref = [TCSyntaxNode node:LANGUAGE_DEREFERENCE];
+        deref.position = parser.tokenPosition;
         deref.spelling = atom.spelling;
         deref.subNodes = [NSMutableArray arrayWithArray:@[atom]];
         atom.nodeType = LANGUAGE_ARRAY;
@@ -98,6 +101,7 @@
     if([parser isNextToken:TOKEN_SUBTRACT] ||
        [parser isNextToken:TOKEN_NOT]) {
         TCSyntaxNode *atom = [TCSyntaxNode node:LANGUAGE_MONADIC];
+        atom.position = parser.tokenPosition;
         atom.action = [parser lastTokenType];
         atom.spelling = [parser lastSpelling];
         
@@ -119,6 +123,7 @@
         TCSyntaxNode * deref = [TCSyntaxNode node:LANGUAGE_ADDRESS];
         deref.argument = nil;
         deref.action = 0;
+        deref.position = parser.tokenPosition;
         deref.subNodes = [NSMutableArray arrayWithArray:@[source]];
         return deref;
         
@@ -128,7 +133,7 @@
     if([parser isNextToken:TOKEN_AMPER]) {
         
         TCSyntaxNode * target = [TCSyntaxNode node:LANGUAGE_ADDRESS];
-
+        target.position = parser.tokenPosition;
         /**
          @NOTE need to handle complex & values instead of just
          simple scalar ones.
@@ -168,6 +173,7 @@
             TCSyntaxNode * cast = subExpression;
             
             subExpression = [TCSyntaxNode node:LANGUAGE_CAST];
+            subExpression.position = parser.tokenPosition;
             subExpression.subNodes = [NSMutableArray arrayWithArray:@[cast]];
         }
         
@@ -208,18 +214,21 @@
     
     if([parser isNextToken:TOKEN_INTEGER]) {
         TCSyntaxNode * atom = [TCSyntaxNode node:LANGUAGE_SCALAR];
+        atom.position = parser.tokenPosition;
         atom.action = TOKEN_INTEGER;
         atom.spelling = [parser lastSpelling];
         return atom;
     }
     else if([parser isNextToken:TOKEN_DOUBLE]) {
         TCSyntaxNode *atom = [TCSyntaxNode node:LANGUAGE_SCALAR];
+        atom.position = parser.tokenPosition;
         atom.action = TOKEN_DOUBLE;
         atom.spelling = [parser lastSpelling];
         return atom;
     }
     else if([parser isNextToken:TOKEN_STRING]) {
         TCSyntaxNode * atom = [TCSyntaxNode node:LANGUAGE_SCALAR];
+        atom.position = parser.tokenPosition;
         atom.action = TOKEN_STRING;
         atom.spelling = [parser lastSpelling];
         return atom;
@@ -255,12 +264,15 @@
     
     while( [parser isNextToken:TOKEN_ASTERISK] ||
           [parser isNextToken:TOKEN_DIVIDE]) {
+        long position = parser.tokenPosition;
+        
         TokenType whichOperation = [parser lastTokenType];
         NSString * spelling = [parser lastSpelling];
         
         TCSyntaxNode * rightSide = [self parseAtom:parser];
         if( rightSide) {
             TCSyntaxNode *thisRelation = [TCSyntaxNode node:LANGUAGE_DIADIC];
+            thisRelation.position = position;
             thisRelation.action = whichOperation;
             thisRelation.spelling = spelling;
             [thisRelation addNode:atom];
@@ -295,6 +307,7 @@
     while( [parser isNextToken:TOKEN_ADD] ||
           [parser isNextToken:TOKEN_SUBTRACT]) {
         TokenType whichOperation = [parser lastTokenType];
+        long position = parser.tokenPosition;
         NSString * spelling = [parser lastSpelling];
         
         TCSyntaxNode * rightSide = [self parseMultiplyDivide:parser];
@@ -302,6 +315,7 @@
             TCSyntaxNode *thisRelation = [TCSyntaxNode node:LANGUAGE_DIADIC];
             thisRelation.action = whichOperation;
             thisRelation.spelling = spelling;
+            thisRelation.position = position;
             [thisRelation addNode:atom];
             [thisRelation addNode:rightSide];
             atom = thisRelation;
@@ -335,12 +349,14 @@
        [parser isNextToken:TOKEN_BOOLEAN_OR]) {
         TokenType whichRelation = [parser lastTokenType];
         NSString * spelling = [parser lastSpelling];
-        
+        long position = parser.tokenPosition;
+
         TCSyntaxNode * rightSide = [self parseRelations:parser];
         if( rightSide) {
             TCSyntaxNode *thisRelation = [TCSyntaxNode node:LANGUAGE_DIADIC];
             thisRelation.action = whichRelation;
             thisRelation.spelling = spelling;
+            thisRelation.position = position;
             [thisRelation addNode:atom];
             [thisRelation addNode:rightSide];
             return thisRelation;
@@ -383,12 +399,14 @@
        [parser isNextToken:TOKEN_NOT_EQUAL]) {
         TokenType whichRelation = [parser lastTokenType];
         NSString * spelling = [parser lastSpelling];
-        
+        long position = parser.tokenPosition;
+
         TCSyntaxNode * rightSide = [self parseAddSubtract:parser];
         if( rightSide) {
             TCSyntaxNode *thisRelation = [TCSyntaxNode node:LANGUAGE_RELATION];
             thisRelation.action = whichRelation;
             thisRelation.spelling = spelling;
+            thisRelation.position = position;
             [thisRelation addNode:atom];
             [thisRelation addNode:rightSide];
             return thisRelation;
@@ -406,10 +424,12 @@
         return nil;
     
     if([parser isNextToken:TOKEN_ASSIGNMENT]) {
-        
+        long position = parser.tokenPosition;
+
         TCSyntaxNode * rightSide = [self parseBoolean:parser];
         if( rightSide) {
             TCSyntaxNode *thisRelation = [TCSyntaxNode node:LANGUAGE_ASSIGNMENT];
+            thisRelation.position = position;
             [thisRelation addNode:atom];
             [thisRelation addNode:rightSide];
             return thisRelation;
@@ -427,6 +447,8 @@
 {
     
     long startingLocation = [parser position];
+    long sourcelocation = parser.tokenPosition;
+    
     TCSyntaxNode * tree = [self parseAssignment:parser];
     if (!tree) {
         [parser setPosition:startingLocation];
@@ -435,6 +457,7 @@
     }
     
     TCSyntaxNode * root = [TCSyntaxNode node:LANGUAGE_EXPRESSION];
+    root.position = sourcelocation;
     root.subNodes = [NSMutableArray arrayWithArray:@[tree]];
     _error = parser.error;
     

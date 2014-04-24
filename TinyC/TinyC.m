@@ -104,6 +104,17 @@ BOOL assertAbort = NO;
         functionResult = [execution execute:tree
                                  entryPoint:@"main"
                               withArguments:@[ [[TCValue alloc]initWithInt:10] ]];
+        
+        // After we're done, do we need to dump out memory usage stats?
+        
+        if( debugFlags & TCDebugMemory) {
+            NSLog(@"MEMORY: total runtime memory (in bytes):       %8ld", storage.size);
+            NSLog(@"MEMORY: Maximum active automatic stack frames: %8d", storage.frameCount);
+            NSLog(@"MEMORY: Maximum automatic storage allocated:   %8ld", storage.autoMark);
+            NSLog(@"MEMORY: Maximum dynamic   storage allocated:   %8ld", storage.dynamicMark);
+            NSLog(@"MEMORY: Unused runtime memory:                 %8ld",
+                  storage.size - (storage.autoMark + storage.dynamicMark + 8));
+        }
         return [execution error];
     }
 

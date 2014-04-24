@@ -89,6 +89,10 @@ const char * typeName( TCValueType t )
         // runtime malloc() and free() calls.
         _size = size;
         _dynamic = size - 4L;
+        
+        _autoMark = 0L;
+        _dynamicMark = 0L;
+        _maxFrames = 0L;
 
         // The first 8 bytes are filled with 0xFF as a trap to help
         // locate uninitialized pointer references.  The base of
@@ -122,6 +126,9 @@ const char * typeName( TCValueType t )
 -(long) pushStorage;
 {
     _frameCount++;
+    if( _frameCount > _maxFrames)
+        _maxFrames = _frameCount;
+    
     if(_debug)
         NSLog(@"STORAGE: push new storage frame #%d at %ld", _frameCount, _current);
     [_stack addObject:[NSNumber numberWithLong:_base]];
@@ -166,6 +173,9 @@ const char * typeName( TCValueType t )
     
     long newAddr = _current;
     _current += size;
+    if( _current > _autoMark)
+        _autoMark = _current;
+    
     return newAddr;
 }
 
@@ -192,7 +202,7 @@ const char * typeName( TCValueType t )
     
     // No, we must allocate anew from the storage area
     
-    if( _dynamic - size <= _current) {
+    if((_dynamic - size) <= _current) {
         NSLog(@"FATAL - dynamic memory exhausted");
         return 0L;
     }
@@ -204,6 +214,9 @@ const char * typeName( TCValueType t )
               size, _dynamic, _allocList.count-1);
     }
 
+    if((_size - _dynamic) > _dynamicMark)
+        _dynamicMark = (_size - _dynamic);
+    
     return _dynamic;
 }
 
@@ -260,7 +273,10 @@ const char * typeName( TCValueType t )
         _current = _current + (size-pad);
         if(_debug)
             NSLog(@"STORAGE: allocation padded by %d bytes", (int)(size-pad));
+        if( _current > _autoMark)
+            _autoMark = _current;
     }
+    
 }
 
 
@@ -281,6 +297,9 @@ const char * typeName( TCValueType t )
     
     long newAddr = _current;
     _current += size;
+    if( _current > _autoMark)
+        _autoMark = _current;
+
     return newAddr;
 }
 

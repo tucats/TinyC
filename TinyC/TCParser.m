@@ -187,6 +187,16 @@
     }
 }
 
+// Get the most recent token's position in the source buffer,
+// or -1L if there is no currently available position data.
+
+-(long) tokenPosition
+{
+    if( lastToken )
+        return lastToken.position;
+    return -1L;
+    
+}
 
 //
 //	Get the current position in the token buffer

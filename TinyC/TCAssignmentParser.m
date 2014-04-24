@@ -21,6 +21,7 @@
     if( [parser isNextToken:TOKEN_IDENTIFIER]) {
         TCSyntaxNode * lvalue = [TCSyntaxNode node:LANGUAGE_ADDRESS];
         lvalue.spelling = [parser lastSpelling];
+        lvalue.position = parser.tokenPosition;
         
         // See if it is an array reference
         if([parser isNextToken:TOKEN_BRACKET_LEFT]) {
@@ -51,6 +52,7 @@
 -(TCSyntaxNode*) parse:(TCParser *)parser
 {
     TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_ASSIGNMENT];
+    stmt.position = parser.tokenPosition;
     
     long savedPosition = parser.position;
     

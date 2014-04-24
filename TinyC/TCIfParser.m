@@ -25,6 +25,7 @@
             //NSLog(@"PARSE parse if");
 
             TCSyntaxNode * tree = [TCSyntaxNode node:LANGUAGE_IF];
+            tree.position = parser.tokenPosition;
             
             TCExpressionParser *exp = [[TCExpressionParser alloc]init];
             TCSyntaxNode * expTree = [exp parse:parser];

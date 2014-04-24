@@ -16,7 +16,8 @@ typedef enum {
     TCDebugTokens = 1,
     TCDebugParse = 2,
     TCDebugTrace = 4,
-    TCDebugStorage = 8
+    TCDebugStorage = 8,
+    TCDebugMemory = 16
 } TCDebugFlag;
 
 

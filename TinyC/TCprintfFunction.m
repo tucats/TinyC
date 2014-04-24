@@ -20,6 +20,11 @@
         self.error = nil;
         return [[TCValue alloc]initWithLong:0];
     }
+    
+    // We will accumulate the arguments into an array of data
+    // items loaded from memory or directly referenced by
+    // value as appropriate
+    
     NSMutableArray * valueArgs = [NSMutableArray array];
     TCValue* formatValue = (TCValue*) arguments[0];
     NSString * formatString = [formatValue getString];
@@ -45,8 +50,12 @@
             
         }
     }
+
+    // Call our custom formatting function that uses an array of values.  The resulting
+    // buffer is then processed through the escape string manager to convert "\n" to an
+    // actual new line, etc.
+    
     NSString * buffer = [[NSString stringWithFormat:formatString array:valueArgs] escapeString];
-    //NSString *newString = [buffer stringByReplacingOccurrencesOfString:@"\\n" withString:@"\n"];
     
     int bytesPrinted = printf("%s", [buffer UTF8String]);
     return [[TCValue alloc]initWithInt: bytesPrinted];

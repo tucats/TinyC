@@ -51,6 +51,7 @@ typedef enum {
 @property int action;
 @property NSObject * argument;
 @property NSMutableArray * subNodes;
+@property long position;
 
 +(instancetype) node:(SyntaxNodeType)type;
 -(instancetype) initWithType:(SyntaxNodeType) type;

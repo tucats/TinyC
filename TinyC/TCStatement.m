@@ -38,6 +38,7 @@
         //NSLog(@"PARSE Basic block");
         
         tree = [TCSyntaxNode node:LANGUAGE_BLOCK];
+        tree.position = parser.tokenPosition;
         
         while(1) {
             if([parser isNextToken:TOKEN_BRACE_RIGHT])
@@ -62,6 +63,7 @@
     if( tree == nil ) {
         if([parser isNextToken:TOKEN_CONTINUE]) {
             TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_CONTINUE];
+            stmt.position = parser.tokenPosition;
             return stmt;
         }
     }
@@ -70,6 +72,7 @@
     if( tree == nil ) {
         if([parser isNextToken:TOKEN_BREAK]) {
             TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_BREAK];
+            stmt.position = parser.tokenPosition;
             return stmt;
         }
     }
@@ -77,7 +80,9 @@
     if( tree == nil ) {
         if( [parser isNextToken:TOKEN_RETURN]) {
             TCExpressionParser * expr = [[TCExpressionParser alloc]init];
+
             TCSyntaxNode * ret = [TCSyntaxNode node:LANGUAGE_RETURN];
+            ret.position = parser.tokenPosition;
             ret.subNodes = [NSMutableArray arrayWithArray:@[[expr parse:parser]]];
             if(parser.error)
                 return nil;
@@ -110,6 +115,7 @@
         
         long savedPosition = parser.position;
         if([parser isNextToken:TOKEN_FOR]) {
+            long tokenPosition = parser.tokenPosition;
             
             if([parser isNextToken:TOKEN_PAREN_LEFT]) {
                 
@@ -145,6 +151,7 @@
                                     tree = nil;
                                 } else {
                                     tree = [TCSyntaxNode node:LANGUAGE_FOR];
+                                    tree.position = tokenPosition;
                                     tree.subNodes = [NSMutableArray arrayWithArray:@[initClause, termClause, incrementClause, block]];
                                     return tree;
                                 }
@@ -168,6 +175,7 @@
         
         long savedPosition = parser.position;
         if([parser isNextToken:TOKEN_WHILE]) {
+            long tokenPosition = parser.tokenPosition;
             
             if([parser isNextToken:TOKEN_PAREN_LEFT]) {
                 
@@ -190,6 +198,7 @@
                             tree = nil;
                         } else {
                             tree = [TCSyntaxNode node:LANGUAGE_WHILE];
+                            tree.position = tokenPosition;
                             tree.subNodes = [NSMutableArray arrayWithArray:@[termClause, block]];
                             return tree;
                         }
