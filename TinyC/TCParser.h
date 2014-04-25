@@ -52,7 +52,7 @@
 
 -(void) addSpelling:(NSString*)theSpelling forToken:(TokenType) code;
 
--(int) nextToken;
+-(TokenType) nextToken;
 -(long) lex:(NSString*) string;
 -(long) count;
 -(long) position;
@@ -62,8 +62,8 @@
 
 -(BOOL) isAtEnd;
 
--(BOOL) isNextToken:(int) ofType;
--(BOOL) isNextToken:(NSString*) spelling ofType:(int) tokenType;
+-(BOOL) isNextToken:(TokenType) ofType;
+-(BOOL) isNextToken:(NSString*) spelling ofType:(TokenType) tokenType;
 -(BOOL) isNextIdentifier:(NSString*) spelling;
 -(BOOL) isNextSpecial:(NSString*) spelling;
 

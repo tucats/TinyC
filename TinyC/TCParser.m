@@ -53,6 +53,8 @@
         
         // Set up token dictionary
         
+        [self addSpelling:@"++" forToken:TOKEN_INCREMENT];
+        [self addSpelling:@"--" forToken:TOKEN_DECREMENT];
         [self addSpelling:@">=" forToken:TOKEN_GREATER_OR_EQUAL];
         [self addSpelling:@">" forToken:TOKEN_GREATER];
         [self addSpelling:@"<=" forToken:TOKEN_LESS_OR_EQUAL];
@@ -217,7 +219,7 @@
 //
 //	Get the next token in the buffer.
 //
--(int) nextToken {
+-(TokenType) nextToken {
     if( tokenPosition < [tokenList count]) {
         lastToken = [tokenList objectAtIndex:tokenPosition++];
         return [lastToken type];
@@ -257,7 +259,7 @@
  becomes the "last token" and the token pointer advances.  Returns
  false if it does not match, and the token pointer is not changed.
  */
--(BOOL) isNextToken:(NSString*) testSpelling ofType:(int) testType {
+-(BOOL) isNextToken:(NSString*) testSpelling ofType:(TokenType) testType {
     
     TCToken *t = [tokenList objectAtIndex:tokenPosition];
     if([t type] == testType && testType == TOKEN_EOS) {
@@ -283,7 +285,7 @@
  and the token position is not moved.
  */
 
--(BOOL) isNextToken:(int) ofType {
+-(BOOL) isNextToken:(TokenType) ofType {
     if(tokenPosition >= [tokenList count])
         return NO;
     
@@ -376,6 +378,11 @@
     }
     
     int ch = [buffer characterAtIndex:charPos];
+    int ch2 = 0;
+    
+    if( charPos < buffer.length)
+        ch2 = [buffer characterAtIndex:charPos+1];
+    
     NSRange r;
     r.location = charPos;
     r.length = 1;
@@ -383,9 +390,11 @@
     [lastToken setPosition:charPos];
     
     // Check for leading "+" or "-" characters that would be eaten as
-    // part of check for valid double or integer values.
+    // part of check for valid double or integer values. Note we have
+    // to be sure this isn't the "--" or "++" decrement or increment
+    // operator either by checking the following character.
     
-    if( ch == '-' || ch == '+') {
+    if((ch == '-' && ch2 != '-') || (ch == '+' && ch2 != '+')) {
         charPos++;
         [lastToken setSpelling:[NSString stringWithFormat:@"%c", ch]];
         [tokenList addObject:lastToken];

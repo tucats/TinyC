@@ -115,11 +115,26 @@ extern TCContext* activeContext;
             
             
             // If we are at the start of an expression, just dive in to
-            // the next layer down.
+            // the next layer down. Note that an EXPRESSION can really
+            // be a list of expressions.  We process all of them, but
+            // only return the first one evaluated.  This is used to
+            // support things like ++x and x-- which require two
+            // expression components (the reference to the value and
+            // the increment or decrement) and the order depends on
+            // pre- or post-increment functionality.
             
         case LANGUAGE_EXPRESSION:
-            return [self evaluate:node.subNodes[0] withSymbols:symbols];
+        {
+            TCValue * result = nil;
+            TCValue * subExpression = nil;
             
+            for( int i = 0; i < node.subNodes.count; i++) {
+                subExpression = [self evaluate:node.subNodes[i] withSymbols:symbols];
+                if( i == 0 )
+                    result = subExpression;
+            }
+            return result;
+        }
             // A cast operation?
         case LANGUAGE_CAST:
         {

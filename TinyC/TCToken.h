@@ -55,12 +55,14 @@ typedef  enum TOKEN_TYPE {
     TOKEN_AMPER,
     TOKEN_BREAK,
     TOKEN_CONTINUE,
+    TOKEN_INCREMENT,
+    TOKEN_DECREMENT,
     TOKEN__MAXVALUE
 } TokenType;
 
 @interface TCToken : NSObject
 
-@property int type;
+@property TokenType type;
 @property long position;
 @property NSString * spelling;
 -(id) initWithSpelling:(NSString *) tokenSpelling ofType:(TokenType) tokenKind atPosition:(long) tokenPosition;

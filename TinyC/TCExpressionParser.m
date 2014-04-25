@@ -7,12 +7,86 @@
 //
 
 #import "TCExpressionParser.h"
+#import "TCAssignmentParser.h"
 #import "TCError.h"
 #import "TCTypeParser.h"
 
 
 
 @implementation TCExpressionParser
+
+- (TCSyntaxNode*)parseIncrement:(TCParser*) parser forIdentifier:(NSString*) name
+{
+    TCSyntaxNode *atom = [TCSyntaxNode node:LANGUAGE_REFERENCE];
+
+    // Create a new expression tree with one branch
+    // that describes the increment or decrement, and
+    // a second that gets the reference value.
+    
+    BOOL increment = (parser.lastTokenType == TOKEN_INCREMENT);
+    
+    // This must be followed by an identifier if we do not already have
+    // such an identifier name in hand.  This means this was a prefix
+    // operation and the name must follow it.
+    
+    BOOL isPre = NO;
+    if( !name ) {
+        if(![parser isNextToken:TOKEN_IDENTIFIER]) {
+            parser.error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF withArgument:nil];
+            return nil;
+        }
+        name = parser.lastSpelling;
+        atom.position = parser.tokenPosition;
+        isPre = YES;
+    }
+    
+    // Create the increment operation
+    
+    TCSyntaxNode * aStmt = [TCSyntaxNode node:LANGUAGE_ASSIGNMENT];
+    aStmt.position = parser.tokenPosition;
+    
+    TCSyntaxNode * lvalue = [TCSyntaxNode node:LANGUAGE_ADDRESS];
+    lvalue.position = parser.tokenPosition;
+    lvalue.spelling = name;
+    
+    TCSyntaxNode * rvalue = [TCSyntaxNode node:LANGUAGE_DIADIC];
+    rvalue.action = TOKEN_ADD;
+    rvalue.position = parser.tokenPosition;
+    
+    TCSyntaxNode * rvalueName = [TCSyntaxNode node:LANGUAGE_REFERENCE];
+    rvalueName.position = parser.tokenPosition;
+    rvalueName.spelling = name;
+    
+    TCSyntaxNode * rvalueInc = [TCSyntaxNode node:LANGUAGE_SCALAR];
+    rvalueInc.action = TOKEN_INTEGER;
+    rvalueInc.spelling = @"1";
+    
+    if( increment) {
+        rvalue.subNodes = [NSMutableArray arrayWithArray:@[rvalueName, rvalueInc]];
+    } else {
+        TCSyntaxNode * neg = [TCSyntaxNode node:LANGUAGE_MONADIC];
+        neg.action = TOKEN_MINUS;
+        neg.subNodes = [NSMutableArray arrayWithArray:@[rvalueInc]];
+        rvalue.subNodes = [NSMutableArray arrayWithArray:@[rvalueName, neg]];
+    }
+    
+    aStmt.subNodes = [NSMutableArray arrayWithArray:@[lvalue, rvalue]];
+    atom.nodeType = LANGUAGE_EXPRESSION;
+    
+    // The order of the subnodes depends on whether this is a post- or
+    // pre-increment operation. The EXPRESSION interpreter always uses
+    // the first subexpression but executes them all.  So we either use
+    // the result of the increment (pre-op) or the value before the
+    // increment (post-op)
+    
+    if( isPre)
+        atom.subNodes = [NSMutableArray arrayWithArray:@[aStmt]];
+    else
+        atom.subNodes = [NSMutableArray arrayWithArray:@[rvalueName, aStmt]];
+    
+    return atom;
+}
+
 
 - (TCSyntaxNode*)parseIdentifier:(TCParser *)parser
 {
@@ -24,7 +98,26 @@
     // Let's check for cases other than the simplest reference
     // to a variable.
     
-    // Is it an array refernce?
+    // @NOTE I think we have a problem here in that we do not
+    // handle post operations correctly -- they would be the
+    // same as pre-operations.  Need to know when that is the
+    // case, and order the expression nodes backwards.  Also,
+    // need to be able to get reference to item and resolve it
+    // before allowing post-op to occur on target value.  I.e.
+    // get value of before calculating new value.
+    
+    
+    // Is it a pre- increment or decrement operation?
+    
+    if([parser isNextToken:TOKEN_INCREMENT] ||
+       [parser isNextToken:TOKEN_DECREMENT]) {
+        
+        return [self parseIncrement:parser forIdentifier:atom.spelling];
+        
+    }
+    
+    
+    // Is it an array reference?
     
     if([parser isNextToken:TOKEN_BRACKET_LEFT]) {
         TCSyntaxNode * arrayExpression = [self parseRelations:parser];
@@ -96,6 +189,15 @@
     if([parser isNextToken:TOKEN_ADD]) {
         ; // No action, we skip a spurioius "+"
     }
+    
+    // Look for leading pre-increment or -decrement, which takes us into the
+    // identifier parser.
+    
+    if([parser isNextToken:TOKEN_INCREMENT] ||
+       [parser isNextToken:TOKEN_DECREMENT]) {
+        return [self parseIncrement:parser forIdentifier:nil];
+    }
+    
     
     // Look for leading negation or boolean not which implies monadic operator
     if([parser isNextToken:TOKEN_SUBTRACT] ||
@@ -419,17 +521,32 @@
 
 -(TCSyntaxNode*) parseAssignment:(TCParser *) parser
 {
+    long savedPosition = parser.position;
+    
     TCSyntaxNode * atom = [self parseBoolean:parser];
     if( !atom )
         return nil;
     
     if([parser isNextToken:TOKEN_ASSIGNMENT]) {
-        long position = parser.tokenPosition;
+        
+        // If it was an assignment then we have to back up and fix the parsing
+        // of the LVALUE side.
+        parser.position = savedPosition;
+        TCAssignmentParser * p = [[TCAssignmentParser alloc]init];
+        atom = [p parse:parser];
+        if( !atom || parser.error) {
+            parser.position = savedPosition;
+            return nil;
+        }
 
+        // Now record the location of the assignment RVALUE and parse that.
+        
+        long tokenPosition = parser.tokenPosition;
+        
         TCSyntaxNode * rightSide = [self parseBoolean:parser];
         if( rightSide) {
             TCSyntaxNode *thisRelation = [TCSyntaxNode node:LANGUAGE_ASSIGNMENT];
-            thisRelation.position = position;
+            thisRelation.position = tokenPosition;
             [thisRelation addNode:atom];
             [thisRelation addNode:rightSide];
             return thisRelation;

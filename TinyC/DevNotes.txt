@@ -120,5 +120,8 @@
 
 32. [DONE] Implement BREAK and CONTINUE to affect for() and while() loop execution, using
     non-error signals to unwind nested blocks, etc.
+
+33. [DONE] Support increment and decrement pre- and post-evaluation operators (++, --)
+
         
     
