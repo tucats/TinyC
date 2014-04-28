@@ -42,7 +42,14 @@
     symbol.spelling = name;
     symbol.type = type;
     symbol.size = [TCValue sizeOf:type];
-    symbol.address = [storage allocateAuto:symbol.size];
+    long storageSize = 0;
+    
+    if( type > TCVALUE_POINTER )
+        storageSize = sizeof(char*);
+    else
+        storageSize = symbol.size;
+    
+    symbol.address = [storage allocateAuto:storageSize];
     symbol.allocated = YES;
     [_symbols setObject:symbol forKey:name];
     return symbol;

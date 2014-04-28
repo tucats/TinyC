@@ -18,7 +18,7 @@
 - (TCSyntaxNode*)parseIncrement:(TCParser*) parser forIdentifier:(NSString*) name
 {
     TCSyntaxNode *atom = [TCSyntaxNode node:LANGUAGE_REFERENCE];
-
+    
     // Create a new expression tree with one branch
     // that describes the increment or decrement, and
     // a second that gets the reference value.
@@ -190,6 +190,33 @@
         ; // No action, we skip a spurioius "+"
     }
     
+    // Look for 'char' datum
+    if([parser isNextToken:TOKEN_CHAR]) {
+        TCSyntaxNode * c = [TCSyntaxNode node:LANGUAGE_SCALAR];
+        c.action = TOKEN_INTEGER;
+        
+        if(parser.lastSpelling.length == 1) {
+            int ch = [parser.lastSpelling characterAtIndex:0];
+            c.spelling = [NSString stringWithFormat:@"%d",ch ];
+        }
+        else
+            if([parser.lastSpelling isEqualToString:@"\\n"])
+                c.spelling = [NSString stringWithFormat:@"%d",'\n'];
+            else if([parser.lastSpelling isEqualToString:@"\\t"])
+                c.spelling = [NSString stringWithFormat:@"%d",'\t'];
+            else if([parser.lastSpelling isEqualToString:@"\\'"])
+                c.spelling = [NSString stringWithFormat:@"%d",'\''];
+            else if([parser.lastSpelling isEqualToString:@"\\\""])
+                c.spelling = [NSString stringWithFormat:@"%d",'\"'];
+            else if([parser.lastSpelling isEqualToString:@"\\r"])
+                c.spelling = [NSString stringWithFormat:@"%d",'\r'];
+            else if([parser.lastSpelling isEqualToString:@"\\0"])
+                c.spelling = [NSString stringWithFormat:@"%d",'\0'];
+            else c.spelling = @"<invalid character constant>";
+        return c;
+        
+    }
+    
     // Look for leading pre-increment or -decrement, which takes us into the
     // identifier parser.
     
@@ -253,7 +280,7 @@
     // checking function or array references
     
     if([parser isNextToken:TOKEN_IDENTIFIER]) {
-            return [self parseIdentifier:parser];
+        return [self parseIdentifier:parser];
     }
     
     //  Is this a (subexpression) or a (cast)?  If so, parse the parenthesis
@@ -452,7 +479,7 @@
         TokenType whichRelation = [parser lastTokenType];
         NSString * spelling = [parser lastSpelling];
         long position = parser.tokenPosition;
-
+        
         TCSyntaxNode * rightSide = [self parseRelations:parser];
         if( rightSide) {
             TCSyntaxNode *thisRelation = [TCSyntaxNode node:LANGUAGE_DIADIC];
@@ -502,7 +529,7 @@
         TokenType whichRelation = [parser lastTokenType];
         NSString * spelling = [parser lastSpelling];
         long position = parser.tokenPosition;
-
+        
         TCSyntaxNode * rightSide = [self parseAddSubtract:parser];
         if( rightSide) {
             TCSyntaxNode *thisRelation = [TCSyntaxNode node:LANGUAGE_RELATION];
@@ -538,7 +565,7 @@
             parser.position = savedPosition;
             return nil;
         }
-
+        
         // Now record the location of the assignment RVALUE and parse that.
         
         long tokenPosition = parser.tokenPosition;

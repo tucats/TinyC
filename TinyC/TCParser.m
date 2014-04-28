@@ -447,8 +447,10 @@
             [lastToken setType:TOKEN_INTEGER];
         }
         else
-            // Is it a quoted string?
-            if( ch == '\'' || ch == '"') {
+            // Is it a quoted string? Double quotes mean actual string; single quotes
+            // are converted to an integer value.
+            
+            if(ch == '\'' || ch == '"') {
                 charPos++;
                 r.location++;
                 while( YES ) {
@@ -461,7 +463,14 @@
                     charPos++;
                 }
                 charPos++; /* Skip past the quote character */
-                [lastToken setType:TOKEN_STRING];
+                
+                // If single quotes, convert spelling to a character
+                
+                if(ch=='\'') {
+                    [lastToken setType:TOKEN_CHAR];
+                } else {
+                    [lastToken setType:TOKEN_STRING];
+                }
             }
             else if( isalnum(ch)) {
                 
