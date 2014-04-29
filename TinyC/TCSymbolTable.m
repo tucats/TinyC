@@ -35,7 +35,7 @@
     return symbol;
 }
 
--(TCSymbol*) newSymbol:(NSString *)name ofType:(TCValueType)type storage:(TCStorage*) storage
+-(TCSymbol*) newSymbol:(NSString *)name ofType:(TCValueType)type storage:(TCStorageManager*) storage
 {
     
     TCSymbol *symbol = [[TCSymbol alloc]init];

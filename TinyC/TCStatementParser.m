@@ -6,24 +6,24 @@
 //
 //
 
-#import "TCStatement.h"
+#import "TCStatementParser.h"
 #import "TCDeclarationParser.h"
 #import "TCAssignmentParser.h"
 #import "TCExpressionParser.h"
 #import "TCIfParser.h"
 
-@implementation TCStatement
+@implementation TCStatementParser
 
 /**
  Helper function that doesn't require options - assumes none are given
  */
--(TCSyntaxNode*) parse:(TCParser*)parser;
+-(TCSyntaxNode*) parse:(TCSymtanticParser*)parser;
 {
     return [self parse:parser options:TCSTATEMENT_NONE];
 }
 
 
--(TCSyntaxNode*) parse:(TCParser*)parser options:(TCStatementOptions) options
+-(TCSyntaxNode*) parse:(TCSymtanticParser*)parser options:(TCStatementOptions) options
 {
     TCSyntaxNode * tree = nil;
     
@@ -121,7 +121,7 @@
                 
                 // There are three statement groups separated by ";" characters
                 parser.error = nil;
-                TCStatement * clause = [[TCStatement alloc]init];
+                TCStatementParser * clause = [[TCStatementParser alloc]init];
                 TCSyntaxNode * initClause = nil;
                 TCSyntaxNode * termClause = nil;
                 TCSyntaxNode * incrementClause = nil;
@@ -181,7 +181,7 @@
                 
                 // There is a single term clause and a body to process
                 parser.error = nil;
-                TCStatement * clause = [[TCStatement alloc]init];
+                TCStatementParser * clause = [[TCStatementParser alloc]init];
                 TCSyntaxNode * termClause = nil;
                 TCSyntaxNode * block = nil;
                 

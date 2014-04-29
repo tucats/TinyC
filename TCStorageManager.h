@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "TCValue.h"
 
-@interface TCStorage : NSObject
+@interface TCStorageManager : NSObject
 
 {
     NSMutableArray * _freeList;

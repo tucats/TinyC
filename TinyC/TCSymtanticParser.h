@@ -13,7 +13,7 @@
 #define DEFAULT_FILE_NAME @"LanguageTokens.plist"
 #define VERSION_KEY       @"__version__"
 
-@interface TCParser : NSObject {
+@interface TCSymtanticParser : NSObject {
 	
     NSString *persistantFileName;
 	NSString *buffer;

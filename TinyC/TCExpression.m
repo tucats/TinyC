@@ -9,7 +9,7 @@
 #import "TCExpression.h"
 
 #import "TCToken.h"
-#import "TCParser.h"
+#import "TCSymtanticParser.h"
 #import "TCExpressionInterpreter.h"
 #import "TCExpressionParser.h"
 
@@ -24,7 +24,7 @@
 
 +(TCValue*) evaluateString:(NSString *)string withDebugging:(BOOL) debug error:(TCError**)error
 {
-    TCParser * parser = [[TCParser alloc] initFromDefaultFile:@"LanguageTokens.plist"];
+    TCSymtanticParser * parser = [[TCSymtanticParser alloc] initFromDefaultFile:@"LanguageTokens.plist"];
     
         // Lex the command, and dump it as a diagnostic step.
     [parser lex:string];

@@ -6,10 +6,10 @@
 //  Copyright 2008 SAS Institute Inc. All rights reserved.
 //
 
-#import "TCParser.h"
+#import "TCSymtanticParser.h"
 
 
-@implementation TCParser
+@implementation TCSymtanticParser
 
 #pragma mark - Constructor and Destructor
 

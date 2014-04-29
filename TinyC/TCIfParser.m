@@ -8,13 +8,13 @@
 
 #import "TCIfParser.h"
 #import "TCExpressionParser.h"
-#import "TCStatement.h"
+#import "TCStatementParser.h"
 
 @implementation TCIfParser
 
 
 
--(TCSyntaxNode*) parse:(TCParser *)parser
+-(TCSyntaxNode*) parse:(TCSymtanticParser *)parser
 {
     
     // Is this an IF statement?
@@ -38,7 +38,7 @@
                 parser.error = [[TCError alloc]initWithCode:TCERROR_PARENMISMATCH withArgument:nil];
                 return nil;
             }
-            TCStatement * stmt = [[TCStatement alloc] init];
+            TCStatementParser * stmt = [[TCStatementParser alloc] init];
             
             TCSyntaxNode * condStatement = [stmt parse:parser options:TCSTATEMENT_SUBSTATEMENT];
             if( parser.error != nil ) {

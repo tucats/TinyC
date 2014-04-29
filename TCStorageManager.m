@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Forest Edge. All rights reserved.
 //
 
-#import "TCStorage.h"
+#import "TCStorageManager.h"
 #import "TCValue.h"
 
 const char * typeName( TCValueType t )
@@ -62,7 +62,7 @@ const char * typeName( TCValueType t )
     [name getCString:msgBuffer maxLength:78 encoding:NSUTF8StringEncoding];
     return msgBuffer;
 }
-@implementation TCStorage
+@implementation TCStorageManager
 
 #pragma mark - Initialization
 

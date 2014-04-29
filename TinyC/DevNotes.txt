@@ -123,5 +123,13 @@
 
 33. [DONE] Support increment and decrement pre- and post-evaluation operators (++, --)
 
+34. [DONE] Support character constants like 'a' or '\n' which are converted to SCALAR ints
+
+35. [DONE] Clean up functional naming in the TinyC processor.  For example, the compileFile and
+    compileString do not actually compile; they only read the value and tokenize it.  The
+    execute function similarly does the "compilation" by forming the abstract syntax tree
+    and allocating storage before executing.  These should be more clearly identified as
+    phases that can be done by the caller, with helper functions like runFile and runString.
+
         
     

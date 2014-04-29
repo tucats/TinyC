@@ -8,16 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import "TCSyntaxNode.h"
-#import "TCParser.h"
+#import "TCSymtanticParser.h"
 
 typedef enum {
     TCSTATEMENT_NONE = 0,
     TCSTATEMENT_SUBSTATEMENT = 1
 } TCStatementOptions;
 
-@interface TCStatement : NSObject
+@interface TCStatementParser : NSObject
 
--(TCSyntaxNode*) parse:(TCParser*)parser  options:(TCStatementOptions)options;
--(TCSyntaxNode*) parse:(TCParser*)parser ;
+-(TCSyntaxNode*) parse:(TCSymtanticParser*)parser  options:(TCStatementOptions)options;
+-(TCSyntaxNode*) parse:(TCSymtanticParser*)parser ;
 
 @end

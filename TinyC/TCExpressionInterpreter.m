@@ -8,23 +8,23 @@
 
 #import "TCExpressionInterpreter.h"
 #import "TCToken.h"
-#import "TCParser.h"
+#import "TCSymtanticParser.h"
 #import "TCExpressionParser.h"
 #import "TCSymbolTable.h"
-#import "TCContext.h"
+#import "TCExecutionContext.h"
 #import "NSString+NSStringFormatting.h"
 #import "TCFunction.h"
 
 
 char* typeMap(TCValueType);
 
-extern TCContext* activeContext;
+extern TCExecutionContext* activeContext;
 
 @implementation TCExpressionInterpreter
 
 -(TCValue*) evaluateString:(NSString *)string
 {
-    TCParser * parser = [[TCParser alloc] initFromDefaultFile:@"LanguageTokens.plist"];
+    TCSymtanticParser * parser = [[TCSymtanticParser alloc] initFromDefaultFile:@"LanguageTokens.plist"];
     
     // Lex the command text
     [parser lex:string];
@@ -415,8 +415,8 @@ extern TCContext* activeContext;
             NSLog(@"EXPRESS: Found entry point at %@, creating new frame", entry);
         
         
-        TCContext * savedContext = activeContext;
-        TCContext * newContext = [[TCContext alloc]initWithStorage:self.storage];
+        TCExecutionContext * savedContext = activeContext;
+        TCExecutionContext * newContext = [[TCExecutionContext alloc]initWithStorage:self.storage];
         newContext.debug = activeContext.debug;
         
         activeContext = newContext;

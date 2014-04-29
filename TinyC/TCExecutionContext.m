@@ -6,7 +6,7 @@
 //
 //
 
-#import "TCContext.h"
+#import "TCExecutionContext.h"
 #import "TCSyntaxNode.h"
 #import "TCSymbolTable.h"
 #import "TCError.h"
@@ -16,7 +16,7 @@
 #import "TCFunction.h"
 
 
-TCContext* activeContext;
+TCExecutionContext* activeContext;
 
 #pragma mark - Utilities
 
@@ -112,11 +112,11 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     return [value castTo:newType];
 }
 
-@implementation TCContext
+@implementation TCExecutionContext
 
 #pragma mark - Initialization
 
--(instancetype)initWithStorage:(TCStorage*) storage
+-(instancetype)initWithStorage:(TCStorageManager*) storage
 {
     if(( self = [super init])) {
         _storage = storage;

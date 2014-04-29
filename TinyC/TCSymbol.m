@@ -7,7 +7,7 @@
 //
 
 #import "TCSymbol.h"
-#import "TCStorage.h"
+#import "TCStorageManager.h"
 
 @implementation TCSymbol
 
@@ -36,7 +36,7 @@
     return self;
 }
 
--(void) setValue:(TCValue*)value storage:(TCStorage*) storage
+-(void) setValue:(TCValue*)value storage:(TCStorageManager*) storage
 {
     _initialValue = value;
     if( _allocated )

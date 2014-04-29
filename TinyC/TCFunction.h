@@ -8,12 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "TCValue.h"
-#import "TCStorage.h"
+#import "TCStorageManager.h"
 #import "TCError.h"
 
 @interface TCFunction : NSObject
 
-@property TCStorage *storage;
+@property TCStorageManager *storage;
 @property TCError *error;
 
 -(TCValue*) execute:(NSArray*) arguments;

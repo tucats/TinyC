@@ -7,14 +7,14 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TCParser.h"
+#import "TCSymtanticParser.h"
 #import "TCSyntaxNode.h"
 
 @interface TCAssignmentParser : NSObject
 
 @property BOOL debug;
 
--(TCSyntaxNode * ) parse: (TCParser*) parser;
+-(TCSyntaxNode * ) parse: (TCSymtanticParser*) parser;
 
 
 @end

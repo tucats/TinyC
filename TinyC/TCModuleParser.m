@@ -7,18 +7,18 @@
 //
 
 #import "TCModuleParser.h"
-#import "TCStatement.h"
+#import "TCStatementParser.h"
 #import "TCTypeParser.h"
 #import "TCDeclarationParser.h"
 
 @implementation TCModuleParser
--(TCSyntaxNode*) parse:(TCParser *)parser
+-(TCSyntaxNode*) parse:(TCSymtanticParser *)parser
 {
     return [self parse:parser name:@"__ANONYMOUS__"];
 }
 
 
--(TCSyntaxNode*) parse:(TCParser *)parser name:(NSString*) name
+-(TCSyntaxNode*) parse:(TCSymtanticParser *)parser name:(NSString*) name
 {
     
     TCSyntaxNode * module = [TCSyntaxNode node:LANGUAGE_MODULE];
@@ -94,7 +94,7 @@
             
             // Now, need body of function
             
-            TCStatement * block = [[TCStatement alloc]init];
+            TCStatementParser * block = [[TCStatementParser alloc]init];
             
             TCSyntaxNode * blockTree = [block parse:parser];
             if( !blockTree || parser.error) {

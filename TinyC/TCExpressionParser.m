@@ -15,7 +15,7 @@
 
 @implementation TCExpressionParser
 
-- (TCSyntaxNode*)parseIncrement:(TCParser*) parser forIdentifier:(NSString*) name
+- (TCSyntaxNode*)parseIncrement:(TCSymtanticParser*) parser forIdentifier:(NSString*) name
 {
     TCSyntaxNode *atom = [TCSyntaxNode node:LANGUAGE_REFERENCE];
     
@@ -88,7 +88,7 @@
 }
 
 
-- (TCSyntaxNode*)parseIdentifier:(TCParser *)parser
+- (TCSyntaxNode*)parseIdentifier:(TCSymtanticParser *)parser
 {
     TCSyntaxNode *atom = [TCSyntaxNode node:LANGUAGE_REFERENCE];
     atom.spelling = [parser lastSpelling];
@@ -184,7 +184,7 @@
  @return a node (or tree) representing the atom or subexpression.
  */
 
--(TCSyntaxNode*) parseAtom:(TCParser*) parser
+-(TCSyntaxNode*) parseAtom:(TCSymtanticParser*) parser
 {
     if([parser isNextToken:TOKEN_ADD]) {
         ; // No action, we skip a spurioius "+"
@@ -383,7 +383,7 @@
  the diadic operator, or a node representing the subordinate expression
  component.
  */
--(TCSyntaxNode*) parseMultiplyDivide:(TCParser*) parser
+-(TCSyntaxNode*) parseMultiplyDivide:(TCSymtanticParser*) parser
 {
     
     
@@ -427,7 +427,7 @@
  component.
  */
 
--(TCSyntaxNode*) parseAddSubtract:(TCParser*) parser
+-(TCSyntaxNode*) parseAddSubtract:(TCSymtanticParser*) parser
 {
     TCSyntaxNode * atom = [self parseMultiplyDivide:parser];
     if( !atom )
@@ -468,7 +468,7 @@
  component.
  */
 
--(TCSyntaxNode*) parseBoolean:(TCParser* ) parser
+-(TCSyntaxNode*) parseBoolean:(TCSymtanticParser* ) parser
 {
     TCSyntaxNode * atom = [self parseRelations:parser];
     if( !atom )
@@ -514,7 +514,7 @@
  */
 
 
--(TCSyntaxNode*) parseRelations:(TCParser *) parser
+-(TCSyntaxNode*) parseRelations:(TCSymtanticParser *) parser
 {
     TCSyntaxNode * atom = [self parseAddSubtract:parser];
     if( !atom )
@@ -546,7 +546,7 @@
 
 
 
--(TCSyntaxNode*) parseAssignment:(TCParser *) parser
+-(TCSyntaxNode*) parseAssignment:(TCSymtanticParser *) parser
 {
     long savedPosition = parser.position;
     
@@ -587,7 +587,7 @@
  as the method result.  Returns nil if no expression was found.
  */
 
--(TCSyntaxNode*) parse:(TCParser *)parser
+-(TCSyntaxNode*) parse:(TCSymtanticParser *)parser
 {
     
     long startingLocation = [parser position];

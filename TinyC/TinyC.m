@@ -4,12 +4,21 @@
 //
 //  Created by Tom Cole on 4/8/14.
 //
+//  MAIN CLASS
 //
+//  This class defines the generalized object for TinyC.  It allows the caller
+//  to specify a file or string containing a TinyC program, and comiple it for
+//  execution.  The compilation is maintained as a property of the TinyC object;
+//  there should be one instance for each module compiled.
+//
+//  Once compiled, the object can be executed repeatedly by calling the appropriate
+//  method.
+
 
 #import "TinyC.h"
 #import "TCValue.h"
-#import "TCParser.h"
-#import "TCContext.h"
+#import "TCSymtanticParser.h"
+#import "TCExecutionContext.h"
 #import "TCModuleParser.h"
 
 BOOL assertAbort = NO;
@@ -19,25 +28,88 @@ BOOL assertAbort = NO;
 -(TCError*) compileFile:(NSString *)path
 {
     NSError * error;
-
+    
+    // Build a string that contains the contents of the file in memory.  If an error occurs, wrap
+    // it in a TCError value and return it.
     NSString * source = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
     if( error != nil) {
-        //printf("File error %s\n", [[error localizedDescription] UTF8String]);
         return [[TCError alloc]initWithCode:TCERROR_FATAL withArgument:[error localizedDescription]];
     }
     
+    // Successfully read; formulate the module name by using the last component of the path name
+    // with any extension removed.  So /Users/tom/Projects/TinyC/simple.c becomes module "simple".
     _moduleName = [[path lastPathComponent] stringByDeletingPathExtension];
-    return [self compileString:source];
+    
+    // Now compile the string and capture the appropriate return code, or nil if no errors
+    // occurred.
+    TCError * compileError = [self compileString:source];
+    
+    // Compilation done; formulate the module name by using the last component of the path name
+    // with any extension removed.  So /Users/tom/Projects/TinyC/simple.c becomes module "simple".
+    // This must be done after the compileString call since it initializes the module name to
+    // be "__STRING__"
+    _moduleName = [[path lastPathComponent] stringByDeletingPathExtension];
+    
+    
+    return compileError;
 }
 
 -(TCError*) compileString:(NSString *)source
 {
+    TCError *error;
     
-    parser = [[TCParser alloc]init];
+    parser = [[TCSymtanticParser alloc]init];
     [parser lex:source];
     if( self.debugTokens)
         [parser dump];
     _moduleName = @"__STRING__";
+    
+    TCModuleParser* module = [[TCModuleParser alloc]init];
+    TCSyntaxNode * tree = [module parse:parser name:_moduleName];
+    error = parser.error;
+    
+    // If the parse resulted in an error, bail out.
+    if( error != nil) {
+        return error;
+    }
+    
+    
+    // If requested by the user, dump the tree now.
+    
+    if( self.debugParse ) {
+        [tree dumpTree];
+    }
+    
+    // Allocate the storage manager we will use.
+    
+    if( _memorySize == 0 )
+        _memorySize = 65536;
+    
+    self.storage = [[TCStorageManager alloc]initWithStorage:_memorySize];
+    self.storage.debug = self.debugStorage;
+    
+    // Create execution context and check to see if there are
+    // unresolved symbols
+    
+    context = [[TCExecutionContext alloc]initWithStorage:self.storage];
+    context.debug = self.debugTrace;
+    context.module = tree;
+    if([context hasUnresolvedNames:tree]) {
+        return context.error;
+    }
+    
+    // Now that we have storage and the tree is free of obvious
+    // errors, search for string scalar values
+    // that really need to be char* pointing to static storage.
+    // Always start with an empty dictionary. After the allocation
+    // we no longer need the dictionary and can free it up...
+    
+    _stringPool = [NSMutableDictionary dictionary];
+    [self allocateScalarStrings:tree storage: self.storage];
+    _stringPool = nil;
+    
+    _result = nil;
+    
     return parser.error;
 }
 
@@ -45,7 +117,7 @@ BOOL assertAbort = NO;
 {
     TCError * error = [self execute];
     if( result != nil )
-        *result = functionResult;
+        *result = _result;
     
     return error;
     
@@ -54,71 +126,27 @@ BOOL assertAbort = NO;
 
 -(TCError* ) execute
 {
-    TCError * error;
-    TCModuleParser* module = [[TCModuleParser alloc]init];
-    TCSyntaxNode * tree = [module parse:parser name:_moduleName];
-    error = parser.error;
     
-    functionResult = nil;
-    if( error != nil) {
-        return error;
-    }
-    else {
- 
-        // If requested by the user, dump the tree now.
-        
-        if( self.debugParse ) {
-            [tree dumpTree];
-        }
-  
-        // Allocate the storage manager we will use.
-        
-        if( _memorySize == 0 )
-            _memorySize = 65536;
-        
-        TCStorage * storage = [[TCStorage alloc]initWithStorage:_memorySize];
-        storage.debug = self.debugStorage;
-        
-        // Create execution context and check to see if there are
-        // unresolved symbols
-        
-        TCContext * execution = [[TCContext alloc]initWithStorage:storage];
-        execution.debug = self.debugTrace;
-        [execution module:tree];
-        if([execution hasUnresolvedNames:tree]) {
-            return execution.error;
-        }
-        
-        // Now that we have storage and the tree is free of obvious
-        // errors, search for string scalar values
-        // that really need to be char* pointing to static storage.
-        // Always start with an empty dictionary. After the allocation
-        // we no longer need the dictionary and can free it up...
-        
-        _stringPool = [NSMutableDictionary dictionary];
-        [self allocateScalarStrings:tree storage: storage];
-        _stringPool = nil;
-        
-        // Looks good, execute the symantic tree.
-        
-        functionResult = [execution execute:tree
-                                 entryPoint:@"main"
-                              withArguments:@[ [[TCValue alloc]initWithInt:10] ]];
-        
-        // After we're done, do we need to dump out memory usage stats?
-        
-        if( debugFlags & TCDebugMemory) {
-            NSLog(@"MEMORY: total runtime memory (in bytes):       %8ld", storage.size);
-            NSLog(@"MEMORY: Maximum active automatic stack frames: %8d", storage.frameCount);
-            NSLog(@"MEMORY: Maximum automatic storage allocated:   %8ld", storage.autoMark);
-            NSLog(@"MEMORY: Maximum dynamic   storage allocated:   %8ld", storage.dynamicMark);
-            NSLog(@"MEMORY: Unused runtime memory:                 %8ld",
-                  storage.size - (storage.autoMark + storage.dynamicMark + 8));
-        }
-        return [execution error];
+    // Execute the symantic tree.
+    
+    _result = [context execute:context.module
+                             entryPoint:@"main"
+                          withArguments:@[ [[TCValue alloc]initWithInt:10] ]];
+    
+    // After we're done, do we need to dump out memory usage stats?
+    
+    if( debugFlags & TCDebugMemory) {
+        NSLog(@"MEMORY: total runtime memory (in bytes):       %8ld", _storage.size);
+        NSLog(@"MEMORY: Maximum active automatic stack frames: %8d",  _storage.frameCount);
+        NSLog(@"MEMORY: Maximum automatic storage allocated:   %8ld", _storage.autoMark);
+        NSLog(@"MEMORY: Maximum dynamic   storage allocated:   %8ld", _storage.dynamicMark);
+        NSLog(@"MEMORY: Unused runtime memory:                 %8ld",
+              _storage.size - (_storage.autoMark + _storage.dynamicMark + 8));
     }
 
+    return [context error];
 }
+
 
 /**
  Search a parse tree (recursively as needed) and locate any SCALAR string loads.
@@ -128,7 +156,7 @@ BOOL assertAbort = NO;
  @return count of nodes were found that need replacing
  */
 
--(long) allocateScalarStrings:(TCSyntaxNode *)tree storage:(TCStorage *)storage
+-(long) allocateScalarStrings:(TCSyntaxNode *)tree storage:(TCStorageManager *)storage
 {
     long count = 0;
     
@@ -147,7 +175,7 @@ BOOL assertAbort = NO;
         } else {
             // Allocate new space for the string
             base = [storage allocUnpadded:stringLength];
-  
+            
             // Copy it to the memory area.
             
             const char * data = [tree.spelling cStringUsingEncoding:NSUTF8StringEncoding];

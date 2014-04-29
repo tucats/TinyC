@@ -8,10 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import "TCSyntaxNode.h"
-#import "TCParser.h"
+#import "TCSymtanticParser.h"
 
 @interface TCTypeParser : NSObject
 
--(TCSyntaxNode*) parse:(TCParser*)parser;
+-(TCSyntaxNode*) parse:(TCSymtanticParser*)parser;
 
 @end

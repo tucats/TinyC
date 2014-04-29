@@ -11,7 +11,7 @@
 
 @implementation TCAssignmentParser
 
--(TCSyntaxNode*) parseLValue:(TCParser*)parser
+-(TCSyntaxNode*) parseLValue:(TCSymtanticParser*)parser
 {
 
     // Right now all we know about is simple identifiers
@@ -49,7 +49,7 @@
 }
 
 
--(TCSyntaxNode*) parse:(TCParser *)parser
+-(TCSyntaxNode*) parse:(TCSymtanticParser *)parser
 {
     TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_ASSIGNMENT];
     stmt.position = parser.tokenPosition;

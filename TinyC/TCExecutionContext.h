@@ -11,22 +11,22 @@
 #import "TCError.h"
 #import "TCValue.h"
 #import "TCSymbolTable.h"
-#import "TCStorage.h"
+#import "TCStorageManager.h"
 #import "TCFunction.h"
 
 int typeSize(int t );
 
-@interface TCContext : NSObject
+@interface TCExecutionContext : NSObject
 
 {
-    TCStorage* _storage;
+    TCStorageManager* _storage;
 }
 
 @property TCSyntaxNode * module;
 @property TCSyntaxNode *block;
 @property int blockPosition;
 @property TCSymbolTable * symbols;
-@property TCContext * parent;
+@property TCExecutionContext * parent;
 @property TCError * error;
 @property BOOL debug;
 @property NSArray * arguments;
@@ -35,7 +35,7 @@ int typeSize(int t );
 @property NSMutableArray * importedArguments;
 
 
--(instancetype) initWithStorage:(TCStorage*) storage;
+-(instancetype) initWithStorage:(TCStorageManager*) storage;
 -(TCValue*) execute:(TCSyntaxNode*) tree withSymbols:(TCSymbolTable *) symbols;
 -(TCValue*) execute:(TCSyntaxNode*) tree;
 -(TCValue *) execute:(TCSyntaxNode *)tree entryPoint:(NSString*) entryName;

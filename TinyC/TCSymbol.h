@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "TCValue.h"
-#import "TCStorage.h"
+#import "TCStorageManager.h"
 
 
 @interface TCSymbol : NSObject
@@ -21,7 +21,7 @@
 @property int scope;
 @property long address;
 
--(void) setValue:(TCValue*)value storage:(TCStorage*) storage;
+-(void) setValue:(TCValue*)value storage:(TCStorageManager*) storage;
 
 
 @end

@@ -9,7 +9,7 @@
 #import "TCDeclarationParser.h"
 #import "TCExpressionParser.h"
 #import "TCExpressionInterpreter.h"
-#import "TCStatement.h"
+#import "TCStatementParser.h"
 #import "TCToken.h"
 #import "TCTypeParser.h"
 #import "TCSyntaxNode.h"
@@ -40,7 +40,7 @@ TCValueType tokenToType( TokenType tok )
 
 @implementation TCDeclarationParser
 
--(TCSyntaxNode*) parse:(TCParser *)parser
+-(TCSyntaxNode*) parse:(TCSymtanticParser *)parser
 {
     TCSyntaxNode * decl = nil;
     parser.error = nil;

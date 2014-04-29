@@ -12,7 +12,7 @@
 
 @implementation TCTypeParser
 
--(TCSyntaxNode*) parse:(TCParser*)parser
+-(TCSyntaxNode*) parse:(TCSymtanticParser*)parser
 {
     TCSyntaxNode * decl = nil;
     long savedPosition = parser.position;

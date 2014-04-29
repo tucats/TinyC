@@ -121,11 +121,18 @@ int main(int argc, const char * argv[])
             printf("No source given, using test code\n");
             df = TCDebugParse | TCDebugTrace | TCDebugStorage;
         }
+        
+        // End of options processing, let's do the work.
+        //
+        // 1. Allocate a TinyC instance to handle the work, and initialize it's storage and options.
+        
         TCError * error = nil;
         TinyC * tinyC = [[TinyC alloc]init];
         [tinyC setDebug: df];
         tinyC.memorySize = memory;
         tinyC.sigAbort = sigAbort;
+        
+        // 2. If we have a file, compile that, else compile the string we captured.
         
         if( path == nil )
             error = [tinyC compileString:program];
@@ -137,15 +144,22 @@ int main(int argc, const char * argv[])
             return 1;
         }
         
-        TCValue * result = nil;
-        error = [tinyC executeReturningValue:&result];
+        // 3. Run the program, and capture the return code.  If there was a runtime
+        //    error, then report it.
+        
+        error = [tinyC execute];
         
         if( error != nil ) {
             printf("%s\n", [[error description] UTF8String]);
             return 2;
         }
         
-        printf("Program returns %s\n", [[result description] UTF8String]);
+        // 4. Get the program result (it's actual C-language return) and print
+        //    that out as well.  We use the description method so we don't care
+        //    if the result is numeric or string or whatever; it will be printed
+        //    as a string.
+        
+        printf("Program returns %s\n", [[tinyC.result description] UTF8String]);
         return 0;
     }
     return 0;
