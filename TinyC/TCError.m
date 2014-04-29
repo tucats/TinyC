@@ -68,7 +68,7 @@
         case TCERROR_EXP_EXPRESSION:
             return @"Expected expression not found";
         case TCERROR_INV_LVALUE:
-            return @"Invalid LVALUE address";
+            return @"Invalid LVALUE address %@";
         case TCERROR_BRACEMISMATCH:
             return @"Mismatched {} braces";
         case TCERROR_BRACKETMISMATCH:

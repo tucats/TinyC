@@ -418,13 +418,12 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             // that includes the POINTER designation.
             
             TCValueType targetType = targetAddress.getType;
-            if( targetType <= TCVALUE_POINTER) {
-                _error = [[TCError alloc]initWithCode:TCERROR_INV_LVALUE withArgument:nil];
-                return nil;
+            TCValueType actualType = targetType;
+
+            if( targetType > TCVALUE_POINTER) {
+                actualType = targetType - TCVALUE_POINTER;
             }
-            
-            TCValueType actualType = targetType - TCVALUE_POINTER;
-            
+                        
             value = [value castTo:actualType];
             [_storage setValue:value at:targetAddress.getLong];
             result = value;

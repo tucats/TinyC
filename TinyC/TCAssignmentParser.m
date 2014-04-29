@@ -18,6 +18,12 @@
     
     long savedPosition = parser.position;
     
+    // Is there a dereference prefix?
+    
+    BOOL dereference = NO;
+    if([parser isNextToken:TOKEN_ASTERISK])
+        dereference = YES;
+    
     if( [parser isNextToken:TOKEN_IDENTIFIER]) {
         TCSyntaxNode * lvalue = [TCSyntaxNode node:LANGUAGE_ADDRESS];
         lvalue.spelling = [parser lastSpelling];
@@ -39,6 +45,13 @@
             }
             lvalue.nodeType = LANGUAGE_ARRAY;
             lvalue.subNodes = [NSMutableArray arrayWithArray:@[arrayExpression]];
+        }
+        
+        // Was it a pointer dereference?
+        if(dereference) {
+            TCSyntaxNode * deref = [TCSyntaxNode node:LANGUAGE_DEREFERENCE];
+            deref.subNodes = [NSMutableArray arrayWithArray:@[lvalue]];
+            return deref;
         }
         return lvalue;
     }
