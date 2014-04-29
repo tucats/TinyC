@@ -12,11 +12,13 @@
 #import "TCError.h"
 #import "TCSymbolTable.h"
 #import "TCStorageManager.h"
+#import "TCExecutionContext.h"
 
 @interface TCExpressionInterpreter : NSObject
 @property BOOL debug;
 @property TCError* error;
 @property TCStorageManager *storage;
+@property TCExecutionContext *context;
 
 -(TCValue *) evaluate:(TCSyntaxNode* ) node withSymbols:(TCSymbolTable*) symbols;
 -(TCValue *) evaluateString:(NSString*) string;

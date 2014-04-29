@@ -21,8 +21,6 @@
 #import "TCExecutionContext.h"
 #import "TCModuleParser.h"
 
-BOOL assertAbort = NO;
-
 @implementation TinyC
 
 -(TCError*) compileFile:(NSString *)path
@@ -127,6 +125,11 @@ BOOL assertAbort = NO;
 -(TCError* ) execute
 {
     
+    // Make sure the flag indicating if asserts are fatal in this execution
+    // is copied into the execution context.  We do this now since it could
+    // have been (re)set by the caller after compilation but before execution.
+    context.assertAbort = (BOOL) (flags & TCFatalAsserts);
+    
     // Execute the symantic tree.
     
     _result = [context execute:context.module
@@ -135,7 +138,7 @@ BOOL assertAbort = NO;
     
     // After we're done, do we need to dump out memory usage stats?
     
-    if( debugFlags & TCDebugMemory) {
+    if( flags & TCDebugMemory) {
         NSLog(@"MEMORY: total runtime memory (in bytes):       %8ld", _storage.size);
         NSLog(@"MEMORY: Maximum active automatic stack frames: %8d",  _storage.frameCount);
         NSLog(@"MEMORY: Maximum automatic storage allocated:   %8ld", _storage.autoMark);
@@ -192,7 +195,7 @@ BOOL assertAbort = NO;
         
         tree.action = TCVALUE_CHAR + TCVALUE_POINTER;
         tree.argument = [NSNumber numberWithLong:base];
-        if(debugFlags & TCDebugStorage) {
+        if(flags & TCDebugStorage) {
             
             NSLog(@"STORAGE: %@ %ld byte string constant \"%@\" @ %@",
                   inPool ? @"re-used pooled" : @"copied",
@@ -211,31 +214,27 @@ BOOL assertAbort = NO;
 
 -(BOOL) debugParse
 {
-    return (debugFlags & TCDebugParse) ? YES: NO;
+    return (flags & TCDebugParse) ? YES: NO;
 }
 
 -(BOOL) debugTokens
 {
-    return (debugFlags & TCDebugTokens)? YES : NO;
+    return (flags & TCDebugTokens)? YES : NO;
 }
 
 -(BOOL) debugTrace
 {
-    return (debugFlags & TCDebugTrace)? YES : NO;
+    return (flags & TCDebugTrace)? YES : NO;
 }
 
 -(BOOL) debugStorage
 {
-    return (debugFlags & TCDebugStorage)? YES : NO;
+    return (flags & TCDebugStorage)? YES : NO;
 }
 
--(void) setDebug:(TCDebugFlag)debugFlag
+-(void) setDebug:(TCFlag)debugFlag
 {
-    debugFlags = debugFlag;
+    flags = debugFlag;
 }
 
--(void) setSigAbort:(BOOL)flag
-{
-    assertAbort = flag;
-}
 @end

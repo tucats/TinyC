@@ -10,7 +10,7 @@
 
 @implementation TCFunction
 
--(TCValue*) execute:(NSArray*) arguments
+-(TCValue*) execute:(NSArray*) arguments inContext:(TCExecutionContext*) context
 {
     NSLog(@"FATAL - attempt to execute abstract function");
     return nil;

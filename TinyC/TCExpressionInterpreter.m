@@ -93,6 +93,8 @@ extern TCExecutionContext* activeContext;
             TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
             expInt.storage = _storage;
             expInt.debug = _debug;
+            expInt.context = _context;
+            
             TCValue * address = [expInt evaluate:node.subNodes[0] withSymbols:symbols];
             if( address == nil ) {
                 _error = expInt.error;
@@ -459,7 +461,7 @@ extern TCExecutionContext* activeContext;
         if(_debug)
             NSLog(@"EXPRESS: dynamic execution of \"%@\" function", name);
         f.storage = _storage;
-        TCValue * result = [f execute:arguments];
+        TCValue * result = [f execute:arguments inContext:_context];
         _error = f.error;
         return result;
     }

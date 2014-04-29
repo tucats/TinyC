@@ -18,11 +18,10 @@ int main(int argc, const char * argv[])
         
         NSString * program = nil;
         NSString * path = nil;
-        BOOL sigAbort = NO;
         
         long memory = 65536L;
         
-        TCDebugFlag df = TCDebugNone;
+        TCFlag df = TCDebugNone;
         
         for( int ax = 1; ax < argc; ax++ ) {
             if( strncmp(argv[ax], "-d", 2) == 0 ) {
@@ -57,7 +56,7 @@ int main(int argc, const char * argv[])
                 continue;
             }
             if( strcmp(argv[ax], "-a") == 0) {
-                sigAbort = YES;
+                df |= TCFatalAsserts;
                 continue;
             }
             
@@ -130,7 +129,6 @@ int main(int argc, const char * argv[])
         TinyC * tinyC = [[TinyC alloc]init];
         [tinyC setDebug: df];
         tinyC.memorySize = memory;
-        tinyC.sigAbort = sigAbort;
         
         // 2. If we have a file, compile that, else compile the string we captured.
         

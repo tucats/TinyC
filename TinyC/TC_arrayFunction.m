@@ -11,7 +11,7 @@
 
 @implementation TC_arrayFunction
 
--(TCValue*) execute:(NSArray *)arguments
+-(TCValue*) execute:(NSArray *)arguments inContext:(TCExecutionContext*) context
 {
     
     // There must be two arguments

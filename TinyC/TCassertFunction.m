@@ -7,20 +7,19 @@
 //
 
 #import "TCassertFunction.h"
+#import "TCExecutionContext.h"
 
 @implementation TCassertFunction
 
-extern BOOL assertAbort;
-
--(TCValue*) execute:(NSArray *)arguments
+-(TCValue*) execute:(NSArray *)arguments inContext:(TCExecutionContext*) context
 {
-    
+        
     if( arguments.count != 2 ) {
         self.error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
         return nil;
     }
     
-    if( !assertAbort )
+    if(!context.assertAbort)
         return [[TCValue alloc]initWithInt:0];
 
     TCValue * sizeArg = arguments[0];
@@ -29,7 +28,7 @@ extern BOOL assertAbort;
     if( test )
         return [[TCValue alloc]initWithInt:0];
     
-    if( !assertAbort )
+    if( !context.assertAbort )
         return [[TCValue alloc]initWithInt:1];
 
     TCValue * msg = arguments[1];

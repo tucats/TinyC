@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "TCValue.h"
 #import "TCStorageManager.h"
+#import "TCExecutionContext.h"
 #import "TCError.h"
 
 @interface TCFunction : NSObject
@@ -16,6 +17,6 @@
 @property TCStorageManager *storage;
 @property TCError *error;
 
--(TCValue*) execute:(NSArray*) arguments;
+-(TCValue*) execute:(NSArray*) arguments inContext:(TCExecutionContext*) context;
 
 @end

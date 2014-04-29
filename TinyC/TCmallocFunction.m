@@ -10,7 +10,7 @@
 
 @implementation TCmallocFunction
 
--(TCValue*) execute:(NSArray *)arguments
+-(TCValue*) execute:(NSArray *)arguments inContext:(TCExecutionContext*) context
 {
     
         if( arguments.count != 1 ) {

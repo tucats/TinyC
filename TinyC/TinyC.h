@@ -42,9 +42,12 @@ typedef enum {
     TCDebugStorage = 8,
     
     /** Produce a summary report at the end of execution of memory usage */
-    TCDebugMemory = 16
+    TCDebugMemory = 16,
     
-} TCDebugFlag;
+    /** Are calls to _assert that fail considered fatal, or ignored? */
+    TCFatalAsserts = 32
+    
+} TCFlag;
 
 
 @class TCSymtanticParser;
@@ -66,7 +69,7 @@ typedef enum {
     /** The debug flag(s) in effect for this object.  This may be
         the sum of one or more of the TCDebugFlag values.
      */
-    TCDebugFlag debugFlags;
+    TCFlag flags;
     
     /** This is the context used to execute this program code. */
     TCExecutionContext * context;
@@ -151,7 +154,7 @@ typedef enum {
   @param debugFlag a summation of the
   desired TCDebugFlag values.
  */
--(void) setDebug:(TCDebugFlag) debugFlag;
+-(void) setDebug:(TCFlag) debugFlag;
 
 /** Accessor function to determine if the TCDebugTokens flag is set */
 -(BOOL) debugTokens;
@@ -165,6 +168,5 @@ typedef enum {
 /** Accessor function to determine if the TCDebugStorage flag is set */
 -(BOOL) debugStorage;
 
--(void) setSigAbort:(BOOL) flag;
 
 @end

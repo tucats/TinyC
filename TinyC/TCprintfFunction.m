@@ -11,7 +11,7 @@
 
 @implementation TCprintfFunction
 
--(TCValue*) execute:(NSArray *)arguments
+-(TCValue*) execute:(NSArray *)arguments inContext:(TCExecutionContext*) context
 {
     
     // Simplest case, no arguments and we have no work.

@@ -209,6 +209,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
             expInt.storage = _storage;
             expInt.debug = _debug;
+            expInt.context = self;
             
             return [expInt evaluate:tree withSymbols:_symbols];
         }
@@ -221,6 +222,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
             expInt.storage = _storage;
             expInt.debug = _debug;
+            expInt.context = self;
+
             TCValue * address = [expInt evaluate:tree.subNodes[0] withSymbols:_symbols];
             if( address == nil ) {
                 _error = expInt.error;
@@ -276,6 +279,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
             expInt.debug = _debug;
             expInt.storage = _storage;
+            expInt.context = self;
+
             
             result = [expInt evaluate:tree withSymbols:_symbols];
             if(expInt.error) {
@@ -401,7 +406,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCExpressionInterpreter *expInt = [[TCExpressionInterpreter alloc]init];
             expInt.debug = _debug;
             expInt.storage = _storage;
-            
+            expInt.context = self;
+
             TCValue * value = [expInt evaluate:exp withSymbols:_symbols];
             if( expInt.error) {
                 _error = expInt.error;
@@ -434,7 +440,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
             expInt.debug = _debug;
             expInt.storage = _storage;
-            
+            expInt.context = self;
+
             TCValue * condValue = [expInt evaluate:condition withSymbols:_symbols];
             if( condValue.getLong ) {
                 if(_debug)
@@ -456,7 +463,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
             expInt.debug = _debug;
             expInt.storage = _storage;
-            
+            expInt.context = self;
+
             result = [expInt evaluate:tree.subNodes[0] withSymbols:_symbols];
             if( expInt.error) {
                 _error = expInt.error;
@@ -506,7 +514,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                     TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
                     expInt.debug = _debug;
                     expInt.storage = _storage;
-                    
+                    expInt.context = self;
+
                     TCValue * initValue = [expInt evaluate:initializer withSymbols:_symbols];
                     if(expInt.error) {
                         _error = expInt.error;

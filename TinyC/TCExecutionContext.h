@@ -12,7 +12,8 @@
 #import "TCValue.h"
 #import "TCSymbolTable.h"
 #import "TCStorageManager.h"
-#import "TCFunction.h"
+
+@class TCFunction;
 
 int typeSize(int t );
 
@@ -33,7 +34,7 @@ int typeSize(int t );
 @property TCSyntaxNode *returnInfo;
 @property TCSymbol * lastSymbol;
 @property NSMutableArray * importedArguments;
-
+@property BOOL assertAbort;
 
 -(instancetype) initWithStorage:(TCStorageManager*) storage;
 -(TCValue*) execute:(TCSyntaxNode*) tree withSymbols:(TCSymbolTable *) symbols;
