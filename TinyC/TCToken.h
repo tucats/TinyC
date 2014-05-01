@@ -58,6 +58,7 @@ typedef  enum TOKEN_TYPE {
     TOKEN_CONTINUE,
     TOKEN_INCREMENT,
     TOKEN_DECREMENT,
+    TOKEN_PERCENT,
     TOKEN__MAXVALUE
 } TokenType;
 

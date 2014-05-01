@@ -40,19 +40,12 @@
     
     // Now compile the string and capture the appropriate return code, or nil if no errors
     // occurred.
-    TCError * compileError = [self compileString:source];
-    
-    // Compilation done; formulate the module name by using the last component of the path name
-    // with any extension removed.  So /Users/tom/Projects/TinyC/simple.c becomes module "simple".
-    // This must be done after the compileString call since it initializes the module name to
-    // be "__STRING__"
-    _moduleName = [[path lastPathComponent] stringByDeletingPathExtension];
-    
+    TCError * compileError = [self compileString:source module:_moduleName];
     
     return compileError;
 }
 
--(TCError*) compileString:(NSString *)source
+-(TCError*) compileString:(NSString *)source module:(NSString*) moduleName
 {
     TCError *error;
     
@@ -60,7 +53,10 @@
     [parser lex:source];
     if( self.debugTokens)
         [parser dump];
-    _moduleName = @"__STRING__";
+    if(moduleName != nil)
+        _moduleName = moduleName;
+    else
+        _moduleName = @"__STRING__";
     
     TCModuleParser* module = [[TCModuleParser alloc]init];
     TCSyntaxNode * tree = [module parse:parser name:_moduleName];
@@ -124,17 +120,52 @@
 
 -(TCError* ) execute
 {
+    // Initialize the random number generator state unless the flag is
+    // set to use deterministic random numbers
+    
+    if( flags & TCNonRandomNumbers)
+        srandom(0);
+    else
+        srandomdev();
     
     // Make sure the flag indicating if asserts are fatal in this execution
     // is copied into the execution context.  We do this now since it could
     // have been (re)set by the caller after compilation but before execution.
     context.assertAbort = (BOOL) (flags & TCFatalAsserts);
     
+    // Copy the argument list to runtime memory
+    
+    int argc = 0;
+    long argv = 0L;
+    
+    if( _arguments != nil) {
+        argc = (int) _arguments.count;
+        argv = [_storage allocateDynamic:argc*sizeof(char*)];
+        for( int ix = 0; ix < argc; ix++ ) {
+            NSString * arg = [_arguments objectAtIndex:ix];
+            long bytes = arg.length + 1;
+            long argp = [_storage allocateDynamic:bytes];
+            if( self.debugStorage)
+                NSLog(@"STORAGE: store argument %d, \"%@\" at %ld",
+                      ix, arg, argp);
+            for( int cp = 0; cp < arg.length; cp++) {
+                [_storage setChar:[arg characterAtIndex:cp] at:argp+cp];
+            }
+            [_storage setChar:0 at:argp+bytes];
+
+            [_storage setLong:argp at:argv+(ix*sizeof(long))];
+        }
+    }
+    
     // Execute the symantic tree.
+    
+    TCValue * argcValue = [[TCValue alloc]initWithInt:argc];
+    
+    TCValue * argvValue = [[[TCValue alloc]initWithLong:argv] makePointer:TCVALUE_POINTER_CHAR];
     
     _result = [context execute:context.module
                              entryPoint:@"main"
-                          withArguments:@[ [[TCValue alloc]initWithInt:10] ]];
+                          withArguments:@[ argcValue, argvValue ]];
     
     // After we're done, do we need to dump out memory usage stats?
     

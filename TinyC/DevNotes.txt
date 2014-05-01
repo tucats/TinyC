@@ -133,4 +133,6 @@
 
 36. [DONE] LValue parsing in the TCAssignmentParser does not handle address references correctly; 
     i.e. *foo = 55 and similar cases.  Need to modify it to handle dereference prefix.
+
+37. [DONE] Add modulo ("%") operator for integer and floating types.
     

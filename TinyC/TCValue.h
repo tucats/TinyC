@@ -51,6 +51,7 @@ typedef enum {
 -(TCValue*) addValue:(TCValue*) value;
 -(TCValue*) subtractValue:(TCValue*) value;
 -(TCValue*) divideValue:(TCValue*) value;
+-(TCValue*) moduloValue:(TCValue*) value;
 -(TCValue*) multiplyValue:(TCValue*) value;
 
 -(TCValue *) makePointer:(TCValueType)ofType;
@@ -59,6 +60,7 @@ typedef enum {
 -(TCValue*) booleanNot;
 
 -(TCValueType)getType;
+-(NSString*) getTypeName;
 
 -(long)getLong;
 -(int)getInt;

@@ -164,7 +164,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
     
     if(_debug) {
         if( entryName != nil)
-            NSLog(@"LANGPRC: Searching MODULE for entrypoint %@", entryName);
+            NSLog(@"TRACE:   Searching MODULE for entrypoint %@", entryName);
         
     }
     
@@ -188,7 +188,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             // CONTINUE does nothing
         case LANGUAGE_CONTINUE:
             if(_debug)
-                NSLog(@"LANGPRC: CONTINUE, restart basic block from beginning");
+                NSLog(@"TRACE:   CONTINUE, restart basic block from beginning");
             _error = [[TCError alloc]initWithCode:TCERROR_CONTINUE withArgument:nil];
             return result;
 
@@ -196,7 +196,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             // Break returns special return code
         case LANGUAGE_BREAK:
             if(_debug)
-                NSLog(@"LANGPRC: BREAK, exit basic block");
+                NSLog(@"TRACE:   BREAK, exit basic block");
             _error = [[TCError alloc]initWithCode:TCERROR_BREAK withArgument:nil];
             return nil;
             break;
@@ -265,7 +265,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 return nil;
             }
             if( _debug )
-                NSLog(@"LANGPRC: Locate address of %@, %ld", tree.spelling, targetValue.address);
+                NSLog(@"TRACE:   Locate address of %@, %ld", tree.spelling, targetValue.address);
             result = [[[TCValue alloc]initWithLong:targetValue.address] makePointer:targetValue.type];
             
             return result;
@@ -295,7 +295,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
         {
             if( _debug)
-                NSLog(@"LANGPRC: Beginning execution of entrypoint %@", tree.spelling);
+                NSLog(@"TRACE:   Beginning execution of entrypoint %@", tree.spelling);
             
             
             // The first subnode is the return type; squirrel that away.
@@ -323,14 +323,14 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                     TCValue* argValue = (TCValue*) arguments[ix];
                     if( argValue.getType != localArg.action) {
                         if( _debug)
-                            NSLog(@"LANGPRC: Casting function parm #%d to %s", ix+1, typeMap(localArg.action));
+                            NSLog(@"TRACE:   Casting function parm #%d to %s", ix+1, typeMap(localArg.action));
                         argValue = [argValue castTo:localArg.action];
                     }
                     localArgName.argument = argValue;
                     [_importedArguments addObject:localArg ];
                     
                     if(_debug)
-                        NSLog(@"LANGPRC: Add arg #%d %@ of type %s to arglist",ix, localArgName.spelling, typeMap(localArg.action));
+                        NSLog(@"TRACE:   Add arg #%d %@ of type %s to arglist",ix, localArgName.spelling, typeMap(localArg.action));
                 }
             }
             // The final subnode is the code block to execute. Fetch that out and let's run it.
@@ -355,7 +355,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
             if( _importedArguments ) {
                 if( _debug)
-                    NSLog(@"LANGPRC: Importing %d arguments to local symbol table",
+                    NSLog(@"TRACE:   Importing %d arguments to local symbol table",
                           (int)_importedArguments.count);
                 for( int ix = 0; ix < _importedArguments.count; ix ++ ) {
                     TCSyntaxNode * argDecl = (TCSyntaxNode*) _importedArguments[ix];
@@ -423,8 +423,12 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             if( targetType > TCVALUE_POINTER) {
                 actualType = targetType - TCVALUE_POINTER;
             }
-                        
-            value = [value castTo:actualType];
+            
+            if(value.getType != actualType) {
+                value = [value castTo:actualType];
+                if(_debug)
+                    NSLog(@"TRACE:   Assignment cast to target type of %@", value.getTypeName);
+            }
             [_storage setValue:value at:targetAddress.getLong];
             result = value;
         }
@@ -444,14 +448,14 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             TCValue * condValue = [expInt evaluate:condition withSymbols:_symbols];
             if( condValue.getLong ) {
                 if(_debug)
-                    NSLog(@"LANGPRC: Condition value %@, execute true branch", condValue);
+                    NSLog(@"TRACE:   Condition value %@, execute true branch", condValue);
                 result = [self execute:ifTrue withSymbols:_symbols];
             } else if( tree.subNodes.count > 2) {
                 if(_debug)
-                    NSLog(@"LANGPRC: Condition value %@, execute false branch", condValue);
+                    NSLog(@"TRACE:   Condition value %@, execute false branch", condValue);
                 result = [self execute:tree.subNodes[2] withSymbols:_symbols];
             } else if(_debug)
-                NSLog(@"LANGPRC: Condition value %@, nothing executed", condValue);
+                NSLog(@"TRACE:   Condition value %@, nothing executed", condValue);
         }
             break;
             
@@ -470,12 +474,12 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 return nil;
             }
             if( _debug) {
-                NSLog(@"LANGPRC: Returning block value %@", result);
+                NSLog(@"TRACE:   Returning block value %@", result);
             }
             
             if( _returnInfo ) {
                 if(_debug) {
-                    NSLog(@"LANGPRC: Return type coerced to %s", typeMap(_returnInfo.action));
+                    NSLog(@"TRACE:   Return type coerced to %s", typeMap(_returnInfo.action));
                 }
                 result = coerceType(result, _returnInfo.action);
             }
@@ -527,9 +531,9 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                 
                 if( _debug) {
                     if( _lastSymbol.initialValue)
-                        NSLog(@"LANGPRC: Created new variable %@ with initial value %@", _lastSymbol, _lastSymbol.initialValue);
+                        NSLog(@"TRACE:   Created new variable %@ with initial value %@", _lastSymbol, _lastSymbol.initialValue);
                     else
-                        NSLog(@"LANGPRC: Created new variable %@", _lastSymbol);
+                        NSLog(@"TRACE:   Created new variable %@", _lastSymbol);
                 }
             }
             

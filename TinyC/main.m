@@ -22,8 +22,16 @@ int main(int argc, const char * argv[])
         long memory = 65536L;
         
         TCFlag df = TCDebugNone;
+        BOOL argCapture = NO;
+        NSMutableArray *argList = [NSMutableArray array];
         
         for( int ax = 1; ax < argc; ax++ ) {
+            
+            if(argCapture) {
+                [argList addObject:[NSString stringWithUTF8String:argv[ax]]];
+                continue;
+            }
+            
             if( strncmp(argv[ax], "-d", 2) == 0 ) {
                 for( int dp = 2; dp < strlen(argv[ax]); dp++) {
                     char c = (argv[ax])[dp];
@@ -47,6 +55,9 @@ int main(int argc, const char * argv[])
                         case 's':
                             df |= TCDebugStorage;
                             break;
+                            
+                        case 'r':
+                            df |= TCNonRandomNumbers;
                             
                         default:
                             printf("Unrecognized -d option %c ignored\n", c);
@@ -89,12 +100,18 @@ int main(int argc, const char * argv[])
             }
             if( strcmp(argv[ax], "-") == 0) {
                 NSMutableString *argBuff = [NSMutableString string];
-                for( int bx = ax+1; bx<argc; bx++) {
-                    [argBuff appendString:[NSString stringWithCString:argv[bx] encoding:NSUTF8StringEncoding]];
+                while(!feof(stdin)) {
+                    char buffer[256];
+                    char *bp;
+                    bp = fgets(buffer, 255, stdin);
+                    if(!bp)
+                        break;
+                    [argBuff appendString:[NSString stringWithCString:bp
+                                                             encoding:NSUTF8StringEncoding]];
                     [argBuff appendString: @" "];
                 }
                 program = [NSString stringWithString:argBuff];
-                //printf("Program source from command line\n");
+                argCapture = YES;
                 break;
             }
             
@@ -106,19 +123,20 @@ int main(int argc, const char * argv[])
                 printf("    -dx   Trace execution\n");
                 printf("    -ds   Trace storage\n");
                 printf("    -dm   Summarize memory use\n");
+                printf("    -dr   Do not use true random numbers\n");
                 printf("    -a    assert() abort\n");
                 printf("    -m n  Allocate n bytes to runtime storage\n");
                 return -3;
             }
             path = [NSString stringWithCString:argv[ax] encoding:NSUTF8StringEncoding];
-            //printf("Program source from file %s\n", [path UTF8String]);
-            
+            argCapture = YES;
         }
         
         if( path == nil && program == nil) {
             path = @"/Users/tom/test.c";
             printf("No source given, using test code\n");
             df = TCDebugParse | TCDebugTrace | TCDebugStorage;
+            argList = [NSMutableArray arrayWithArray:@[@"foo", @"3"]];
         }
         
         // End of options processing, let's do the work.
@@ -133,7 +151,7 @@ int main(int argc, const char * argv[])
         // 2. If we have a file, compile that, else compile the string we captured.
         
         if( path == nil )
-            error = [tinyC compileString:program];
+            error = [tinyC compileString:program module:@"__COMMAND_LINE__"];
         else
             error = [tinyC compileFile:path];
         
@@ -142,8 +160,13 @@ int main(int argc, const char * argv[])
             return 1;
         }
         
-        // 3. Run the program, and capture the return code.  If there was a runtime
+        // 3. Run the program, and capture the return code.  Whatever argument
+        //    list was grabbed by the command line, put the module name at
+        //    the start of the list (argv[0]).  If there was a runtime
         //    error, then report it.
+        
+        [argList insertObject:tinyC.moduleName atIndex:0];
+        tinyC.arguments = argList;
         
         error = [tinyC execute];
         

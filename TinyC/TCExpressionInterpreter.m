@@ -79,7 +79,7 @@ extern TCExecutionContext* activeContext;
             }
             
             if( _debug )
-                NSLog(@"EXPRESS: Locate address of %@, %@", node.spelling, targetAddress);
+                NSLog(@"TRACE:   Locate address of %@, %@", node.spelling, targetAddress);
             
             return targetAddress;
             
@@ -148,7 +148,7 @@ extern TCExecutionContext* activeContext;
             TCSyntaxNode * castInfo = (TCSyntaxNode*)node.subNodes[0];
             
             if( _debug)
-                NSLog(@"EXPRESS: Cast %@ to type %s", result, typeMap(castInfo.action));
+                NSLog(@"TRACE:   Cast %@ to type %s", result, typeMap(castInfo.action));
             result = [result castTo:castInfo.action];
             return result;
         }
@@ -203,12 +203,12 @@ extern TCExecutionContext* activeContext;
             // Do we have real storage now?
             if( _storage != nil ) {
                 if(_debug)
-                    NSLog(@"EXPRESS: Reference load value of %@, at %ld", node.spelling, targetSymbol.address);
+                    NSLog(@"TRACE:   Reference load value of %@, at %ld", node.spelling, targetSymbol.address);
                 
                 return [_storage getValue:targetSymbol.address ofType:targetSymbol.type];
             }
             if(_debug)
-                NSLog(@"EXPRESS: Reference load of %@ has no storage, using embedded value %@",
+                NSLog(@"TRACE:   Reference load of %@ has no storage, using embedded value %@",
                       targetSymbol.spelling, targetSymbol.initialValue);
             return targetSymbol.initialValue;
             
@@ -222,12 +222,12 @@ extern TCExecutionContext* activeContext;
             switch( node.action) {
                 case TOKEN_INTEGER:
                     if(_debug)
-                        NSLog(@"EXPRESS: Load integer %@", node.spelling);
+                        NSLog(@"TRACE:   Load integer %@", node.spelling);
                     return [[TCValue alloc]initWithInt:(int) [node.spelling integerValue]];
                     
                 case TOKEN_DOUBLE:
                     if(_debug)
-                        NSLog(@"EXPRESS: Load double %@", node.spelling);
+                        NSLog(@"TRACE:   Load double %@", node.spelling);
                     return [[TCValue alloc]initWithDouble:[node.spelling doubleValue]];
                     
                 case TOKEN_STRING: {
@@ -236,7 +236,7 @@ extern TCExecutionContext* activeContext;
                     NSString * escapedString = [node.spelling escapeString];
                     
                     if(_debug)
-                        NSLog(@"EXPRESS: Load string %@", escapedString);
+                        NSLog(@"TRACE:   Load string %@", escapedString);
                     return [[TCValue alloc] initWithString:escapedString];
                 }
                     
@@ -253,7 +253,7 @@ extern TCExecutionContext* activeContext;
                     
                     NSString * cString = [NSString stringWithCString:stringPtr encoding:NSUTF8StringEncoding];
                     if(_debug)
-                        NSLog(@"EXPRESS: load string literal %@ from char* pointer %ld", cString, virtualAddress);
+                        NSLog(@"TRACE:   load string literal %@ from char* pointer %ld", cString, virtualAddress);
                     
                     return [[TCValue alloc]initWithString:cString];
                 }
@@ -270,7 +270,7 @@ extern TCExecutionContext* activeContext;
             
             TCValue * target = [self evaluate:node.subNodes[0] withSymbols:symbols];
             if(_debug)
-                NSLog(@"EXPRESS: Monadic action %d on %@", node.action, target);
+                NSLog(@"TRACE:   Monadic action %d on %@", node.action, target);
             switch(node.action) {
                 case TOKEN_SUBTRACT:
                     return [target negate];
@@ -299,9 +299,11 @@ extern TCExecutionContext* activeContext;
             }
             
             if( _debug)
-                NSLog(@"EXPRESS: Diadic action %d on %@, %@", node.action, left, right);
+                NSLog(@"TRACE:   Diadic action %d on %@, %@", node.action, left, right);
             
             switch(node.action) {
+                case TOKEN_PERCENT:
+                    return [left moduloValue:right];
                 case TOKEN_BOOLEAN_AND:
                     return [[TCValue alloc]initWithLong:([left getLong] && [right getLong])];
                 case TOKEN_BOOLEAN_OR:
@@ -395,7 +397,7 @@ extern TCExecutionContext* activeContext;
     }
     
     if( _debug)
-        NSLog(@"EXPRESS: Attempt to call function %@", node.spelling);
+        NSLog(@"TRACE:   Attempt to call function %@", node.spelling);
     
     // Build an argument list array
     
@@ -403,7 +405,7 @@ extern TCExecutionContext* activeContext;
     
     for( int ix = 0; ix < node.subNodes.count; ix++ ) {
         if(_debug)
-            NSLog(@"EXPRESS: Evaluate argument %d", ix);
+            NSLog(@"TRACE:   Evaluate argument %d", ix);
         TCSyntaxNode * exp = (TCSyntaxNode*) node.subNodes[ix];
         TCValue * argValue = [self evaluate:exp withSymbols:symbols];
         [arguments addObject:argValue];
@@ -414,7 +416,7 @@ extern TCExecutionContext* activeContext;
     TCSyntaxNode * entry =[activeContext findEntryPoint:node.spelling];
     if( entry != nil) {
         if(_debug)
-            NSLog(@"EXPRESS: Found entry point at %@, creating new frame", entry);
+            NSLog(@"TRACE:   Found entry point at %@, creating new frame", entry);
         
         
         TCExecutionContext * savedContext = activeContext;
@@ -459,7 +461,7 @@ extern TCExecutionContext* activeContext;
     
     if( f != nil ) {
         if(_debug)
-            NSLog(@"EXPRESS: dynamic execution of \"%@\" function", name);
+            NSLog(@"TRACE:   dynamic execution of \"%@\" function", name);
         f.storage = _storage;
         TCValue * result = [f execute:arguments inContext:_context];
         _error = f.error;

@@ -18,6 +18,7 @@
     long savedPosition = parser.position;
     
     if([parser isNextToken:TOKEN_DECL_INT] ||
+       [parser isNextToken:TOKEN_DECL_LONG] ||
        [parser isNextToken:TOKEN_DECL_DOUBLE] ||
        [parser isNextToken:TOKEN_DECL_CHAR]) {
         
@@ -35,7 +36,11 @@
             case TOKEN_DECL_INT:
                 decl.action = TCVALUE_INT;
                 break;
-            
+ 
+            case TOKEN_DECL_LONG:
+                decl.action = TCVALUE_LONG;
+                break;
+                
             case TOKEN_DECL_CHAR:
                 decl.action = TCVALUE_CHAR;
                 break;

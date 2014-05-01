@@ -391,7 +391,8 @@
     if( !atom )
         return nil;
     
-    while( [parser isNextToken:TOKEN_ASTERISK] ||
+    while([parser isNextToken:TOKEN_ASTERISK] ||
+          [parser isNextToken:TOKEN_PERCENT] ||
           [parser isNextToken:TOKEN_DIVIDE]) {
         long position = parser.tokenPosition;
         

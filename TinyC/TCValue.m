@@ -138,6 +138,9 @@ typedef struct {
         case TCVALUE_INT:
             return (double)intValue;
             
+        case TCVALUE_LONG:
+            return (double)longValue;
+            
         case TCVALUE_FLOAT:
         case TCVALUE_DOUBLE:
             return doubleValue;
@@ -319,6 +322,8 @@ typedef struct {
                 case TCVALUE_CHAR:
                 case TCVALUE_INT:
                     return [[TCValue alloc]initWithDouble:(double) intValue];
+                case TCVALUE_LONG:
+                    return [[TCValue alloc]initWithDouble:(double) longValue];
                 case TCVALUE_STRING:
                     return [[TCValue alloc]initWithDouble:[stringValue doubleValue]];
                 default:
@@ -457,6 +462,53 @@ typedef struct {
         }
         case TCVALUE_DOUBLE:
             return [[TCValue alloc]initWithDouble:([self getDouble] / [value getDouble])];
+            
+        default:
+            NSLog(@"Attempt to add unsupported data type %d", promotedType);
+            return nil;
+    }
+}
+
+
+-(TCValue * ) moduloValue: (TCValue*) value
+{
+    
+    int promotedType = MAX([self getType], [value getType]);
+    
+    switch(promotedType) {
+        case TCVALUE_CHAR:
+        {
+            char v1 = [self getInt];
+            char v2 = [value getInt];
+            if( v2 == 0 ) {
+                NSLog(@"Divide by zero");
+                return 0;
+            }
+            return [[TCValue alloc]initWithInt:(char)(v1 % v2)];
+        }
+            
+        case TCVALUE_INT:
+        {
+            int v1 = [self getInt];
+            int v2 = [value getInt];
+            if( v2 == 0 ) {
+                NSLog(@"Divide by zero");
+                return 0;
+            }
+            return [[TCValue alloc]initWithInt:(v1 % v2)];
+        }
+        case TCVALUE_LONG:
+        {
+            long v1 = [self getLong];
+            long v2 = [value getLong];
+            if( v2 == 0 ) {
+                NSLog(@"Divide by zero");
+                return 0;
+            }
+            return [[TCValue alloc]initWithLong:(v1 % v2)];
+        }
+        case TCVALUE_DOUBLE:
+            return [[TCValue alloc]initWithDouble:(fmod([self getDouble], [value getDouble]))];
             
         default:
             NSLog(@"Attempt to add unsupported data type %d", promotedType);

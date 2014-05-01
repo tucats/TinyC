@@ -45,7 +45,9 @@ typedef enum {
     TCDebugMemory = 16,
     
     /** Are calls to _assert that fail considered fatal, or ignored? */
-    TCFatalAsserts = 32
+    TCFatalAsserts = 32,
+    
+    TCNonRandomNumbers = 64
     
 } TCFlag;
 
@@ -100,17 +102,21 @@ typedef enum {
  */
 @property TCStorageManager * storage;
 
+/** The argv[] array for this execution, if any */
+@property NSMutableArray * arguments;
+
 /**
  Given a string containing the text of a TinyC module, compile it and
  prepare it for execution.
  @param source the NSString containing the input source
+ @param the module name to assign
  @returns nil if no error occured, else a description of the error.
  */
--(TCError*) compileString:(NSString*) source;
+-(TCError*) compileString:(NSString *)source module:(NSString*) moduleName;
 
 /**
  Given a text file containing the text of a TinyC module, compile it and
- prepare it for execution.
+ prepare it for execution. The module name is taken from the file name.
  @param path the NSString containing the name of the input file.
  @returns nil if no error occured, else a description of the error.
  */

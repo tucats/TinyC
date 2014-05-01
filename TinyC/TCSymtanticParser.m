@@ -75,6 +75,7 @@
         [self addSpelling:@"=" forToken:TOKEN_ASSIGNMENT];
         [self addSpelling:@"int" forToken:TOKEN_DECL_INT];
         [self addSpelling:@"char" forToken:TOKEN_DECL_CHAR];
+        [self addSpelling:@"long" forToken:TOKEN_DECL_LONG];
         [self addSpelling:@"double" forToken:TOKEN_DECL_DOUBLE];
         [self addSpelling:@"float" forToken:TOKEN_DECL_FLOAT];
         [self addSpelling:@"if" forToken:TOKEN_IF];
@@ -89,6 +90,7 @@
         [self addSpelling:@"}" forToken:TOKEN_BRACE_RIGHT];
         [self addSpelling:@"break" forToken:TOKEN_BREAK];
         [self addSpelling:@"continue" forToken:TOKEN_CONTINUE];
+        [self addSpelling:@"%" forToken:TOKEN_PERCENT];
         [self doNotPersist];
 
     }
