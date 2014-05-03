@@ -314,13 +314,18 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             if( tree.subNodes.count > 2 ) {
                 _importedArguments = [NSMutableArray array];
                 for( int ix = 0; ix < arguments.count; ix++ ) {
+                    TCValue* argValue = (TCValue*) arguments[ix];
+                    if((ix+1) >= tree.subNodes.count-1 ) {
+                        if(_debug)
+                            NSLog(@"TRACE:   warning, passed arg #%d(%@) has no matching function parameter", ix+1, argValue);
+                        break;
+                    }
                     TCSyntaxNode* localArg = tree.subNodes[ix+1];
                     TCSyntaxNode* localArgName = localArg.subNodes[0];
                     
                     // See if we need to cast each argument to the type
                     // of the caller so we don't read storage values incorrectly!!
                     
-                    TCValue* argValue = (TCValue*) arguments[ix];
                     if( argValue.getType != localArg.action) {
                         if( _debug)
                             NSLog(@"TRACE:   Casting function parm #%d to %s", ix+1, typeMap(localArg.action));
@@ -354,14 +359,17 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             [_storage pushStorage];  // Make a new storage frame
             
             if( _importedArguments ) {
+                NSArray * tempArglist = [_importedArguments copy];
+                _importedArguments = nil;
                 if( _debug)
                     NSLog(@"TRACE:   Importing %d arguments to local symbol table",
-                          (int)_importedArguments.count);
-                for( int ix = 0; ix < _importedArguments.count; ix ++ ) {
-                    TCSyntaxNode * argDecl = (TCSyntaxNode*) _importedArguments[ix];
+                          (int)tempArglist.count);
+                
+                for( int ix = 0; ix < tempArglist.count; ix ++ ) {
+                    TCSyntaxNode * argDecl = (TCSyntaxNode*) tempArglist[ix];
                     [self execute:argDecl];
                 }
-                _importedArguments = nil;
+                tempArglist = nil;
             }
             for( ix = 0; ix < tree.subNodes.count; ix++) {
                 _blockPosition = ix;

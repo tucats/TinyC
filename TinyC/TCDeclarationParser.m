@@ -40,6 +40,15 @@ TCValueType tokenToType( TokenType tok )
 
 @implementation TCDeclarationParser
 
+
+-(TCSyntaxNode*) parseSingle:(TCSymtanticParser *)parser
+{
+    _endOnComma = YES;
+    TCSyntaxNode *tree = [self parse:parser];
+    _endOnComma = NO;
+    return tree;
+}
+
 -(TCSyntaxNode*) parse:(TCSymtanticParser *)parser
 {
     TCSyntaxNode * decl = nil;
@@ -155,7 +164,7 @@ TCValueType tokenToType( TokenType tok )
         if( varData != nil )
             [decl.subNodes addObject:varData];
         
-        if(![parser isNextToken:TOKEN_COMMA])
+        if(_endOnComma || ![parser isNextToken:TOKEN_COMMA])
             break;
     }
     

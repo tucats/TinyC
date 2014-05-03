@@ -70,7 +70,11 @@
                 break;
 
                 case 's':
-                [buffer appendString:[NSString stringWithFormat:f, [(NSString*)v cStringUsingEncoding:NSUTF8StringEncoding]]];
+                if([v isKindOfClass:[NSString class]])
+                    [buffer appendString:[NSString stringWithFormat:f, [(NSString*)v cStringUsingEncoding:NSUTF8StringEncoding]]];
+                else {
+                    NSLog(@"FATAL: invalid data type used with %@ selector", @"%s");
+                }
                 break;
                 
             default:

@@ -77,7 +77,7 @@
                     return nil;
                 }
 
-                TCSyntaxNode * arg = [dp parse:parser];
+                TCSyntaxNode * arg = [dp parseSingle:parser];
                 if( parser.error) {
                     return nil;
                 }

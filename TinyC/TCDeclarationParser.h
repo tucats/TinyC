@@ -13,10 +13,14 @@
 
 @interface TCDeclarationParser : NSObject
 
+{
+    BOOL _endOnComma;
+}
 
 @property BOOL debug;
 
 -(TCSyntaxNode * ) parse: (TCSymtanticParser*) parser;
+-(TCSyntaxNode*) parseSingle:(TCSymtanticParser *)parser;
 
 
 @end

@@ -98,7 +98,7 @@ int main(int argc, const char * argv[])
                 //printf("Creating runtime memory area of %ld bytes\n", memory);
                 continue;
             }
-            if( strcmp(argv[ax], "-") == 0) {
+            if( strcmp(argv[ax], "-") == 0 || strcmp(argv[ax], "-stdin") == 0) {
                 NSMutableString *argBuff = [NSMutableString string];
                 while(!feof(stdin)) {
                     char buffer[256];
@@ -108,7 +108,7 @@ int main(int argc, const char * argv[])
                         break;
                     [argBuff appendString:[NSString stringWithCString:bp
                                                              encoding:NSUTF8StringEncoding]];
-                    [argBuff appendString: @" "];
+                    [argBuff appendString: @"\n"];
                 }
                 program = [NSString stringWithString:argBuff];
                 argCapture = YES;

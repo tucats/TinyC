@@ -234,22 +234,22 @@
 		E262FE1118F8489B00DFC135 /* Semantic Parsing */ = {
 			isa = PBXGroup;
 			children = (
-				E262FDF618F847BA00DFC135 /* TCSyntaxNode.h */,
-				E262FDF718F847BA00DFC135 /* TCSyntaxNode.m */,
+				E262FDEC18F847BA00DFC135 /* TCModuleParser.h */,
+				E262FDED18F847BA00DFC135 /* TCModuleParser.m */,
+				E262FDE018F847BA00DFC135 /* TCDeclarationParser.h */,
+				E262FDE118F847BA00DFC135 /* TCDeclarationParser.m */,
+				E297A57618FEBC92009C7EDC /* TCTypeParser.h */,
+				E297A57718FEBC92009C7EDC /* TCTypeParser.m */,
 				E262FDF018F847BA00DFC135 /* TCStatementParser.h */,
 				E262FDF118F847BA00DFC135 /* TCStatementParser.m */,
 				E262FDEA18F847BA00DFC135 /* TCIfParser.h */,
 				E262FDEB18F847BA00DFC135 /* TCIfParser.m */,
 				E262FDDC18F847BA00DFC135 /* TCAssignmentParser.h */,
 				E262FDDD18F847BA00DFC135 /* TCAssignmentParser.m */,
-				E262FDE018F847BA00DFC135 /* TCDeclarationParser.h */,
-				E262FDE118F847BA00DFC135 /* TCDeclarationParser.m */,
-				E297A57618FEBC92009C7EDC /* TCTypeParser.h */,
-				E297A57718FEBC92009C7EDC /* TCTypeParser.m */,
 				E262FDE818F847BA00DFC135 /* TCExpressionParser.h */,
 				E262FDE918F847BA00DFC135 /* TCExpressionParser.m */,
-				E262FDEC18F847BA00DFC135 /* TCModuleParser.h */,
-				E262FDED18F847BA00DFC135 /* TCModuleParser.m */,
+				E262FDF618F847BA00DFC135 /* TCSyntaxNode.h */,
+				E262FDF718F847BA00DFC135 /* TCSyntaxNode.m */,
 			);
 			name = "Semantic Parsing";
 			sourceTree = "<group>";
