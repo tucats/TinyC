@@ -47,6 +47,7 @@ typedef enum {
     /** Are calls to _assert that fail considered fatal, or ignored? */
     TCFatalAsserts = 32,
     
+    /** Is the random number generator deterministic or truly random? */
     TCNonRandomNumbers = 64
     
 } TCFlag;
@@ -69,7 +70,7 @@ typedef enum {
     TCSyntaxNode * parseTree;
     
     /** The debug flag(s) in effect for this object.  This may be
-        the sum of one or more of the TCDebugFlag values.
+        the sum of one or more of the TCFlag values.
      */
     TCFlag flags;
     

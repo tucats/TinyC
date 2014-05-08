@@ -16,7 +16,8 @@ typedef  enum TOKEN_TYPE {
 	TOKEN_IDENTIFIER, 
 	TOKEN_SPECIAL,
     TOKEN_CHAR,
-	TOKEN_EOS,
+	TOKEN_EOS,            // From the first token to this one, the order must match the
+                          // list of names in the description method of Token.m
 	TOKEN_PRINT,
 	TOKEN_ASSIGNMENT,
 	TOKEN_END,

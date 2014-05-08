@@ -14,25 +14,42 @@
 #pragma mark - Constructor and Destructor
 
 /**
- This is the designated init routine for this class.
+ This is the designated init routine for this class. The lexical analyzer uses a
+ dictionary of tokens that are recognized as reserved names or symbols.  This list
+ is build during initialization.  This can come from a plist physical file or be
+ statically initalized.
+ 
+ @param fileName the name of the plist file containing the token dictionary table.
+ If this name is null, no attempt is made to initialize the dictionary from the file.
  */
 -(instancetype) initFromFile:(NSString*) fileName
 {
     if(self = [super init]) {
+        
+        // Create a dictionary that will be used to turn a token numeric code back
+        // into the original spelling.
         _spellingTable = [NSMutableDictionary dictionary];
+        
+        // If a filename is provided, try to read it.
         if( fileName ) {
             persistantFileName = fileName;
+            
+            // Create a temporary dictionary for now with the contents of the file.
+            // If this succeeds, create the real dictionary as well.
             NSArray *tempDict = [[NSArray alloc] initWithContentsOfFile:fileName ];
             if( tempDict )
                 _dictionary = [[NSMutableDictionary alloc] initWithCapacity:[tempDict count]];
+            
+            // Scan through the dictionaryr ead from disk adn fetch the spelling and
+            // type values from the dictionary.
             
             for( NSDictionary * t in tempDict) {
                 NSString * spelling = [t valueForKey:@"spelling"];
                 NSNumber * typeNum =  [t valueForKey:@"type"];
                 int type = (int) [typeNum integerValue];
                 
-                // Special token that holds dictionary version is handled differently.  Otherwise
-                // just add the token data to the dictionary normally.
+                // Special token that holds dictionary version is handled differently.
+                // Otherwise just add the token data to the dictionary normally.
                 if( [spelling isEqualToString:VERSION_KEY]) {
                     _dictionaryVersion = type;
                 } else {
@@ -44,15 +61,19 @@
             
             //NSLog(@"%@ loaded from %@", self, fileName);
         }
+        
+        // If the dictionary still isn't initialized it means there was either
+        // no file name, or the file name wasn't valid.  Go ahead and create
+        // the empty dictionary.
+        
         if( !_dictionary) {
             _dictionary = [[NSMutableDictionary alloc]initWithCapacity:100];
-            //NSLog(@"No persistent dictionary found, initializing empty dictionary");
             _wasDictionaryLoaded = NO;
             _dictionaryChanged = NO;
         }
         
-        // Set up token dictionary
-        
+        // Set up token dictionary explicity.  This kind of initialialzation
+        // wouldn't be necessary if a token dictionary was found on disk.
         [self addSpelling:@"++" forToken:TOKEN_INCREMENT];
         [self addSpelling:@"--" forToken:TOKEN_DECREMENT];
         [self addSpelling:@">=" forToken:TOKEN_GREATER_OR_EQUAL];
@@ -458,7 +479,17 @@
                 while( YES ) {
                     if( charPos >= len)
                         break;
-                    if( ch == [buffer characterAtIndex:charPos])
+                    
+                    // Skip over any escaped character without
+                    // even looking at it.  This prevents seeing
+                    // \" as a closing quote.
+                    int ch2 = [buffer characterAtIndex:charPos];
+                    if( ch2 == '\\') {
+                       r.length += 2;
+                       charPos  += 2;
+                       continue;
+                    }
+                    if( ch == ch2)
                         break;
                     
                     r.length++;

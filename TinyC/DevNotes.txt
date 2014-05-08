@@ -135,4 +135,11 @@
     i.e. *foo = 55 and similar cases.  Need to modify it to handle dereference prefix.
 
 37. [DONE] Add modulo ("%") operator for integer and floating types.
+
+38. When reading source lines, construct a line map... array of pointer/length (NSRange?) for
+    each line in the input buffer.  This can be used later to convert position info from each
+    token into the matching source line.
+
+39. Change error handling to include position info, that can be used to report both compile
+    and runtime problems.
     

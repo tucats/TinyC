@@ -51,6 +51,12 @@
                ch == '@')
                 break;
         }
+        
+        // @NOTE I have some concerns about this.  This assumes the argument array member
+        // is an NSNumber, but sometimes it is a NSString.  The value must NOT be touched
+        // until the actual type is determined.  This should probably be cleaned up to
+        // only assign it to 'v' when it's type is verified.
+        
         NSNumber * v = arguments[argp++];
         NSString *f = [format substringWithRange:NSMakeRange(start, length)];
         
@@ -95,15 +101,37 @@
  */
 - (NSString*) escapeString
 {
-    NSString * escapedString = self;
-    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\n"      // Newline
-                                                             withString:@"\n"];
-    
-    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\t"      // Tab
-                                                             withString:@"\t"];
-    
-    escapedString = [escapedString stringByReplacingOccurrencesOfString:@"\\\""     // Double quote
-                                                             withString:@"\""];
+    NSMutableString * escapedString = [NSMutableString string];
+    for( int ix = 0; ix < self.length; ix++) {
+        int ch = [self characterAtIndex:ix];
+        if( ch != '\\') {
+            [escapedString appendFormat:@"%c", ch];
+            continue;
+        }
+        
+        int ch2 = '\\';
+        if( ix < self.length-1)
+            ch2 = [self characterAtIndex:ix+1];
+        
+        switch(ch2) {
+            case 'n':
+                ch = '\n';
+                break;
+            case 't':
+                ch = '\t';
+                break;
+            case '"':
+                ch = '\"';
+                break;
+            case '0':
+                ch = 0;
+                break;
+            default:
+                ch = ch2;
+        }
+        [escapedString appendFormat:@"%c", ch];
+        ix++;
+    }
     return escapedString;
 }
 

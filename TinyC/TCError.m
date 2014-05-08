@@ -15,8 +15,9 @@
 +(NSString*) errorTextForCode:(TCErrorType)code
 {
     
-    // For now this is a simple hard-coded map.  Later, we'll load
-    //  from a localizable resource.
+    // For now this is a simple hard-coded map.  @NOTE Later, we'll load
+    //  from a localizable resource or something similar.  It woudl be
+    // great if this becomes a true framework which internal resources.
     
     switch(code) {
             

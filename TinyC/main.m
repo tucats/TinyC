@@ -95,7 +95,6 @@ int main(int argc, const char * argv[])
                     }
                 }
                 memory = atol(v) * mult;
-                //printf("Creating runtime memory area of %ld bytes\n", memory);
                 continue;
             }
             if( strcmp(argv[ax], "-") == 0 || strcmp(argv[ax], "-stdin") == 0) {
@@ -180,7 +179,8 @@ int main(int argc, const char * argv[])
         //    if the result is numeric or string or whatever; it will be printed
         //    as a string.
         
-        printf("Program returns %s\n", [[tinyC.result description] UTF8String]);
+        if( tinyC.result.getInt != 0)
+            printf("Program returns %s\n", [[tinyC.result description] UTF8String]);
         return 0;
     }
     return 0;
