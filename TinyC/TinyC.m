@@ -21,6 +21,8 @@
 #import "TCExecutionContext.h"
 #import "TCModuleParser.h"
 
+TCExecutionContext* activeContext;
+
 @implementation TinyC
 
 -(TCError*) compileFile:(NSString *)path
@@ -93,6 +95,8 @@
     context = [[TCExecutionContext alloc]initWithStorage:self.storage];
     context.debug = self.debugTrace;
     context.module = tree;
+    activeContext = context;
+    
     if([context hasUnresolvedNames:tree]) {
         return context.error;
     }
