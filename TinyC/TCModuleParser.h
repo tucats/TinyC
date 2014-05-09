@@ -7,11 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TCSymtanticParser.h"
+#import "TCLexicalScanner.h"
 #import "TCSyntaxNode.h"
 
 @interface TCModuleParser : NSObject
 
--(TCSyntaxNode*) parse:(TCSymtanticParser*) parser;
--(TCSyntaxNode*) parse:(TCSymtanticParser *)parser name:(NSString*) name;
+-(TCSyntaxNode*) parse:(TCLexicalScanner*) scanner;
+-(TCSyntaxNode*) parse:(TCLexicalScanner *)scanner name:(NSString*) name;
 @end

@@ -17,7 +17,7 @@
 
 #import "TinyC.h"
 #import "TCValue.h"
-#import "TCSymtanticParser.h"
+#import "TCLexicalScanner.h"
 #import "TCExecutionContext.h"
 #import "TCModuleParser.h"
 
@@ -29,9 +29,13 @@
     
     // Build a string that contains the contents of the file in memory.  If an error occurs, wrap
     // it in a TCError value and return it.
-    NSString * source = [NSString stringWithContentsOfFile:path encoding:NSUTF8StringEncoding error:&error];
+    NSString * source = [NSString stringWithContentsOfFile:path
+                                                  encoding:NSUTF8StringEncoding
+                                                     error:&error];
     if( error != nil) {
-        return [[TCError alloc]initWithCode:TCERROR_FATAL withArgument:[error localizedDescription]];
+        return [[TCError alloc]initWithCode:TCERROR_FATAL
+                                     atNode:nil
+                               withArgument:[error localizedDescription]];
     }
     
     // Successfully read; formulate the module name by using the last component of the path name
@@ -49,18 +53,19 @@
 {
     TCError *error;
     
-    parser = [[TCSymtanticParser alloc]init];
-    [parser lex:source];
+    scanner = [[TCLexicalScanner alloc]init];
+    [scanner lex:source];
     if( self.debugTokens)
-        [parser dump];
+        [scanner dump];
+    
     if(moduleName != nil)
         _moduleName = moduleName;
     else
         _moduleName = @"__STRING__";
     
     TCModuleParser* module = [[TCModuleParser alloc]init];
-    TCSyntaxNode * tree = [module parse:parser name:_moduleName];
-    error = parser.error;
+    TCSyntaxNode * tree = [module parse:scanner name:_moduleName];
+    error = scanner.error;
     
     // If the parse resulted in an error, bail out.
     if( error != nil) {
@@ -104,7 +109,7 @@
     
     _result = nil;
     
-    return parser.error;
+    return scanner.error;
 }
 
 -(TCError*) executeReturningValue:(TCValue *__autoreleasing *)result

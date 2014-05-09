@@ -9,10 +9,10 @@
 #import <Foundation/Foundation.h>
 
 #import "TCSyntaxNode.h"
-#import "TCSymtanticParser.h"
+#import "TCLexicalScanner.h"
 #import "TCError.h"
 
 @interface TCIfParser : NSObject
--(TCSyntaxNode * ) parse: (TCSymtanticParser*) parser;
+-(TCSyntaxNode * ) parse: (TCLexicalScanner*) scanner;
 
 @end

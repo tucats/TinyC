@@ -40,7 +40,7 @@
  @return a syntax tree describing the lvalue,
  or nil if no lvalue clause can be parsed
  */
--(TCSyntaxNode*) parseLValue:(TCSymtanticParser*)parser
+-(TCSyntaxNode*) parseLValue:(TCLexicalScanner*)parser
 {
 
     // Mark our spot in the input stream in case we have to
@@ -60,7 +60,7 @@
         
         // Start by creating an ADDRESS node that will calculate a
         // writable address of a value.
-        TCSyntaxNode * lvalue = [TCSyntaxNode node:LANGUAGE_ADDRESS];
+        TCSyntaxNode * lvalue = [TCSyntaxNode node:LANGUAGE_ADDRESS usingScanner:parser];
         lvalue.spelling = [parser lastSpelling];
         lvalue.position = parser.tokenPosition;
         
@@ -81,7 +81,7 @@
             
             // There has to be a closing bracket after the index expression
             if(![parser isNextToken:TOKEN_BRACKET_RIGHT]) {
-                parser.error = [[TCError alloc]initWithCode:TCERROR_BRACEMISMATCH withArgument:nil];
+                parser.error = [[TCError alloc]initWithCode:TCERROR_BRACEMISMATCH usingScanner:parser];
                 return nil;
             }
             
@@ -99,7 +99,7 @@
         // change what we return to be a DEREFERENCE with the ADDRESS node we
         // previously worked out as it's sole child node.
         if(dereference) {
-            TCSyntaxNode * deref = [TCSyntaxNode node:LANGUAGE_DEREFERENCE];
+            TCSyntaxNode * deref = [TCSyntaxNode node:LANGUAGE_DEREFERENCE usingScanner:parser];
             deref.subNodes = [NSMutableArray arrayWithArray:@[lvalue]];
             return deref;
         }
@@ -126,22 +126,22 @@
  or nil if no assignment statement can be parsed
  */
 
--(TCSyntaxNode*) parse:(TCSymtanticParser *)parser
+-(TCSyntaxNode*) parse:(TCLexicalScanner *)scanner
 {
-    TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_ASSIGNMENT];
-    stmt.position = parser.tokenPosition;
+    TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_ASSIGNMENT usingScanner:scanner];
+    stmt.position = scanner.tokenPosition;
     
-    long savedPosition = parser.position;
+    long savedPosition = scanner.position;
     
-    TCSyntaxNode * lvalue = [self parseLValue:parser];
+    TCSyntaxNode * lvalue = [self parseLValue:scanner];
     if( lvalue != nil ) {
         // Found an lvalue, do we have an assignment operator?
         
-        if( [parser isNextToken:TOKEN_ASSIGNMENT]) {
+        if( [scanner isNextToken:TOKEN_ASSIGNMENT]) {
             //NSLog(@"PARSE parse assignment");
 
             TCExpressionParser * expr = [[TCExpressionParser alloc] init];
-            TCSyntaxNode *rvalue = [expr parse:parser];
+            TCSyntaxNode *rvalue = [expr parse:scanner];
             if( rvalue != nil ) {
                 stmt.subNodes = [NSMutableArray arrayWithArray: @[lvalue, rvalue]];
                 return stmt;
@@ -151,7 +151,7 @@
     // No assignment found, reset to the start of where we poked around
     // so the next statement type can try.
     
-    [parser setPosition:savedPosition];
+    [scanner setPosition:savedPosition];
     
     return nil;
 }

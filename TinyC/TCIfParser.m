@@ -28,27 +28,27 @@
 
 
 
--(TCSyntaxNode*) parse:(TCSymtanticParser *)parser
+-(TCSyntaxNode*) parse:(TCLexicalScanner *)scanner
 {
     
     // Is this an IF statement?
     
-    long savedPosition = parser.position;
-    if([parser isNextToken:TOKEN_IF]) {
+    long savedPosition = scanner.position;
+    if([scanner isNextToken:TOKEN_IF]) {
         
         // A valid IF statement must be followed by the condition in
         // parenthesis.
         
-        if([parser isNextToken:TOKEN_PAREN_LEFT]) {
+        if([scanner isNextToken:TOKEN_PAREN_LEFT]) {
 
             // Create the initial tree and save it's source position
-            TCSyntaxNode * tree = [TCSyntaxNode node:LANGUAGE_IF];
-            tree.position = parser.tokenPosition;
+            TCSyntaxNode * tree = [TCSyntaxNode node:LANGUAGE_IF usingScanner:scanner];
+            tree.position = scanner.tokenPosition;
             
             // Parse the conditional expression.
             TCExpressionParser *exp = [[TCExpressionParser alloc]init];
-            TCSyntaxNode * expTree = [exp parse:parser];
-            if( exp.error != nil )
+            TCSyntaxNode * expTree = [exp parse:scanner];
+            if(expTree == nil || exp.error != nil )
                 return nil;
             
             // Create the subnodes for the LANGUAGE_IF statement, and store
@@ -57,8 +57,8 @@
             [tree.subNodes addObject:expTree];
             
             // If no closing parenthesis then error
-            if(![parser isNextToken:TOKEN_PAREN_RIGHT]) {
-                parser.error = [[TCError alloc]initWithCode:TCERROR_PARENMISMATCH withArgument:nil];
+            if(![scanner isNextToken:TOKEN_PAREN_RIGHT]) {
+                scanner.error = [[TCError alloc]initWithCode:TCERROR_PARENMISMATCH usingScanner:scanner];
                 return nil;
             }
             
@@ -72,8 +72,11 @@
             // If there is an error while parsing, bail out.
             
             TCStatementParser * stmt = [[TCStatementParser alloc] init];
-            TCSyntaxNode * condStatement = [stmt parse:parser options:TCSTATEMENT_SUBSTATEMENT];
-            if( parser.error != nil ) {
+            TCSyntaxNode * condStatement = [stmt parse:scanner options:TCSTATEMENT_SUBSTATEMENT];
+            if(condStatement == nil) {
+                scanner.error = [[TCError alloc]initWithCode:TCERROR_EXP_EXPRESSION usingScanner:scanner];
+            }
+            if(scanner.error != nil) {
                 return nil;
             }
             
@@ -83,10 +86,10 @@
             // Three might be an optional ELSE clause.  If so, then parse that as
             // well. If there is an error, bail out.  Otherwise add it as the
             // third node in the subtree.
-            if( [parser isNextToken:TOKEN_ELSE]) {
+            if( [scanner isNextToken:TOKEN_ELSE]) {
 
-                condStatement = [stmt parse:parser options:TCSTATEMENT_SUBSTATEMENT];
-                if( parser.error != nil ) {
+                condStatement = [stmt parse:scanner options:TCSTATEMENT_SUBSTATEMENT];
+                if(condStatement == nil || scanner.error != nil ) {
                     return nil;
                 }
                 [tree.subNodes addObject:condStatement];
@@ -101,7 +104,7 @@
     // We did not find an "if" keyword followed by "(" to signify the start of
     // a valid IF statement.  Reset the pointer and bail out, so the caller can
     // try something else.
-    [parser setPosition:savedPosition];
+    [scanner setPosition:savedPosition];
     return nil;
     }
 

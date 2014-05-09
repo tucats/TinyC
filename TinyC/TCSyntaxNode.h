@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+@class TCLexicalScanner;
 
 typedef enum {
     LANGUAGE_ENTRYPOINT,
@@ -52,9 +53,10 @@ typedef enum {
 @property NSObject * argument;
 @property NSMutableArray * subNodes;
 @property long position;
+@property TCLexicalScanner * scanner;
 
-+(instancetype) node:(SyntaxNodeType)type;
--(instancetype) initWithType:(SyntaxNodeType) type;
++(instancetype) node:(SyntaxNodeType)type usingScanner:(TCLexicalScanner*) parser;
+-(instancetype) initWithType:(SyntaxNodeType) type usingScanner:(TCLexicalScanner*) parser;
 
 -(void) addNode: (TCSyntaxNode*) newNode;
 -(void) dumpTree;

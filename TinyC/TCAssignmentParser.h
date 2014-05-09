@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TCSymtanticParser.h"
+#import "TCLexicalScanner.h"
 #import "TCSyntaxNode.h"
 
 @interface TCAssignmentParser : NSObject
@@ -23,7 +23,7 @@
  @return a syntax tree describing the assignment operation,
   or nil if no assignment statement can be parsed
  */
--(TCSyntaxNode * ) parse: (TCSymtanticParser*) parser;
+-(TCSyntaxNode * ) parse: (TCLexicalScanner*) scanner;
 
 
 @end

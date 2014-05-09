@@ -78,9 +78,9 @@ NSString * nodeSpelling( int nodeType ) {
  @returns the newly created instance.
  */
 
-+(instancetype)node:(SyntaxNodeType) type
++(instancetype)node:(SyntaxNodeType) type  usingScanner:(TCLexicalScanner*)parser
 {
-    return [[TCSyntaxNode alloc]initWithType:type];
+    return [[TCSyntaxNode alloc]initWithType:type usingScanner:parser];
     
 }
 
@@ -98,10 +98,11 @@ NSString * nodeSpelling( int nodeType ) {
  @returns the newly created instance.
  */
 
--(instancetype)initWithType:(SyntaxNodeType)type
+-(instancetype)initWithType:(SyntaxNodeType)type usingScanner:(TCLexicalScanner*) parser
 {
     if( self = [super init]) {
         _nodeType = type;
+        _scanner = parser;
     }
     return self;
 }

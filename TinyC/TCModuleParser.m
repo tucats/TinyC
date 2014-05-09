@@ -12,48 +12,48 @@
 #import "TCDeclarationParser.h"
 
 @implementation TCModuleParser
--(TCSyntaxNode*) parse:(TCSymtanticParser *)parser
+-(TCSyntaxNode*) parse:(TCLexicalScanner *)scanner
 {
-    return [self parse:parser name:@"__ANONYMOUS__"];
+    return [self parse:scanner name:@"__ANONYMOUS__"];
 }
 
 
--(TCSyntaxNode*) parse:(TCSymtanticParser *)parser name:(NSString*) name
+-(TCSyntaxNode*) parse:(TCLexicalScanner *)scanner name:(NSString*) name
 {
     
-    TCSyntaxNode * module = [TCSyntaxNode node:LANGUAGE_MODULE];
+    TCSyntaxNode * module = [TCSyntaxNode node:LANGUAGE_MODULE usingScanner:scanner];
     module.subNodes = [NSMutableArray array];
     module.spelling = name;
-    module.position = parser.tokenPosition;
+    module.position = scanner.tokenPosition;
     
     while( 1 ) {
-        if([parser isAtEnd])
+        if([scanner isAtEnd])
             break;
         
         // Each entry point starts with a type def
         
         TCTypeParser * typeDecl = [[TCTypeParser alloc]init];
-        TCSyntaxNode * decl = [typeDecl parse:parser];
+        TCSyntaxNode * decl = [typeDecl parse:scanner];
         
 
         if( decl == nil ) {
-            parser.error = [[TCError alloc]initWithCode:TCERROR_EXP_FUNC withArgument:nil];
+            scanner.error = [[TCError alloc]initWithCode:TCERROR_EXP_FUNC usingScanner:scanner];
             return nil;
         }
 
         // Parse the entry point name
-        if( ![parser isNextToken:TOKEN_IDENTIFIER]) {
-            parser.error = [[TCError alloc]initWithCode:TCERROR_EXP_ENTRYPOINT withArgument:nil];
+        if( ![scanner isNextToken:TOKEN_IDENTIFIER]) {
+            scanner.error = [[TCError alloc]initWithCode:TCERROR_EXP_ENTRYPOINT usingScanner:scanner];
             return nil;
         }
-        decl.spelling = parser.lastSpelling;
+        decl.spelling = scanner.lastSpelling;
         
         // Parse the block.
         
-        if( decl.subNodes.count <= 1 && [parser isNextToken:TOKEN_PAREN_LEFT]) {
+        if( decl.subNodes.count <= 1 && [scanner isNextToken:TOKEN_PAREN_LEFT]) {
             
-            TCSyntaxNode * varData = [TCSyntaxNode node:LANGUAGE_RETURN_TYPE];
-            varData.position = parser.tokenPosition;
+            TCSyntaxNode * varData = [TCSyntaxNode node:LANGUAGE_RETURN_TYPE usingScanner:scanner];
+            varData.position = scanner.tokenPosition;
             varData.action = decl.action;
             varData.subNodes = decl.subNodes;
             
@@ -69,20 +69,20 @@
             
             BOOL requireComma = NO;
             while(YES) {
-                if([parser isNextToken:TOKEN_PAREN_RIGHT]) {
+                if([scanner isNextToken:TOKEN_PAREN_RIGHT]) {
                     break;
                 }
-                if( requireComma && ![parser isNextToken:TOKEN_COMMA]) {
-                    parser.error = [[TCError alloc]initWithCode:TCERROR_EXP_COMMA withArgument:nil];
+                if( requireComma && ![scanner isNextToken:TOKEN_COMMA]) {
+                    scanner.error = [[TCError alloc]initWithCode:TCERROR_EXP_COMMA usingScanner:scanner];
                     return nil;
                 }
 
-                TCSyntaxNode * arg = [dp parseSingle:parser];
-                if( parser.error) {
+                TCSyntaxNode * arg = [dp parseSingle:scanner];
+                if( scanner.error) {
                     return nil;
                 }
                 if( arg == nil || arg.nodeType != LANGUAGE_DECLARE){
-                    parser.error = [[TCError alloc]initWithCode:TCERROR_EXP_DECLARATION withArgument:nil];
+                    scanner.error = [[TCError alloc]initWithCode:TCERROR_EXP_DECLARATION usingScanner:scanner];
                     return nil;
                 }
                 [decl.subNodes addObject:arg];
@@ -96,8 +96,8 @@
             
             TCStatementParser * block = [[TCStatementParser alloc]init];
             
-            TCSyntaxNode * blockTree = [block parse:parser];
-            if( !blockTree || parser.error) {
+            TCSyntaxNode * blockTree = [block parse:scanner];
+            if( !blockTree || scanner.error) {
                 return nil;
             }
             

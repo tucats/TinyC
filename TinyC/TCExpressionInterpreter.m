@@ -8,7 +8,7 @@
 
 #import "TCExpressionInterpreter.h"
 #import "TCToken.h"
-#import "TCSymtanticParser.h"
+#import "TCLexicalScanner.h"
 #import "TCExpressionParser.h"
 #import "TCSymbolTable.h"
 #import "TCExecutionContext.h"
@@ -24,7 +24,7 @@ extern TCExecutionContext* activeContext;
 
 -(TCValue*) evaluateString:(NSString *)string
 {
-    TCSymtanticParser * parser = [[TCSymtanticParser alloc] initFromDefaultFile:@"LanguageTokens.plist"];
+    TCLexicalScanner * parser = [[TCLexicalScanner alloc] initFromDefaultFile:@"LanguageTokens.plist"];
     
     // Lex the command text
     [parser lex:string];
@@ -57,7 +57,9 @@ extern TCExecutionContext* activeContext;
                 sym = [symbols findSymbol:node.spelling];
                 
                 if( sym == nil ) {
-                    _error = [[TCError alloc]initWithCode:TCERROR_UNK_IDENTIFIER withArgument:node.spelling];
+                    _error = [[TCError alloc]initWithCode:TCERROR_UNK_IDENTIFIER
+                                                   atNode:node
+                                             withArgument:node.spelling];
                     if( _debug )
                         NSLog(@"C_ERROR: %@", _error);
                     return nil;
@@ -160,7 +162,9 @@ extern TCExecutionContext* activeContext;
             // Find the symbolic name.  Fail if it doesn't exist
             TCSymbol * targetSymbol = [symbols findSymbol:node.spelling];
             if( targetSymbol == nil ){
-                _error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF withArgument:node.spelling];
+                _error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF
+                                               atNode:node
+                                         withArgument:node.spelling];
                 return nil;
             }
             
@@ -196,7 +200,9 @@ extern TCExecutionContext* activeContext;
             
             TCSymbol * targetSymbol = [symbols findSymbol:node.spelling];
             if( targetSymbol == nil ){
-                _error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF withArgument:node.spelling];
+                _error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF
+                                               atNode:node
+                                         withArgument:node.spelling];
                 return nil;
             }
             
@@ -260,6 +266,7 @@ extern TCExecutionContext* activeContext;
                     
                 default:
                     _error = [[TCError alloc] initWithCode:TCERROR_INTERP_BAD_SCALAR
+                              atNode:node
                                               withArgument:[NSNumber numberWithInt:node.action]];
                     return nil;
             }
@@ -280,6 +287,7 @@ extern TCExecutionContext* activeContext;
                     
                 default:
                     _error = [[TCError alloc] initWithCode:TCERROR_INTERP_UNIMP_MODADIC
+                                                    atNode:node
                                               withArgument:[NSNumber numberWithInt:node.action]];
                     return nil;
             }
@@ -294,7 +302,9 @@ extern TCExecutionContext* activeContext;
                 return nil;
             
             if( left == nil || right == nil) {
-                _error = [[TCError alloc]initWithCode:TCERROR_UNINIT_VALUE withArgument:nil];
+                _error = [[TCError alloc]initWithCode:TCERROR_UNINIT_VALUE
+                                               atNode:node
+                                         withArgument:nil];
                 return nil;
             }
             
@@ -318,6 +328,7 @@ extern TCExecutionContext* activeContext;
                     return [left divideValue:right];
                 default:
                     _error = [[TCError alloc] initWithCode:TCERROR_INTERP_UNIMP_DIADIC
+                                                    atNode:node
                                               withArgument:[NSNumber numberWithInt:node.action]];
                     return nil;
             }
@@ -369,13 +380,16 @@ extern TCExecutionContext* activeContext;
                     
                 default:
                     _error = [[TCError alloc] initWithCode:TCERROR_INTERP_UNIMP_RELATION
+                                                    atNode:node
                                               withArgument:[NSNumber numberWithInt:node.action]];
                     
                     return nil;
             }
             
         default:
-            _error = [[TCError alloc]initWithCode:TCERROR_INTERP_UNIMP_NODE withArgument:[NSNumber numberWithInt:node.nodeType]];
+            _error = [[TCError alloc]initWithCode:TCERROR_INTERP_UNIMP_NODE
+                                           atNode:node
+                                     withArgument:[NSNumber numberWithInt:node.nodeType]];
             
             return nil;
     }
@@ -388,11 +402,15 @@ extern TCExecutionContext* activeContext;
     TCValue * result = nil;
     
     if( node == nil ) {
-        _error = [[TCError alloc]initWithCode:TCERROR_FATAL withArgument:@"Call to nil node"];
+        _error = [[TCError alloc]initWithCode:TCERROR_FATAL
+                                       atNode:node
+                                 withArgument:@"Call to nil node"];
         return nil;
     }
     if( node.nodeType != LANGUAGE_CALL) {
-        _error = [[TCError alloc]initWithCode:TCERROR_FATAL withArgument:@"Call to wrong node type"];
+        _error = [[TCError alloc]initWithCode:TCERROR_FATAL
+                                       atNode:node
+                                 withArgument:@"Call to wrong node type"];
         return nil;
     }
     
@@ -437,7 +455,7 @@ extern TCExecutionContext* activeContext;
     
     // See if it is a built-in function?
     
-    return [self executeFunction:node.spelling withArguments:arguments];
+    return [self executeFunction:node.spelling withArguments:arguments atNode:node];
 }
 
 /**
@@ -451,7 +469,7 @@ extern TCExecutionContext* activeContext;
  was not found or there was a runtime error, nil is returned.
  */
 
--(TCValue*) executeFunction:(NSString *)name withArguments:(NSArray *)arguments
+-(TCValue*) executeFunction:(NSString *)name withArguments:(NSArray *)arguments atNode:(TCSyntaxNode*)node
 {
     
     // First, see if it is a known class we can dynamically construct an instance
@@ -468,7 +486,9 @@ extern TCExecutionContext* activeContext;
         return result;
     }
     
-    _error = [[TCError alloc]initWithCode:TCERROR_UNK_ENTRYPOINT withArgument:name];
+    _error = [[TCError alloc]initWithCode:TCERROR_UNK_ENTRYPOINT
+                                   atNode:node
+                             withArgument:name];
     return nil;
     
 }

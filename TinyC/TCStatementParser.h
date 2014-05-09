@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "TCSyntaxNode.h"
-#import "TCSymtanticParser.h"
+#import "TCLexicalScanner.h"
 
 typedef enum {
     TCSTATEMENT_NONE = 0,
@@ -17,7 +17,7 @@ typedef enum {
 
 @interface TCStatementParser : NSObject
 
--(TCSyntaxNode*) parse:(TCSymtanticParser*)parser  options:(TCStatementOptions)options;
--(TCSyntaxNode*) parse:(TCSymtanticParser*)parser ;
+-(TCSyntaxNode*) parse:(TCLexicalScanner*)scanner  options:(TCStatementOptions)options;
+-(TCSyntaxNode*) parse:(TCLexicalScanner*)scanner ;
 
 @end

@@ -189,7 +189,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         case LANGUAGE_CONTINUE:
             if(_debug)
                 NSLog(@"TRACE:   CONTINUE, restart basic block from beginning");
-            _error = [[TCError alloc]initWithCode:TCERROR_CONTINUE withArgument:nil];
+            _error = [[TCError alloc]initWithCode:TCERROR_CONTINUE atNode:tree];
             return result;
 
 #pragma mark > break
@@ -197,7 +197,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         case LANGUAGE_BREAK:
             if(_debug)
                 NSLog(@"TRACE:   BREAK, exit basic block");
-            _error = [[TCError alloc]initWithCode:TCERROR_BREAK withArgument:nil];
+            _error = [[TCError alloc]initWithCode:TCERROR_BREAK atNode:tree];
             return nil;
             break;
             
@@ -255,7 +255,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             targetValue = [_symbols findSymbol:tree.spelling];
             
             if( targetValue == nil ) {
-                _error = [[TCError alloc]initWithCode:TCERROR_UNK_IDENTIFIER withArgument:tree.spelling];
+                _error = [[TCError alloc]initWithCode:TCERROR_UNK_IDENTIFIER atNode:tree withArgument:tree.spelling];
                 if( _debug )
                     NSLog(@"C_ERROR: %@", _error);
                 return nil;
@@ -307,7 +307,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             //local variable initializer field.
             
             if( arguments.count < (tree.subNodes.count - 2)) {
-                _error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
+                _error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH atNode:tree withArgument:nil];
                 return nil;
             }
             
@@ -629,6 +629,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
 
         default:
             self.error = [[TCError alloc]initWithCode:TCERROR_UNK_STATEMENT
+                                               atNode:tree
                                          withArgument:[NSNumber numberWithInt:tree.nodeType]];
             return nil;
             
@@ -681,7 +682,9 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         if( entryNode == nil ) {
             TCFunction * f = [self findBuiltin:node.spelling];
             if( f == nil ) {
-                _error = [[TCError alloc]initWithCode:TCERROR_UNK_ENTRYPOINT withArgument:node.spelling];
+                _error = [[TCError alloc]initWithCode:TCERROR_UNK_ENTRYPOINT
+                                               atNode:node
+                                         withArgument:node.spelling];
                 return YES;
             }
         }

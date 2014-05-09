@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+@class TCLexicalScanner;
+@class TCSyntaxNode;
 
 typedef enum {
     TCERROR_BREAK=-100,     // Non-error signal values
@@ -50,11 +52,15 @@ typedef enum {
 @property NSString* sourceText;
 @property long position;
 @property NSObject *argument;
+@property long lineNumber;
 
 +(NSString*) errorTextForCode:(TCErrorType) code;
 -(NSString*) errorMessage;
--(instancetype) initWithCode:(TCErrorType)code inSource:(NSString*) source atPosition:(long)position;
--(instancetype) initWithCode:(TCErrorType)code withArgument:(NSObject*) argument;
+-(instancetype) initWithCode:(TCErrorType)code usingScanner:(TCLexicalScanner*)parser;
+-(instancetype) initWithCode:(TCErrorType)code usingScanner:(TCLexicalScanner*)parser withArgument:(NSObject*) argument;
+-(instancetype) initWithCode:(TCErrorType)code atNode:(TCSyntaxNode*) node;
+-(instancetype) initWithCode:(TCErrorType)code atNode:(TCSyntaxNode*) node withArgument:(NSObject*) argument;
+
 -(BOOL) isError;
 -(BOOL) isBreak;
 -(BOOL) isReturn;

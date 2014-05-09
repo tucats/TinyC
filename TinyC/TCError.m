@@ -7,6 +7,8 @@
 //
 
 #import "TCError.h"
+#import "TCLexicalScanner.h"
+#import "TCSyntaxNode.h"
 
 @implementation TCError
 
@@ -101,26 +103,41 @@
  @param position the position in the source buffer where the error was found
  @returns a new instance of the object
  */
--(instancetype) initWithCode:(TCErrorType)code inSource:(NSString *)source atPosition:(long)position
+-(instancetype) initWithCode:(TCErrorType)code usingScanner:(TCLexicalScanner*)parser withArgument:(NSObject *)argument
 {
     if(( self = [super init])) {
         _code = code;
-        _sourceText = source;
-        _position = position;
+        _lineNumber = parser.currentLineNumber;
+        _sourceText = parser.currentLineText;
+        _position = parser.currentPosition;
+        _argument = argument;
     }
     return self;
 }
 
--(instancetype) initWithCode:(TCErrorType)code withArgument:(NSObject *)argument
+-(instancetype) initWithCode:(TCErrorType)code usingScanner:(TCLexicalScanner*)parser
 {
-    if((self = [super init])){
+    return [self initWithCode:code usingScanner:parser withArgument:nil];
+}
+
+-(instancetype) initWithCode:(TCErrorType)code atNode:(TCSyntaxNode*) node withArgument:(NSObject*) argument
+{
+    if((self = [super init])) {
         _code = code;
         _argument = argument;
-        _sourceText = nil;
-        _position = 0;
+        TCLexicalScanner * p = node.scanner;
+        _lineNumber = p.currentLineNumber;
+        _sourceText = p.currentLineText;
+        _position = p.currentPosition;
     }
     return self;
 }
+
+-(instancetype) initWithCode:(TCErrorType)code atNode:(TCSyntaxNode*) node
+{
+    return [self initWithCode:code atNode:node withArgument:nil];
+}
+
 
 
 #pragma mark - Query methods
@@ -185,6 +202,8 @@
     
     
     if( _sourceText != nil) {
+        if( _lineNumber >= 0 )
+            [message appendFormat:@" at line %ld", _lineNumber+1];
         [message appendString:@"\n"];
         
         // Starting at the error position, search backwards to see if there is

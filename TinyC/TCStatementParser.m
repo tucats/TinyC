@@ -17,35 +17,35 @@
 /**
  Helper function that doesn't require options - assumes none are given
  */
--(TCSyntaxNode*) parse:(TCSymtanticParser*)parser;
+-(TCSyntaxNode*) parse:(TCLexicalScanner*)scanner;
 {
-    return [self parse:parser options:TCSTATEMENT_NONE];
+    return [self parse:scanner options:TCSTATEMENT_NONE];
 }
 
 
--(TCSyntaxNode*) parse:(TCSymtanticParser*)parser options:(TCStatementOptions) options
+-(TCSyntaxNode*) parse:(TCLexicalScanner*)scanner options:(TCStatementOptions) options
 {
     TCSyntaxNode * tree = nil;
     
     // See if this is an empty statement
     
-    if([parser isNextToken:TOKEN_SEMICOLON])
+    if([scanner isNextToken:TOKEN_SEMICOLON])
         return nil;
     
     // See if this is a basic block
     
-    if( [parser isNextToken:TOKEN_BRACE_LEFT]) {
+    if( [scanner isNextToken:TOKEN_BRACE_LEFT]) {
         //NSLog(@"PARSE Basic block");
         
-        tree = [TCSyntaxNode node:LANGUAGE_BLOCK];
-        tree.position = parser.tokenPosition;
+        tree = [TCSyntaxNode node:LANGUAGE_BLOCK usingScanner:scanner];
+        tree.position = scanner.tokenPosition;
         
         while(1) {
-            if([parser isNextToken:TOKEN_BRACE_RIGHT])
+            if([scanner isNextToken:TOKEN_BRACE_RIGHT])
                 break;
             
-            TCSyntaxNode * stmt = [self parse:parser];
-            if( parser.error != nil)
+            TCSyntaxNode * stmt = [self parse:scanner];
+            if( scanner.error != nil)
                 return nil;
             if( tree.subNodes == nil) {
                 tree.subNodes = [[NSMutableArray alloc]init];
@@ -61,30 +61,30 @@
     
     // CONTINUE
     if( tree == nil ) {
-        if([parser isNextToken:TOKEN_CONTINUE]) {
-            TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_CONTINUE];
-            stmt.position = parser.tokenPosition;
+        if([scanner isNextToken:TOKEN_CONTINUE]) {
+            TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_CONTINUE usingScanner:scanner];
+            stmt.position = scanner.tokenPosition;
             return stmt;
         }
     }
     
     // BREAK
     if( tree == nil ) {
-        if([parser isNextToken:TOKEN_BREAK]) {
-            TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_BREAK];
-            stmt.position = parser.tokenPosition;
+        if([scanner isNextToken:TOKEN_BREAK]) {
+            TCSyntaxNode * stmt = [TCSyntaxNode node:LANGUAGE_BREAK usingScanner:scanner];
+            stmt.position = scanner.tokenPosition;
             return stmt;
         }
     }
     // RETURN
     if( tree == nil ) {
-        if( [parser isNextToken:TOKEN_RETURN]) {
+        if( [scanner isNextToken:TOKEN_RETURN]) {
             TCExpressionParser * expr = [[TCExpressionParser alloc]init];
 
-            TCSyntaxNode * ret = [TCSyntaxNode node:LANGUAGE_RETURN];
-            ret.position = parser.tokenPosition;
-            ret.subNodes = [NSMutableArray arrayWithArray:@[[expr parse:parser]]];
-            if(parser.error)
+            TCSyntaxNode * ret = [TCSyntaxNode node:LANGUAGE_RETURN usingScanner:scanner];
+            ret.position = scanner.tokenPosition;
+            ret.subNodes = [NSMutableArray arrayWithArray:@[[expr parse:scanner]]];
+            if(scanner.error)
                 return nil;
             return ret;
         }
@@ -94,8 +94,8 @@
     
     if( tree == nil ) {
         TCDeclarationParser * declaration = [[TCDeclarationParser alloc] init];
-        tree = [declaration parse:parser];
-        if( parser.error != nil) {
+        tree = [declaration parse:scanner];
+        if( scanner.error != nil) {
             return nil;
         }
     }
@@ -104,8 +104,8 @@
     if( tree == nil ) {
         
         TCAssignmentParser * assignment = [[TCAssignmentParser alloc] init];
-        tree = [assignment parse:parser];
-        if( parser.error != nil ) {
+        tree = [assignment parse:scanner];
+        if( scanner.error != nil ) {
             return nil;
         }
     }
@@ -113,14 +113,14 @@
     // FOR
     if( tree == nil ) {
         
-        long savedPosition = parser.position;
-        if([parser isNextToken:TOKEN_FOR]) {
-            long tokenPosition = parser.tokenPosition;
+        long savedPosition = scanner.position;
+        if([scanner isNextToken:TOKEN_FOR]) {
+            long tokenPosition = scanner.tokenPosition;
             
-            if([parser isNextToken:TOKEN_PAREN_LEFT]) {
+            if([scanner isNextToken:TOKEN_PAREN_LEFT]) {
                 
                 // There are three statement groups separated by ";" characters
-                parser.error = nil;
+                scanner.error = nil;
                 TCStatementParser * clause = [[TCStatementParser alloc]init];
                 TCSyntaxNode * initClause = nil;
                 TCSyntaxNode * termClause = nil;
@@ -128,29 +128,29 @@
                 TCSyntaxNode * block = nil;
                 
                 // Initialization
-                initClause = [clause parse:parser options:TCSTATEMENT_NONE];
-                if( initClause == nil || parser.error) {
+                initClause = [clause parse:scanner options:TCSTATEMENT_NONE];
+                if( initClause == nil || scanner.error) {
                     tree = nil;
                 }
                 else {
-                    termClause = [clause parse:parser options:TCSTATEMENT_NONE];
-                    if( termClause == nil || parser.error) {
+                    termClause = [clause parse:scanner options:TCSTATEMENT_NONE];
+                    if( termClause == nil || scanner.error) {
                         tree = nil;
                     }
                     else {
-                        incrementClause = [clause parse:parser options:TCSTATEMENT_SUBSTATEMENT];
-                        if( incrementClause == nil || parser.error) {
+                        incrementClause = [clause parse:scanner options:TCSTATEMENT_SUBSTATEMENT];
+                        if( incrementClause == nil || scanner.error) {
                             tree = nil;
                         }
                         else {
-                            if( ![parser isNextToken:TOKEN_PAREN_RIGHT]) {
-                                parser.error = [[TCError alloc]initWithCode:TCERROR_PARENMISMATCH withArgument:nil];
+                            if( ![scanner isNextToken:TOKEN_PAREN_RIGHT]) {
+                                scanner.error = [[TCError alloc]initWithCode:TCERROR_PARENMISMATCH usingScanner:scanner];
                             } else {
-                                block = [clause parse:parser options:TCSTATEMENT_NONE];
-                                if( block == nil || parser.error) {
+                                block = [clause parse:scanner options:TCSTATEMENT_NONE];
+                                if( block == nil || scanner.error) {
                                     tree = nil;
                                 } else {
-                                    tree = [TCSyntaxNode node:LANGUAGE_FOR];
+                                    tree = [TCSyntaxNode node:LANGUAGE_FOR usingScanner:scanner];
                                     tree.position = tokenPosition;
                                     tree.subNodes = [NSMutableArray arrayWithArray:@[initClause, termClause, incrementClause, block]];
                                     return tree;
@@ -165,7 +165,7 @@
         // If after all that, if we failed to parse the three clauses then we are not an IF statement.
         
         if( !tree) {
-            parser.position = savedPosition;
+            scanner.position = savedPosition;
         }
     }
     
@@ -173,31 +173,31 @@
     // Note that this is really the same a FOR but without an initializer or increment clause.
     if( tree == nil ) {
         
-        long savedPosition = parser.position;
-        if([parser isNextToken:TOKEN_WHILE]) {
-            long tokenPosition = parser.tokenPosition;
+        long savedPosition = scanner.position;
+        if([scanner isNextToken:TOKEN_WHILE]) {
+            long tokenPosition = scanner.tokenPosition;
             
-            if([parser isNextToken:TOKEN_PAREN_LEFT]) {
+            if([scanner isNextToken:TOKEN_PAREN_LEFT]) {
                 
                 // There is a single term clause and a body to process
-                parser.error = nil;
+                scanner.error = nil;
                 TCStatementParser * clause = [[TCStatementParser alloc]init];
                 TCSyntaxNode * termClause = nil;
                 TCSyntaxNode * block = nil;
                 
-                termClause = [clause parse:parser options:TCSTATEMENT_SUBSTATEMENT];
-                if( termClause == nil || parser.error) {
+                termClause = [clause parse:scanner options:TCSTATEMENT_SUBSTATEMENT];
+                if( termClause == nil || scanner.error) {
                     tree = nil;
                 }
                 else {
-                    if( ![parser isNextToken:TOKEN_PAREN_RIGHT]) {
-                        parser.error = [[TCError alloc]initWithCode:TCERROR_PARENMISMATCH withArgument:nil];
+                    if( ![scanner isNextToken:TOKEN_PAREN_RIGHT]) {
+                        scanner.error = [[TCError alloc]initWithCode:TCERROR_PARENMISMATCH usingScanner:scanner];
                     } else {
-                        block = [clause parse:parser options:TCSTATEMENT_NONE];
-                        if( block == nil || parser.error) {
+                        block = [clause parse:scanner options:TCSTATEMENT_NONE];
+                        if( block == nil || scanner.error) {
                             tree = nil;
                         } else {
-                            tree = [TCSyntaxNode node:LANGUAGE_WHILE];
+                            tree = [TCSyntaxNode node:LANGUAGE_WHILE usingScanner:scanner];
                             tree.position = tokenPosition;
                             tree.subNodes = [NSMutableArray arrayWithArray:@[termClause, block]];
                             return tree;
@@ -211,15 +211,15 @@
         // If after all that, if we failed to parse the three clauses then we are not an IF statement.
         
         if( !tree) {
-            parser.position = savedPosition;
+            scanner.position = savedPosition;
         }
     }
     
     // IF [ELSE]
     if( tree == nil ) {
         TCIfParser * ifStatement = [[TCIfParser alloc] init];
-        tree = [ifStatement parse:parser];
-        if( parser.error != nil) {
+        tree = [ifStatement parse:scanner];
+        if( scanner.error != nil) {
             return nil;
         }
         
@@ -241,8 +241,8 @@
     if( tree == nil ) {
         
         TCExpressionParser * exp = [[TCExpressionParser alloc]init];
-        tree = [exp parse:parser];
-        if( parser.error != nil) {
+        tree = [exp parse:scanner];
+        if( scanner.error != nil) {
             return nil;
         }
     }
@@ -251,9 +251,9 @@
         if(!(options & TCSTATEMENT_SUBSTATEMENT)) {
             // NSLog(@"PARSE require ';'");
             
-            if(![parser isNextToken:TOKEN_SEMICOLON]) {
+            if(![scanner isNextToken:TOKEN_SEMICOLON]) {
                 
-                [parser error:TCERROR_SEMICOLON];
+                [scanner error:TCERROR_SEMICOLON];
                 return nil;
                 
             }
@@ -262,7 +262,7 @@
         return tree;
     }
     
-    parser.error = [[TCError alloc]initWithCode:TCERROR_UNK_STATEMENT withArgument:[parser lastSpelling]];
+    scanner.error = [[TCError alloc]initWithCode:TCERROR_UNK_STATEMENT usingScanner:scanner withArgument:[scanner lastSpelling]];
     return nil;
 }
 

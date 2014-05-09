@@ -12,23 +12,23 @@
 
 @implementation TCTypeParser
 
--(TCSyntaxNode*) parse:(TCSymtanticParser*)parser
+-(TCSyntaxNode*) parse:(TCLexicalScanner*)scanner
 {
     TCSyntaxNode * decl = nil;
-    long savedPosition = parser.position;
+    long savedPosition = scanner.position;
     
-    if([parser isNextToken:TOKEN_DECL_INT] ||
-       [parser isNextToken:TOKEN_DECL_LONG] ||
-       [parser isNextToken:TOKEN_DECL_DOUBLE] ||
-       [parser isNextToken:TOKEN_DECL_CHAR]) {
+    if([scanner isNextToken:TOKEN_DECL_INT] ||
+       [scanner isNextToken:TOKEN_DECL_LONG] ||
+       [scanner isNextToken:TOKEN_DECL_DOUBLE] ||
+       [scanner isNextToken:TOKEN_DECL_CHAR]) {
         
-        decl = [TCSyntaxNode node:LANGUAGE_TYPE];
+        decl = [TCSyntaxNode node:LANGUAGE_TYPE usingScanner:scanner];
         decl.action = TCVALUE_UNDEFINED;
-        decl.position = parser.tokenPosition;
+        decl.position = scanner.tokenPosition;
         
         
         // Check for builtin types first.
-        switch(parser.lastTokenType) {
+        switch(scanner.lastTokenType) {
             case TOKEN_DECL_DOUBLE:
                 decl.action = TCVALUE_DOUBLE;
                 break;
@@ -58,9 +58,9 @@
         // If we have a type then see if it is a pointer to that type
         
         if( decl.action != TCVALUE_UNDEFINED) {
-            if([parser isNextToken:TOKEN_ASTERISK]) {
-                TCSyntaxNode * ptrData = [TCSyntaxNode node:LANGUAGE_ADDRESS];
-                ptrData.position = parser.tokenPosition;
+            if([scanner isNextToken:TOKEN_ASTERISK]) {
+                TCSyntaxNode * ptrData = [TCSyntaxNode node:LANGUAGE_ADDRESS usingScanner:scanner];
+                ptrData.position = scanner.tokenPosition;
                 
                 decl.subNodes = [NSMutableArray arrayWithArray:@[ptrData]];
             }
@@ -70,7 +70,7 @@
         // type declaration after all and we bail out, resetting the parser.
         
         if( decl.action == TCVALUE_UNDEFINED) {
-            parser.position = savedPosition;
+            scanner.position = savedPosition;
             return nil;
         }
         return decl;

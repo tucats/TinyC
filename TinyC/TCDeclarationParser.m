@@ -40,25 +40,42 @@ TCValueType tokenToType( TokenType tok )
 
 @implementation TCDeclarationParser
 
-
--(TCSyntaxNode*) parseSingle:(TCSymtanticParser *)parser
+/** 
+ Parse a single declaration. This stops when it hits the end of the declaration,
+ which can include a comma.  This is used to parse arguments, which can be contextually
+ confused with lists of arguments of the same type.  So this is what is called
+ from the logic that parses paramter lists rather than the generic parser.
+ 
+ @param parser the parsing object that is providing the lexical token queue
+ @return a tree with the single argument/declaration information.
+ */
+-(TCSyntaxNode*) parseSingle:(TCLexicalScanner *)scanner
 {
     _endOnComma = YES;
-    TCSyntaxNode *tree = [self parse:parser];
+    TCSyntaxNode *tree = [self parse:scanner];
     _endOnComma = NO;
     return tree;
 }
 
--(TCSyntaxNode*) parse:(TCSymtanticParser *)parser
+/**
+ Parse a declaration, which can be a list.
+ 
+ <TYPE> [*] <name> [, [*]<name>...]
+ 
+ @param parser the Symatic parser that provides the token queue
+ @return a parse tree with a LANGUAGE_DECLARE tree and a list
+ of values to be bound to the given type.
+ */
+-(TCSyntaxNode*) parse:(TCLexicalScanner *)scanner
 {
     TCSyntaxNode * decl = nil;
-    parser.error = nil;
+    scanner.error = nil;
     TCSyntaxNode* varData = nil;
     
     // Is there a leading type definition here?
     
     TCTypeParser * typeData = [[TCTypeParser alloc]init];
-    decl = [typeData parse:parser];
+    decl = [typeData parse:scanner];
     if( decl == nil)
         return nil;
     
@@ -66,7 +83,7 @@ TCValueType tokenToType( TokenType tok )
     // type.
     
     decl.nodeType = LANGUAGE_DECLARE;
-    decl.position = parser.tokenPosition;
+    decl.position = scanner.tokenPosition;
     
     // Note that if we already think this is a pointer type, we parsed
     // the "*" as part of the type itself.  If so, we need to back up
@@ -75,10 +92,10 @@ TCValueType tokenToType( TokenType tok )
     
     if( decl.subNodes[0]) {
         TCSyntaxNode * addrNode = (TCSyntaxNode*) decl.subNodes[0];
-        if( addrNode && addrNode.nodeType == LANGUAGE_ADDRESS && parser.lastTokenType == TOKEN_ASTERISK) {
+        if( addrNode && addrNode.nodeType == LANGUAGE_ADDRESS && scanner.lastTokenType == TOKEN_ASTERISK) {
             [decl.subNodes removeObjectAtIndex:0];
             addrNode = nil;
-            parser.position = parser.position - 1;
+            scanner.position = scanner.position - 1;
         }
     }
     // NSLog(@"PARSE declaration");
@@ -86,32 +103,32 @@ TCValueType tokenToType( TokenType tok )
         
         BOOL isPointer = NO;
         
-        if( [parser isNextToken:TOKEN_ASTERISK])
+        if( [scanner isNextToken:TOKEN_ASTERISK])
             isPointer = YES;
         
-        if(![parser isNextToken:TOKEN_IDENTIFIER]) {
-            [parser error:TCERROR_IDENTIFIERNF];
+        if(![scanner isNextToken:TOKEN_IDENTIFIER]) {
+            [scanner error:TCERROR_IDENTIFIERNF];
             return nil;
         }
         
-        varData = [TCSyntaxNode node:LANGUAGE_NAME];
-        varData.position = parser.tokenPosition;
+        varData = [TCSyntaxNode node:LANGUAGE_NAME usingScanner:scanner];
+        varData.position = scanner.tokenPosition;
         
         varData.action = isPointer ? decl.action + TCVALUE_POINTER : decl.action;
-        varData.spelling = [parser lastSpelling];
+        varData.spelling = [scanner lastSpelling];
         
         // See if this is an array declaration. This would be followed by
         // "[", expression, "]".  In this case, we convert the type to a
         // pointer, but preallocate the space it points to based on the
         // array size.
         
-        if([parser isNextToken:TOKEN_BRACKET_LEFT]) {
+        if([scanner isNextToken:TOKEN_BRACKET_LEFT]) {
             
             // We need an initializer here, which can be parsed
             // as a constant literal.
             
             TCExpressionParser * initExpression = [[TCExpressionParser alloc]init];
-            TCSyntaxNode * expression = [initExpression parse:parser];
+            TCSyntaxNode * expression = [initExpression parse:scanner];
             if( expression == nil)
                 return nil;
             TCExpressionInterpreter * initInterp = [[TCExpressionInterpreter alloc]init];
@@ -124,31 +141,33 @@ TCValueType tokenToType( TokenType tok )
             // Create two arguments, the size and the type code to pass as
             // parameters.
             
-            TCSyntaxNode * allocator = [TCSyntaxNode node:LANGUAGE_CALL];
+            TCSyntaxNode * allocator = [TCSyntaxNode node:LANGUAGE_CALL usingScanner:scanner];
             allocator.spelling  = @"_array";
-            TCSyntaxNode * arg1 = [TCSyntaxNode node:LANGUAGE_SCALAR];
+            TCSyntaxNode * arg1 = [TCSyntaxNode node:LANGUAGE_SCALAR usingScanner:scanner];
             arg1.action = TOKEN_INTEGER;
             arg1.spelling = [NSString stringWithFormat:@"%ld", arraySize];
-            TCSyntaxNode * arg2 = [TCSyntaxNode node:LANGUAGE_SCALAR];
+            TCSyntaxNode * arg2 = [TCSyntaxNode node:LANGUAGE_SCALAR usingScanner:scanner];
             arg2.action = TOKEN_INTEGER;
             arg2.spelling = [NSString stringWithFormat:@"%d", decl.action];
             allocator.subNodes = [NSMutableArray arrayWithArray:@[arg1, arg2]];
             varData.action = decl.action + TCVALUE_POINTER;
             varData.subNodes = [NSMutableArray arrayWithArray: @[allocator]];
             
-            if(![parser isNextToken:TOKEN_BRACKET_RIGHT]) {
-                parser.error = [[TCError alloc]initWithCode:TCERROR_BRACKETMISMATCH withArgument:nil];
+            if(![scanner isNextToken:TOKEN_BRACKET_RIGHT]) {
+                scanner.error = [[TCError alloc]initWithCode:TCERROR_BRACKETMISMATCH
+                                                usingScanner:scanner
+                                               withArgument:nil];
                 return nil;
             }
             
         }
-        else if([parser isNextToken:TOKEN_ASSIGNMENT]) {
+        else if([scanner isNextToken:TOKEN_ASSIGNMENT]) {
             
             // We need an initializer here, which can be parsed
             // as a constant literal string.
             
             TCExpressionParser * initExpression = [[TCExpressionParser alloc]init];
-            TCSyntaxNode * expression = [initExpression parse:parser];
+            TCSyntaxNode * expression = [initExpression parse:scanner];
             if( expression == nil)
                 return nil;
             TCExpressionInterpreter * initInterp = [[TCExpressionInterpreter alloc]init];
@@ -164,7 +183,7 @@ TCValueType tokenToType( TokenType tok )
         if( varData != nil )
             [decl.subNodes addObject:varData];
         
-        if(_endOnComma || ![parser isNextToken:TOKEN_COMMA])
+        if(_endOnComma || ![scanner isNextToken:TOKEN_COMMA])
             break;
     }
     

@@ -15,7 +15,9 @@
 {
     
     if( arguments.count != 0 ) {
-        self.error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
+        self.error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH
+                                           atNode:nil
+                                     withArgument:nil];
         return nil;
     }
     

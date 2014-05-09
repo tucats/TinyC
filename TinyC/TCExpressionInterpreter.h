@@ -20,9 +20,16 @@
 @property TCStorageManager *storage;
 @property TCExecutionContext *context;
 
--(TCValue *) evaluate:(TCSyntaxNode* ) node withSymbols:(TCSymbolTable*) symbols;
+-(TCValue *) evaluate:(TCSyntaxNode* ) node
+          withSymbols:(TCSymbolTable*) symbols;
+
 -(TCValue *) evaluateString:(NSString*) string;
--(TCValue*) functionCall:(TCSyntaxNode *) node withSymbols:(TCSymbolTable*)symbols;
--(TCValue*) executeFunction:(NSString*) name withArguments:(NSArray*) arguments;
+
+-(TCValue*) functionCall:(TCSyntaxNode *) node
+             withSymbols:(TCSymbolTable*)symbols;
+
+-(TCValue*) executeFunction:(NSString*) name
+              withArguments:(NSArray*) arguments
+                     atNode:(TCSyntaxNode*)node;
 
 @end

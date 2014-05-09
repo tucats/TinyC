@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "TCSymtanticParser.h"
+#import "TCLexicalScanner.h"
 #import "TCSyntaxNode.h"
 
 
@@ -19,8 +19,8 @@
 
 @property BOOL debug;
 
--(TCSyntaxNode * ) parse: (TCSymtanticParser*) parser;
--(TCSyntaxNode*) parseSingle:(TCSymtanticParser *)parser;
+-(TCSyntaxNode * ) parse: (TCLexicalScanner*) scanner;
+-(TCSyntaxNode*) parseSingle:(TCLexicalScanner *)scanner;
 
 
 @end

@@ -13,7 +13,7 @@
 -(TCValue*) execute:(NSArray *)arguments inContext:(TCExecutionContext*) context
 {
     if( arguments.count != 1 ) {
-        self.error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH withArgument:nil];
+        self.error = [[TCError alloc]initWithCode:TCERROR_ARG_MISMATCH atNode:nil];
         return nil;
     }
     
