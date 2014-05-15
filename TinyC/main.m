@@ -25,6 +25,10 @@ int main(int argc, const char * argv[])
         BOOL argCapture = NO;
         NSMutableArray *argList = [NSMutableArray array];
         
+        // Scan over the runtime argument list.  Some will be processed
+        //  by the main program as runtime options.  Once we find the
+        //  program name to run, all remaining arguments are just copied
+        //  into the runtime space of the TinyC program being executed.
         for( int ax = 1; ax < argc; ax++ ) {
             
             if(argCapture) {
@@ -32,32 +36,35 @@ int main(int argc, const char * argv[])
                 continue;
             }
             
+            //  Debug flag begins with -d followed by one or more letters
+            //  indicating debug modes.
             if( strncmp(argv[ax], "-d", 2) == 0 ) {
                 for( int dp = 2; dp < strlen(argv[ax]); dp++) {
                     char c = (argv[ax])[dp];
                     switch (c) {
                         case 'p':
-                            df |= TCDebugParse;
+                            df |= TCDebugParse;     //  -dp     show parse tree
                             break;
                             
                         case 'm':
-                            df |= TCDebugMemory;
+                            df |= TCDebugMemory;    //  -dm     show runtime memory stats
                             break;
                             
                         case 't':
-                            df |= TCDebugTokens;
+                            df |= TCDebugTokens;    //  -dt     show token queue
                             break;
                             
                         case 'x':
-                            df |= TCDebugTrace;
+                            df |= TCDebugTrace;     //  -dx     execution trace
                             break;
                             
                         case 's':
-                            df |= TCDebugStorage;
+                            df |= TCDebugStorage;   //  -ds     storage trace
                             break;
                             
                         case 'r':
-                            df |= TCNonRandomNumbers;
+                            df |= TCNonRandomNumbers;// -dr     Deterministic random numbers
+                            break;
                             
                         default:
                             printf("Unrecognized -d option %c ignored\n", c);
@@ -156,7 +163,7 @@ int main(int argc, const char * argv[])
         
         if( error != nil ) {
             printf("%s\n", [[error description] UTF8String]);
-            return 1;
+            return -1000;
         }
         
         // 3. Run the program, and capture the return code.  Whatever argument
@@ -171,7 +178,7 @@ int main(int argc, const char * argv[])
         
         if( error != nil ) {
             printf("%s\n", [[error description] UTF8String]);
-            return 2;
+            return -1001;
         }
         
         // 4. Get the program result (it's actual C-language return) and print
@@ -179,9 +186,11 @@ int main(int argc, const char * argv[])
         //    if the result is numeric or string or whatever; it will be printed
         //    as a string.
         
-        if( tinyC.result.getInt != 0)
+        int rc = tinyC.result.getInt;
+        
+        if( rc != 0)
             printf("Program returns %s\n", [[tinyC.result description] UTF8String]);
-        return 0;
+        return rc;
     }
     return 0;
 }

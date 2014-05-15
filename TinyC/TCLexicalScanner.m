@@ -1,10 +1,20 @@
 //
-//  Parser.m
-//  Language
+//  TCLexicalScanner.m
+//  TinyC
 //
 //  Created by Tom Cole on 11/19/08.
 //  Copyright 2008 SAS Institute Inc. All rights reserved.
 //
+//  Originally created as some test code for learning ObjectiveC, this turned
+//  into the lexical scanner for a program that interprets a subset of C.  It
+//  processes a string buffer and converts it to a set of tokens.  The token
+//  attributes are based on a reserved token list plus basic rules embedded in
+//  the code below for identifying what is a number, identifier, string,
+//  special character, or reserved word.
+//
+//  The scanner builds an array of the tokens and a parser can then step
+//  through the token array to determine the symantic meaning of the token
+//  stream
 
 #import "TCLexicalScanner.h"
 
@@ -113,7 +123,7 @@
         [self addSpelling:@"continue" forToken:TOKEN_CONTINUE];
         [self addSpelling:@"%" forToken:TOKEN_PERCENT];
         [self doNotPersist];
-
+        
     }
     return self;
 }
@@ -188,7 +198,7 @@
     
     [_dictionary setObject:[[TCToken alloc] initWithSpelling:theSpelling ofType:code atPosition:0] forKey:theSpelling];
     [_spellingTable setObject:theSpelling forKey:[NSNumber numberWithInt:code]];
-     
+    
     _dictionaryChanged = YES;
 }
 
@@ -245,13 +255,13 @@
             return position - r.location;
     }
     return 0L;
-
+    
 }
 
 -(NSArray*) mapSourceLines:(NSString*) source
 {
     
-
+    
     // Build a mapping of line numbers.  The line number
     // is the index into the array; it contains an NSRange
     // with the start and length of the line in the buffer.
@@ -448,7 +458,7 @@
 
 #pragma mark - Tokenization processing
 
-/** 
+/**
  Given a string, break it down into lexical elements ready for parsing.
  @param string the NSString * buffer to be tokenized
  @return a count of the number of tokens found
@@ -482,6 +492,60 @@
 }
 
 /**
+ Eat comments in the input stream. Leaves scanner character position immediately following comment.
+ 
+ @return YES if a comment was consumed, NO if not.
+ */
+-(BOOL) eatComments {
+    
+    // Skip leading whitespace
+    long len = [buffer length];
+    while( YES ) {
+        if( charPos >= len)
+            return NO;
+        if( !isspace([buffer characterAtIndex:charPos]))
+            break;
+        charPos++;
+    }
+    
+    
+    // Is next item a /*comment*/?  If so, scan to closing token
+    
+    if( charPos < len-2) {
+        char ch1 = [buffer characterAtIndex:charPos];
+        char ch2 = [buffer characterAtIndex:(charPos+1)];
+        if(ch1 == '/' && ch2 == '*') {
+            charPos += 2;
+            while(charPos < len-1) {
+                char ch1 = [buffer characterAtIndex:charPos];
+                char ch2 = [buffer characterAtIndex:(charPos+1)];
+                
+                if(ch1 == '*' && ch2 == '/') {
+                    charPos += 2;
+                    break;
+                } else
+                    charPos++;
+            }
+            return YES;
+        }
+
+        // Is next item a // comment? If so scan until line end
+
+        else if([buffer characterAtIndex:charPos] == '/' && [buffer characterAtIndex:(charPos+1) == '/']) {
+                    charPos += 2;
+                    while(charPos < len)
+                        if([buffer characterAtIndex:charPos] == '\n') {
+                            charPos += 1;
+                            break;
+                        } else
+                            charPos++;
+                    return YES;
+                }
+    }
+    return NO;
+}
+
+/**
  Lex the next item, and add it to the queue.  This is called in a loop from the
  lex: method to break out each individual item.  This is where syntactic features
  must be implemented, such as identifying what multi-character special character
@@ -495,6 +559,11 @@
     long len = [buffer length];
     if( charPos >= len )
         return NO;
+    
+    
+    // Eat any comments.  This leaves us positioned after the last comment.
+    
+    while( [self eatComments]);
     
     // Skip leading whitepace.
     
@@ -528,9 +597,9 @@
         [lastToken setSpelling:[NSString stringWithFormat:@"%c", ch]];
         [tokenList addObject:lastToken];
         return true;
-
+        
     }
-
+    
     //	Is it a double?
     [scanner setScanLocation:charPos];
     double double_value;
@@ -591,9 +660,9 @@
                     // \" as a closing quote.
                     int ch2 = [buffer characterAtIndex:charPos];
                     if( ch2 == '\\') {
-                       r.length += 2;
-                       charPos  += 2;
-                       continue;
+                        r.length += 2;
+                        charPos  += 2;
+                        continue;
                     }
                     if( ch == ch2)
                         break;
@@ -634,7 +703,7 @@
                 long complexTokenLength = 0;
                 for (NSString * key in _dictionary) {
                     TCToken * aToken = [_dictionary objectForKey:key];
-                     NSString * testSpelling = aToken.spelling;
+                    NSString * testSpelling = aToken.spelling;
                     long testTokenLength = [testSpelling length];
                     if( charPos + testTokenLength > [buffer length] ) {
                         continue;

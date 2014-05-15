@@ -1,10 +1,21 @@
 //
-//  Token.m
-//  Language
+//  TCToken.m
+//  TinyC
 //
 //  Created by Tom Cole on 11/19/08.
 //  Copyright 2008 SAS Institute Inc. All rights reserved.
 //
+//  Originally created as part of a project to learn Objective-C
+//  this has become the token object for TinyC, a program to read
+//  and interpret a subset of the C programming language
+//
+//  Each token contains information about its spelling, classification,
+//  and position where it was found in the source buffer (this is used
+//  for error reporting)
+//
+//  The same object is also used to hold the dictionary entries for
+//  reserved tokens used by the LexicalScanner; the position informaiton
+//  is ignored in that case.
 
 #import "TCToken.h"
 

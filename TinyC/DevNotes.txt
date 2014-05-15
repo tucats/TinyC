@@ -145,4 +145,17 @@
     and runtime problems. This can be done by using the current active parser at compile time, or
     the current AST node at runtime.  Each AST node points to the parent parser which holds the
     source and line number data.
+
+40. Pointers and arrays don't quite work interchangably as they should.  The symbol table needs
+    to diffferentiate between address-of-value and pointer-to-value with a new attribute.
+    
+41. Symbols need major improvements to be able to handle structures and frame-relative storage.
+
+42. Once symbols are upgraded, need a new scanning phase that allocates storage within each
+    frame, and calculates frame sizes to put at start of each block.
+    
+43. Once we have a proper symbol table we can detect missing symbols right away during compile
+    phase without having runtime allocations.
+
+
     
