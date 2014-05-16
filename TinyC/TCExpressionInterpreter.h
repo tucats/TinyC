@@ -10,7 +10,7 @@
 #import "TCSyntaxNode.h"
 #import "TCValue.h"
 #import "TCError.h"
-#import "TCSymbolTable.h"
+#import "TCRuntimeSymbolTable.h"
 #import "TCStorageManager.h"
 #import "TCExecutionContext.h"
 
@@ -21,12 +21,12 @@
 @property TCExecutionContext *context;
 
 -(TCValue *) evaluate:(TCSyntaxNode* ) node
-          withSymbols:(TCSymbolTable*) symbols;
+          withSymbols:(TCRuntimeSymbolTable*) symbols;
 
 -(TCValue *) evaluateString:(NSString*) string;
 
 -(TCValue*) functionCall:(TCSyntaxNode *) node
-             withSymbols:(TCSymbolTable*)symbols;
+             withSymbols:(TCRuntimeSymbolTable*)symbols;
 
 -(TCValue*) executeFunction:(NSString*) name
               withArguments:(NSArray*) arguments

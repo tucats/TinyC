@@ -10,7 +10,7 @@
 #import "TCToken.h"
 #import "TCLexicalScanner.h"
 #import "TCExpressionParser.h"
-#import "TCSymbolTable.h"
+#import "TCRuntimeSymbolTable.h"
 #import "TCExecutionContext.h"
 #import "NSString+NSStringFormatting.h"
 #import "TCFunction.h"
@@ -37,7 +37,7 @@ extern TCExecutionContext* activeContext;
 }
 
 
--(TCValue*) evaluate:(TCSyntaxNode *)node withSymbols:(TCSymbolTable*) symbols
+-(TCValue*) evaluate:(TCSyntaxNode *)node withSymbols:(TCRuntimeSymbolTable*) symbols
 {
     
     switch( node.nodeType) {
@@ -47,7 +47,7 @@ extern TCExecutionContext* activeContext;
         case LANGUAGE_ADDRESS:
         {
             TCValue *targetAddress = nil;
-            TCSymbol * sym = nil;
+            TCRuntimeSymbol * sym = nil;
             
             // IF this is a named address we want the shortcut of getting the address of this value
             // from the symbol table.
@@ -160,7 +160,7 @@ extern TCExecutionContext* activeContext;
         case LANGUAGE_ARRAY:
         {
             // Find the symbolic name.  Fail if it doesn't exist
-            TCSymbol * targetSymbol = [symbols findSymbol:node.spelling];
+            TCRuntimeSymbol * targetSymbol = [symbols findSymbol:node.spelling];
             if( targetSymbol == nil ){
                 _error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF
                                                atNode:node
@@ -198,7 +198,7 @@ extern TCExecutionContext* activeContext;
             // a symbol value.  The other kind requires processing a sub-expression and then
             // calculating a new address using that expression
             
-            TCSymbol * targetSymbol = [symbols findSymbol:node.spelling];
+            TCRuntimeSymbol * targetSymbol = [symbols findSymbol:node.spelling];
             if( targetSymbol == nil ){
                 _error = [[TCError alloc]initWithCode:TCERROR_IDENTIFIERNF
                                                atNode:node
@@ -397,7 +397,7 @@ extern TCExecutionContext* activeContext;
     
 }
 
--(TCValue*) functionCall:(TCSyntaxNode *) node withSymbols:(TCSymbolTable*)symbols
+-(TCValue*) functionCall:(TCSyntaxNode *) node withSymbols:(TCRuntimeSymbolTable*)symbols
 {
     TCValue * result = nil;
     
