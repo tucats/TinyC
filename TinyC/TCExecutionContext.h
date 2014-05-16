@@ -10,7 +10,7 @@
 #import "TCSyntaxNode.h"
 #import "TCError.h"
 #import "TCValue.h"
-#import "TCSymbolTable.h"
+#import "TCRuntimeSymbolTable.h"
 #import "TCStorageManager.h"
 
 @class TCFunction;
@@ -26,18 +26,18 @@ int typeSize(int t );
 @property TCSyntaxNode * module;
 @property TCSyntaxNode *block;
 @property int blockPosition;
-@property TCSymbolTable * symbols;
+@property TCRuntimeSymbolTable * symbols;
 @property TCExecutionContext * parent;
 @property TCError * error;
 @property BOOL debug;
 @property NSArray * arguments;
 @property TCSyntaxNode *returnInfo;
-@property TCSymbol * lastSymbol;
+@property TCRuntimeSymbol * lastSymbol;
 @property NSMutableArray * importedArguments;
 @property BOOL assertAbort;
 
 -(instancetype) initWithStorage:(TCStorageManager*) storage;
--(TCValue*) execute:(TCSyntaxNode*) tree withSymbols:(TCSymbolTable *) symbols;
+-(TCValue*) execute:(TCSyntaxNode*) tree withSymbols:(TCRuntimeSymbolTable *) symbols;
 -(TCValue*) execute:(TCSyntaxNode*) tree;
 -(TCValue *) execute:(TCSyntaxNode *)tree entryPoint:(NSString*) entryName;
 -(TCValue *) execute:(TCSyntaxNode *)tree entryPoint:(NSString*) entryName withArguments:(NSArray*) arguments;

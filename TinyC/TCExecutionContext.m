@@ -8,7 +8,7 @@
 
 #import "TCExecutionContext.h"
 #import "TCSyntaxNode.h"
-#import "TCSymbolTable.h"
+#import "TCRuntimeSymbolTable.h"
 #import "TCError.h"
 #import "TCValue.h"
 #import "TCToken.h"
@@ -134,7 +134,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
 
 #pragma mark - Execution
 
--(TCValue*)execute:(TCSyntaxNode *)tree withSymbols:(TCSymbolTable *)symbols
+-(TCValue*)execute:(TCSyntaxNode *)tree withSymbols:(TCRuntimeSymbolTable *)symbols
 {
     self.symbols = symbols;
     return [self execute:tree];
@@ -242,7 +242,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
         {
             // Find the address of a target.  Right now we only support a single name.
             
-            TCSymbol * targetValue = nil;
+            TCRuntimeSymbol * targetValue = nil;
             if( tree.spelling == nil ) {
                 TCSyntaxNode *addressTree = (TCSyntaxNode*) tree.subNodes[0];
                 result = [self execute:addressTree withSymbols:_symbols];
@@ -352,7 +352,7 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
             // A block requires a new symbol context so symbols declared are local to the block
             
-            TCSymbolTable * scopedSymbols = [[TCSymbolTable alloc]init];
+            TCRuntimeSymbolTable * scopedSymbols = [[TCRuntimeSymbolTable alloc]init];
             scopedSymbols.parent = self.symbols;
             self.symbols = scopedSymbols;
             self.error = nil;
