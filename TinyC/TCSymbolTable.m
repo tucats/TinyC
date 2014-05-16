@@ -1,59 +1,53 @@
 //
 //  TCSymbolTable.m
-//  Language
+//  TinyC
 //
-//  Created by Tom Cole on 4/1/14.
-//
+//  Created by Tom Cole on 5/15/14.
+//  Copyright (c) 2014 Forest Edge. All rights reserved.
 //
 
 #import "TCSymbolTable.h"
-#import "TCToken.h"
 
 @implementation TCSymbolTable
 
--(instancetype) init
+#pragma mark - Initializers
+
+-(instancetype) initWithParent:(TCSymbolTable*)parent
 {
-    if(self = [super init]) {
+    if((self=[super init])) {
+        
+        _parent = parent;
+        _depth = 0;
+        if(parent)
+            _depth = parent.depth + 1;
+        
         _symbols = [NSMutableDictionary dictionary];
+        
     }
     return self;
-    
 }
 
--(TCValue *) valueOfSymbol:(NSString *)name
+-(instancetype) init
 {
-    return [[self findSymbol:name] initialValue];
-    
+    return [self initWithParent:nil];
 }
 
--(TCSymbol *) findSymbol:(NSString*) name
+#pragma mark - Symbol Management
+
+-(BOOL) addSymbol:(TCSymbol*) symbol
 {
+    TCSymbol* testSymbol = [self.symbols objectForKey:symbol.name];
+    if(testSymbol!=nil)
+        return NO;
     
-    TCSymbol * symbol = [_symbols objectForKey:name];
-    if( symbol == nil && _parent != nil )
-        symbol = [_parent findSymbol:name];
-    return symbol;
+    [self.symbols setObject:symbol forKey:symbol.name];
+    symbol.table = self;
+    
+    return YES;
 }
 
--(TCSymbol*) newSymbol:(NSString *)name ofType:(TCValueType)type storage:(TCStorageManager*) storage
+-(TCSymbol*) findSymbol:(NSString *)name
 {
-    
-    TCSymbol *symbol = [[TCSymbol alloc]init];
-    symbol.spelling = name;
-    symbol.type = type;
-    symbol.size = [TCValue sizeOf:type];
-    long storageSize = 0;
-    
-    if( type > TCVALUE_POINTER )
-        storageSize = sizeof(char*);
-    else
-        storageSize = symbol.size;
-    
-    symbol.address = [storage allocateAuto:storageSize];
-    symbol.allocated = YES;
-    [_symbols setObject:symbol forKey:name];
-    return symbol;
+    return [self.symbols objectForKey:name];
 }
-
-
 @end

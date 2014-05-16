@@ -1,26 +1,25 @@
 //
 //  TCSymbolTable.h
-//  Language
+//  TinyC
 //
-//  Created by Tom Cole on 4/1/14.
-//
+//  Created by Tom Cole on 5/15/14.
+//  Copyright (c) 2014 Forest Edge. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
 #import "TCSymbol.h"
-#import "TCSyntaxNode.h"
-#import "TCValue.h"
-#import "TCStorageManager.h"
 
 @interface TCSymbolTable : NSObject
 
-@property NSMutableDictionary* symbols;
-@property TCSymbolTable * parent;
+@property   TCSymbolTable *         parent;
+@property   long                    baseAddress;
+@property   int                     depth;
+@property   NSMutableDictionary*    symbols;
 
+-(instancetype) initWithParent:(TCSymbolTable*) parent;
 
-//-(TCSymbol*) newSymbol: (NSString*) name ofType:(TCSymbolType)type;
--(TCSymbol*) findSymbol: (NSString*) name;
--(TCValue * ) valueOfSymbol: (NSString*) name;
--(TCSymbol*) newSymbol:(NSString *)name ofType:(TCValueType)type storage:(TCStorageManager*) storage;
+-(BOOL) addSymbol:(TCSymbol*) symbol;
+-(TCSymbol*) findSymbol:(NSString*) name;
+
 
 @end

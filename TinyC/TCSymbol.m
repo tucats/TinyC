@@ -1,94 +1,65 @@
 //
 //  TCSymbol.m
-//  Language
+//  TinyC
 //
-//  Created by Tom Cole on 4/1/14.
-//
+//  Created by Tom Cole on 5/15/14.
+//  Copyright (c) 2014 Forest Edge. All rights reserved.
 //
 
 #import "TCSymbol.h"
-#import "TCStorageManager.h"
+#import "TCSymbolTable.h"
+
+// This array must match the order of the
+// enumerated TCSymbolAttribute base types.
+
+static int baseTypeDataSizes[] = {
+    0,              // TC_SYMBOL_UNDEFINED
+    sizeof(char),   // TC_SYMBOL_CHAR
+    sizeof(int),    // TC_SYMBOL_INT
+    sizeof(long),   // TC_SYMBOL_LONG
+    sizeof(float),  // TC_SYMBOL_FLOAT
+    sizeof(double), // TC_SYMBOL_DOUBLE
+    -1 };           // TC_SYMBOL_TYPEDEF
+
 
 @implementation TCSymbol
 
-/**
- This is the designated initializer
- 
- Create a new symbol node.
- 
- @param name the name of the symbol
- @param type the symbol type (SYMBOL_INTEGER, SYMBOL_POINTER, etc.)
- @param size the symbol size or offset value
- @returns the newly created node.
- */
--(instancetype) initWithName:(NSString*) name withType:(TCValueType) type withSize:(int) size
++(instancetype) symbolWithName:(NSString *)name withAttributes:(TCSymbolAttribute)attributes containedBy:(TCSymbol *)parent
 {
-    if((self = [super init])){
+    return [[self alloc] initWithName:name withAttributes:attributes containedBy:parent];
+}
+
+/**
+ Initialize a new symbol object. The object is assumed not to have a container.
+ 
+ @param name        The name of the symbol to create
+ @param attributes  The attributes of the symbol
+ */
+
+-(instancetype) initWithName:(NSString *)name withAttributes:(TCSymbolAttribute)attributes
+{
+    return [self initWithName:name withAttributes:attributes containedBy:nil];
+}
+
+/**
+ Initialize a new symbol object.
+ 
+ @param name        The name of the symbol to create
+ @param attributes  The attributes of the symbol
+ @param parent      The container symbol, or nil if this symbol has no container
+ */
+-(instancetype) initWithName:(NSString *)name withAttributes:(TCSymbolAttribute)attributes containedBy:(TCSymbol *)parent
+{
+    if((self=[super init])) {
         
-        _spelling = name;
-        _type = type;
-        _size = size;
-        _initialValue = nil;
-        _allocated = NO;
-        _address = -1L;
+        _name = name;
+        _attributes = attributes;
+        _parent = parent;
+        _table = nil;
+        _size = baseTypeDataSizes[BASETYPE(attributes)];
+        
     }
     
     return self;
 }
-
--(void) setValue:(TCValue*)value storage:(TCStorageManager*) storage
-{
-    _initialValue = value;
-    if( _allocated )
-        [storage setValue:value at:_address];
-    else
-        NSLog(@"FATAL: attempt to store value with no storage allocated");
-    
-}
--(NSString*)description
-{
-    NSMutableString * d = [NSMutableString string];
-    
-    [d appendFormat:@"\"%@\" ", self.spelling];
-    BOOL isPointer = NO;
-    
-    TCValueType t = self.type;
-    if( t > TCVALUE_POINTER) {
-        isPointer = YES;
-        t = t - TCVALUE_POINTER;
-    }
-    switch( t ) {
-        case TCVALUE_INT:
-        case TCVALUE_LONG:
-            [d appendFormat:@" integer*%d ", self.size];
-            break;
-            
-        case TCVALUE_FLOAT:
-        case TCVALUE_DOUBLE:
-            [d appendFormat:@" double*%d ", self.size];
-            break;
-            
-        case TCVALUE_STRING:
-            [d appendFormat:@" string*%d ", self.size];
-            break;
-        
-        case TCVALUE_POINTER:
-            [d appendFormat:@" void "];
-            isPointer = YES;
-            break;
-            
-        default:
-            [d appendFormat:@" unknown type %d ", t];
-            
-    }
-    
-    if( isPointer)
-        [d appendString:@" pointer "];
-    
-    if( _allocated)
-        [d appendString:[NSString stringWithFormat:@" @%ld", _address]];
-    return [NSString stringWithString:d];
-}
-
-
 @end
