@@ -124,7 +124,7 @@ NSString * nodeSpelling( int nodeType ) {
 // and the next level in.
 -(void) dumpLevel:(int) level
 {
-    NSString * indent = [@"-|-|-|-|-|-|-|-|-|-|" substringToIndex:(level*2)];
+    NSString * indent = [@"-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|-|" substringToIndex:(level*2)];
     //NSString * spaces = [@"                   " substringToIndex:(level*2)];
     
     NSLog(@"%@ Node %@ %@ %@ %@ %@", indent, nodeSpelling(self.nodeType),
