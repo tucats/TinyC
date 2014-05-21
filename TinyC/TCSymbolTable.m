@@ -36,10 +36,19 @@
 
 -(BOOL) addSymbol:(TCSymbol*) symbol
 {
+    
+    // First, see if there is already a symbol of this name in the local
+    // symbol table. We do not use the findSymbol method because we
+    // only want to search the local table in this case.  IF there is
+    // already a symbol of this name then it is an error (duplicate
+    // symbol definition.
+    
     TCSymbol* testSymbol = [self.symbols objectForKey:symbol.name];
     if(testSymbol!=nil)
         return NO;
     
+    // Otherwise, add the symbol by name into the lcoation dictionary,
+    // and mark the symbol as being contained by this table.
     [self.symbols setObject:symbol forKey:symbol.name];
     symbol.table = self;
     
@@ -48,6 +57,20 @@
 
 -(TCSymbol*) findSymbol:(NSString *)name
 {
-    return [self.symbols objectForKey:name];
+    // First, see if it is in our local table.  If so, job well done!
+    TCSymbol * result = [self.symbols objectForKey:name];
+    if(result != nil)
+        return result;
+    
+    // Secondly, if we have a parent symbol table, as it to search
+    // for the symbol.  Recursively this will search up the entire
+    // symbol table tree
+    
+    if(_parent != nil)
+        return [_parent findSymbol:name];
+    
+    // Third, if there is no parent then we are the root table and
+    // the symbol is not found, so return nil.
+    return nil;
 }
 @end

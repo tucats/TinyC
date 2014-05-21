@@ -29,37 +29,27 @@ static int baseTypeDataSizes[] = {
     return [[self alloc] initWithName:name withAttributes:attributes containedBy:parent];
 }
 
-/**
- Initialize a new symbol object. The object is assumed not to have a container.
- 
- @param name        The name of the symbol to create
- @param attributes  The attributes of the symbol
- */
 
--(instancetype) initWithName:(NSString *)name withAttributes:(TCSymbolAttribute)attributes
+-(instancetype) initWithName:(NSString *)name
+              withAttributes:(TCSymbolAttribute)attributes
 {
     return [self initWithName:name withAttributes:attributes containedBy:nil];
 }
 
-/**
- Initialize a new symbol object.
- 
- @param name        The name of the symbol to create
- @param attributes  The attributes of the symbol
- @param parent      The container symbol, or nil if this symbol has no container
- */
--(instancetype) initWithName:(NSString *)name withAttributes:(TCSymbolAttribute)attributes containedBy:(TCSymbol *)parent
+
+//  Helper function to initialize a new symbol with a known parent
+
+-(instancetype) initWithName:(NSString *)name
+              withAttributes:(TCSymbolAttribute)attributes
+                 containedBy:(TCSymbol *)parent
 {
     if((self=[super init])) {
-        
         _name = name;
         _attributes = attributes;
         _parent = parent;
         _table = nil;
         _size = baseTypeDataSizes[BASETYPE(attributes)];
-        
     }
-    
     return self;
 }
 @end
