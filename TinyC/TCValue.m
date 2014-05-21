@@ -252,10 +252,20 @@ typedef struct {
 -(TCValue*) castTo:(TCValueType)newType
 {
     
+    // If we are already the type being cast, no work to do.
     if( [self getType] == newType)
         return self;
+
+    // Type conversions just require changing the stored type value
+    if(type > TCVALUE_POINTER && newType > TCVALUE_POINTER) {
+        type = newType;
+        return self;
+    }
+    
+    // Looks like actual data conversions will be required...
     
     switch (newType) {
+            
         case TCVALUE_CHAR:
             
             switch ([self getType]) {
