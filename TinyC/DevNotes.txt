@@ -157,5 +157,6 @@
 43. Once we have a proper symbol table we can detect missing symbols right away during compile
     phase without having runtime allocations.
 
-
+44. [DONE] Need to modify runtime handling of math in TCValue so that it can process integer math on
+    pointer data types without panic about unsupported data types.
     

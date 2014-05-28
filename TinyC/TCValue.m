@@ -372,7 +372,16 @@ typedef struct {
     
     int promotedType = MAX([self getType], [value getType]);
     
+    /* Handle special case of pointer math */
+    if( promotedType >= TCVALUE_POINTER) {
+        TCValueType baseType = promotedType - TCVALUE_POINTER;
+        long addr = [self getLong] + [value getLong];
+        TCValue * r = [[TCValue alloc]initWithLong:addr];
+        return [r makePointer:baseType];
+    }
+
     switch(promotedType) {
+            
         case TCVALUE_CHAR:
             return [[TCValue alloc]initWithInt:(char)([self getInt] + [value getInt])];
         case TCVALUE_INT:
@@ -393,6 +402,14 @@ typedef struct {
     
     int promotedType = MAX([self getType], [value getType]);
     
+    /* Handle special case of pointer math */
+    if( promotedType >= TCVALUE_POINTER) {
+        TCValueType baseType = promotedType - TCVALUE_POINTER;
+        long addr = [self getLong] - [value getLong];
+        TCValue * r = [[TCValue alloc]initWithLong:addr];
+        return [r makePointer:baseType];
+    }
+
     switch(promotedType) {
         case TCVALUE_CHAR:
             return [[TCValue alloc]initWithInt:(char)([self getInt] - [value getInt])];
@@ -416,6 +433,14 @@ typedef struct {
     
     int promotedType = MAX([self getType], [value getType]);
     
+    /* Handle special case of pointer math */
+    if( promotedType >= TCVALUE_POINTER) {
+        TCValueType baseType = promotedType - TCVALUE_POINTER;
+        long addr = [self getLong] * [value getLong];
+        TCValue * r = [[TCValue alloc]initWithLong:addr];
+        return [r makePointer:baseType];
+    }
+
     switch(promotedType) {
         case TCVALUE_CHAR:
             return [[TCValue alloc]initWithInt:(char)([self getInt] * [value getInt])];
@@ -438,6 +463,14 @@ typedef struct {
     
     int promotedType = MAX([self getType], [value getType]);
     
+    /* Handle special case of pointer math */
+    if( promotedType >= TCVALUE_POINTER) {
+        TCValueType baseType = promotedType - TCVALUE_POINTER;
+        long addr = [self getLong] / [value getLong];
+        TCValue * r = [[TCValue alloc]initWithLong:addr];
+        return [r makePointer:baseType];
+    }
+
     switch(promotedType) {
         case TCVALUE_CHAR:
         {
