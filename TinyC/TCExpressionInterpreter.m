@@ -426,6 +426,8 @@ extern TCExecutionContext* activeContext;
             NSLog(@"TRACE:   Evaluate argument %d", ix);
         TCSyntaxNode * exp = (TCSyntaxNode*) node.subNodes[ix];
         TCValue * argValue = [self evaluate:exp withSymbols:symbols];
+        if(argValue == nil)
+            return nil;
         [arguments addObject:argValue];
     }
     

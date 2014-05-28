@@ -15,9 +15,17 @@
 #import "TCExecutionContext.h"
 
 @interface TCExpressionInterpreter : NSObject
+
+/** Flag indicating if runtime logging is to be done during expression processing */
 @property BOOL debug;
+
+/** This holds the last error from an expression evaluation */
 @property TCError* error;
+
+/** This is a pointer to the runtime memory storage manager */
 @property TCStorageManager *storage;
+
+/** This is a pointer to the current execution context executing the expression. */
 @property TCExecutionContext *context;
 
 -(TCValue *) evaluate:(TCSyntaxNode* ) node
