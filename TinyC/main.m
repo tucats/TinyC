@@ -11,6 +11,24 @@
 #import "TCValue.h"
 #import "TinyC.h"
 
+NSString * loadProgramFromFile(FILE * input)
+{
+    NSString *program= nil;
+    NSMutableString *argBuff = [NSMutableString string];
+    while(!feof(stdin)) {
+        char buffer[256];
+        char *bp;
+        bp = fgets(buffer, 255, input);
+        if(!bp)
+            break;
+        [argBuff appendString:[NSString stringWithCString:bp
+                                                 encoding:NSUTF8StringEncoding]];
+        [argBuff appendString: @"\n"];
+    }
+    program = [NSString stringWithString:argBuff];
+    return program;
+}
+
 int main(int argc, const char * argv[])
 {
     
@@ -105,18 +123,7 @@ int main(int argc, const char * argv[])
                 continue;
             }
             if( strcmp(argv[ax], "-") == 0 || strcmp(argv[ax], "-stdin") == 0) {
-                NSMutableString *argBuff = [NSMutableString string];
-                while(!feof(stdin)) {
-                    char buffer[256];
-                    char *bp;
-                    bp = fgets(buffer, 255, stdin);
-                    if(!bp)
-                        break;
-                    [argBuff appendString:[NSString stringWithCString:bp
-                                                             encoding:NSUTF8StringEncoding]];
-                    [argBuff appendString: @"\n"];
-                }
-                program = [NSString stringWithString:argBuff];
+                program = loadProgramFromFile(stdin);
                 argCapture = YES;
                 break;
             }
@@ -139,10 +146,12 @@ int main(int argc, const char * argv[])
         }
         
         if( path == nil && program == nil) {
-            path = @"/Users/tom/test.c";
-            printf("No source given, using test code\n");
-            df = TCDebugParse | TCDebugTrace | TCDebugStorage;
-            argList = [NSMutableArray arrayWithArray:@[@"foo", @"3"]];
+            
+            // No input file given on command line, so let's assume we are
+            // just reading everything from stdin and hope for the best.
+            
+            program = loadProgramFromFile(stdin);
+            path = nil;
         }
         
         // End of options processing, let's do the work.

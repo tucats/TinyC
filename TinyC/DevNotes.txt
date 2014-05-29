@@ -159,4 +159,8 @@
 
 44. [DONE] Need to modify runtime handling of math in TCValue so that it can process integer math on
     pointer data types without panic about unsupported data types.
+
+45. [DONE] If there is no program file, just assume stdin. Modify XCode project to pass parameters
+    for default test case execution.
+    
     
