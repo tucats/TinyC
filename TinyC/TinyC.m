@@ -81,12 +81,16 @@ TCExecutionContext* activeContext;
         [tree dumpTree];
     }
     
-    // Allocate the storage manager we will use.
+    // Allocate the storage manager we will use.  This is only done on the
+    // first compile of a session; subsequent compiles use the same storage
+    // area.
     
-    if( _memorySize == 0 )
-        _memorySize = 65536;
-    
-    self.storage = [[TCStorageManager alloc]initWithStorage:_memorySize];
+     if(self.storage == nil ) {
+         if( _memorySize == 0 )
+             _memorySize = 65536;
+         
+       self.storage = [[TCStorageManager alloc]initWithStorage:_memorySize];
+    }
     self.storage.debug = self.debugStorage;
     
     // Create execution context and check to see if there are
