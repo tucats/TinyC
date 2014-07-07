@@ -680,14 +680,14 @@
                     [lastToken setType:TOKEN_STRING];
                 }
             }
-            else if( isalnum(ch)) {
+            else if( isalpha(ch)) {
                 
                 // An IDENTIFIER object, scan until white space or end of string
                 while( YES ) {
                     if( charPos >= len)
                         break;
                     char idChar = [buffer characterAtIndex:charPos];
-                    if( isalpha(idChar) || (idChar == '_')) {
+                    if( isalnum(idChar) || (idChar == '_')) {
                         r.length++;
                         charPos++;
                         
