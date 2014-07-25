@@ -578,7 +578,7 @@
     int ch = [buffer characterAtIndex:charPos];
     int ch2 = 0;
     
-    if( charPos < buffer.length)
+    if( charPos < buffer.length-1)
         ch2 = [buffer characterAtIndex:charPos+1];
     
     NSRange r;
