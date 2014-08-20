@@ -486,6 +486,10 @@
         if( o != nil )
             [lastToken setType:[o type]];
     }
+    
+    // @note
+    // insert lexical scanner here to handle macro substitutions?
+    
     tokenPosition = 0;
     charPos = -1;
     return count;
