@@ -2,8 +2,8 @@
 
 1.  [DONE] Add ability to have errors as a discrete object.  The error can
     take a code as a value, and an optional argument.  The code is formatted
-    as a string internally for localization purposes.  The description method
-    formats the error for printing.
+    as a string internally for localization purposes, though this is not yet
+    done. The description method formats the error for printing.
 
 2.  [DONE] Each major class must include the ability to have an error object
     associated with it.  For example the parser can get an error, but so can
