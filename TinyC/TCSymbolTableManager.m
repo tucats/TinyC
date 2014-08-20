@@ -34,6 +34,7 @@
         
         TCSymbolTable * newTable = [[TCSymbolTable alloc] initWithParent:_activeTable];
         _activeTable = newTable;
+        tree.argument = newTable;
         
     }
     
