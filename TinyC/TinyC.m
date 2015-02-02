@@ -25,6 +25,32 @@ TCExecutionContext* activeContext;
 
 @implementation TinyC
 
+/**
+ * Class Factory to allocate a new instance of the compiler and runtime with a given
+ * memory size and debug flag state.
+ * @param initialMemorySize the amount of memory (in bytes) that will be allocated to run the program
+ * @param debugFlags the runtime flag settings for commpilation and execution of the program
+ * @return a new instance of TinyC ready to accept source for compilation and execution.
+ */
+
++(id)memory:(long)initialMemorySize flags:(TCFlag)debugFlags {
+    return [[super alloc] initWithMemory:initialMemorySize flags:debugFlags];
+}
+
+/**
+ * Short-cut initialization that creates an object and specifies it's memory footprint
+ * and debug flag settings.
+ * @param initialMemorySize the amount of memory (in bytes) that will be allocated to run the program
+ * @param debugFlags the runtime flag settings for commpilation and execution of the program
+ * @return a new instance of TinyC ready to accept source for compilation and execution.
+ */
+-(id)initWithMemory:(long)initialMemorySize flags:(TCFlag)debugFlags {
+    flags = debugFlags;
+    _memorySize = initialMemorySize;
+    return self;
+}
+
+
 -(TCError*) compileFile:(NSString *)path
 {
     NSError * error;
@@ -130,6 +156,20 @@ TCExecutionContext* activeContext;
     
 }
 
+-(TCError*) executeWithArguments:(NSMutableArray *)argList {
+    _arguments = argList;
+    return [self execute];
+}
+
+-(TCError*) executeWithArguments:(NSMutableArray *)argList
+                  returningValue:(TCValue *__autoreleasing*) result
+{
+    _arguments = argList;
+    TCError* error = [self execute];
+    if(result != nil )
+        *result = _result;
+    return error;
+}
 
 -(TCError* ) execute
 {

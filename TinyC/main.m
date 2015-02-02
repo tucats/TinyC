@@ -159,9 +159,7 @@ int main(int argc, const char * argv[])
         // 1. Allocate a TinyC instance to handle the work, and initialize it's storage and options.
         
         TCError * error = nil;
-        TinyC * tinyC = [[TinyC alloc]init];
-        [tinyC setDebug: df];
-        tinyC.memorySize = memory;
+        TinyC * tinyC = [TinyC memory:memory flags:df];
         
         // 2. If we have a file, compile that, else compile the string we captured.
         
@@ -181,9 +179,8 @@ int main(int argc, const char * argv[])
         //    error, then report it.
         
         [argList insertObject:tinyC.moduleName atIndex:0];
-        tinyC.arguments = argList;
         
-        error = [tinyC execute];
+        error = [tinyC executeWithArguments:argList];
         
         if( error != nil ) {
             printf("%s\n", [[error description] UTF8String]);

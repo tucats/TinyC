@@ -79,6 +79,25 @@ typedef enum {
     
 }
 
+
+/**
+ * Class Factory to allocate a new instance of the compiler and runtime with a given
+ * memory size and debug flag state.
+ * @param initialMemorySize the amount of memory (in bytes) that will be allocated to run the program
+ * @param debugFlags the runtime flag settings for commpilation and execution of the program
+ * @return a new instance of TinyC ready to accept source for compilation and execution.
+ */
+
++(id)memory:(long)initialMemorySize flags:(TCFlag)debugFlags;
+/**
+ * Short-cut initialization that creates an object and specifies it's memory footprint
+ * and debug flag settings.
+ * @param initialMemorySize the amount of memory (in bytes) that will be allocated to run the program
+ * @param debugFlags the runtime flag settings for commpilation and execution of the program
+ * @return a new instance of TinyC ready to accept source for compilation and execution.
+ */
+-(id)initWithMemory:(long)initialMemorySize flags:(TCFlag)debugFlags;
+
 /** The result of the program's execution */
 @property TCValue* result;
 
@@ -131,6 +150,22 @@ typedef enum {
 -(TCError*) execute;
 
 /**
+ Helper function to execute a program with an argument list.
+ @param argList the arguments to pass to the program
+ @return nil if success, else an error code
+ */
+
+-(TCError*) executeWithArguments:(NSMutableArray*) argList;
+
+/**
+ Helper function to execute a program with an argument list and
+ return a result.
+ */
+-(TCError*) executeWithArguments:(NSMutableArray *)argList
+                  returningValue:(TCValue *__autoreleasing*) result;
+
+    
+/**
  A helper function; this calls execute and then fetches the result value
  and writes it to the supplied location. 
  @param result a pointer to a TCValue object which will hold the result when
@@ -174,6 +209,8 @@ typedef enum {
 
 /** Accessor function to determine if the TCDebugStorage flag is set */
 -(BOOL) debugStorage;
+
++(id)allocWithMemory:(long) memorySize flags:(TCFlag)flags;
 
 
 @end
