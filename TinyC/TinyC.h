@@ -87,8 +87,8 @@ typedef enum {
  * @param debugFlags the runtime flag settings for commpilation and execution of the program
  * @return a new instance of TinyC ready to accept source for compilation and execution.
  */
++(id)allocWithMemory:(long) initialMemorySize flags:(TCFlag)debugFlags;
 
-+(id)memory:(long)initialMemorySize flags:(TCFlag)debugFlags;
 /**
  * Short-cut initialization that creates an object and specifies it's memory footprint
  * and debug flag settings.
@@ -210,7 +210,6 @@ typedef enum {
 /** Accessor function to determine if the TCDebugStorage flag is set */
 -(BOOL) debugStorage;
 
-+(id)allocWithMemory:(long) memorySize flags:(TCFlag)flags;
 
 
 @end

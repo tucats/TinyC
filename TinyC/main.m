@@ -159,7 +159,7 @@ int main(int argc, const char * argv[])
         // 1. Allocate a TinyC instance to handle the work, and initialize it's storage and options.
         
         TCError * error = nil;
-        TinyC * tinyC = [TinyC memory:memory flags:df];
+        TinyC * tinyC = [TinyC allocWithMemory:memory flags:df];
         
         // 2. If we have a file, compile that, else compile the string we captured.
         

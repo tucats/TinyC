@@ -33,7 +33,7 @@ TCExecutionContext* activeContext;
  * @return a new instance of TinyC ready to accept source for compilation and execution.
  */
 
-+(id)memory:(long)initialMemorySize flags:(TCFlag)debugFlags {
++(id)allocWithMemory:(long)initialMemorySize flags:(TCFlag)debugFlags {
     return [[super alloc] initWithMemory:initialMemorySize flags:debugFlags];
 }
 
