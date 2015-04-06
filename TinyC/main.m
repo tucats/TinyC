@@ -192,10 +192,16 @@ int main(int argc, const char * argv[])
         //    if the result is numeric or string or whatever; it will be printed
         //    as a string.
         
-        int rc = tinyC.result.getInt;
+        int rc = 0;
         
-        if( rc != 0)
-            printf("Program returns %s\n", [[tinyC.result description] UTF8String]);
+        // It might be an empty set, which means a void result
+        if( tinyC.result != nil) {
+            
+            rc = tinyC.result.getInt;
+        
+            if( rc != 0)
+                printf("Program returns %s\n", [[tinyC.result description] UTF8String]);
+        }
         return rc;
     }
     return 0;

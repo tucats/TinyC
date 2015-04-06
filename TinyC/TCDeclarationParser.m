@@ -28,6 +28,7 @@ TCValueType tokenToType( TokenType tok )
             return TCVALUE_FLOAT;
         case TOKEN_DECL_DOUBLE:
             return TCVALUE_DOUBLE;
+        case TOKEN_DECL_VOID:
         case TOKEN_DECL_POINTER:
             return TCVALUE_UNDEFINED;
             

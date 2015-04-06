@@ -23,6 +23,9 @@ TCExecutionContext* activeContext;
 int typeSize(int t )
 {
     switch(t) {
+        case TCVALUE_VOID:
+            return 0;
+            
         case TCVALUE_CHAR:
         case TOKEN_DECL_CHAR:
             return sizeof(char);
@@ -48,6 +51,11 @@ char * typeMap(TokenType theType)
     static char horrible_static[8];
     
     switch ((int)theType) {
+        case TCVALUE_VOID:
+        case TOKEN_DECL_VOID:
+            return "void";
+            break;
+            
         case TCVALUE_INT:
         case TOKEN_DECL_INT:
             return "int";
@@ -476,6 +484,19 @@ TCValue* coerceType(TCValue* value, TokenType theType)
 
         case LANGUAGE_RETURN:
         {
+            
+            // If there is no expression and we are a VOID block, then just be done.
+            
+            if( tree.subNodes == nil || [tree.subNodes count] == 0 ) {
+                if( _returnInfo.action == TCVALUE_VOID) {
+                    result = [[TCValue alloc]initWithInt:0];
+                    return nil;
+                }
+                
+                _error = [[TCError alloc ]initWithCode:TCERROR_RETURNVALUE atNode:tree];
+                return nil;
+            }
+            // No, we'e got to get the return value.
             TCExpressionInterpreter * expInt = [[TCExpressionInterpreter alloc]init];
             expInt.debug = _debug;
             expInt.storage = _storage;
@@ -491,12 +512,19 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             }
             
             if( _returnInfo ) {
+                
+                // If we are supposed to be a VOID then a RETURN is not legal.
+                if( _returnInfo.action == TCVALUE_VOID) {
+                    _error = [[TCError alloc] initWithCode:TCERROR_VOIDRETURN atNode:tree];
+                }
                 if(_debug) {
                     NSLog(@"TRACE:   Return type coerced to %s", typeMap(_returnInfo.action));
                 }
-                result = coerceType(result, _returnInfo.action);
+                if( _returnInfo.action != TCVALUE_VOID)
+                    result = coerceType(result, _returnInfo.action);
+                else
+                    result = nil;
             }
-            //[_storage popStorage];
             return result;
         }
 #pragma mark > declare

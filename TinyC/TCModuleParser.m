@@ -52,9 +52,9 @@
             globals = [TCSyntaxNode node:LANGUAGE_ENTRYPOINT usingScanner:scanner];
             globals.subNodes = [NSMutableArray array];
             globals.spelling = RUNTIME_ENTRYPOINT;
-            // First subnode is the return type, we specify int
+            // First subnode is the return type, we specify void
             globalBlock = [TCSyntaxNode node:LANGUAGE_RETURN_TYPE usingScanner:scanner];
-            globalBlock.action = TCVALUE_INT;
+            globalBlock.action = TCVALUE_VOID;
             [globals addNode:globalBlock];
             // Second subnode is a BLOCK with the actual declarations inside it
             globalBlock = [TCSyntaxNode node:LANGUAGE_BLOCK usingScanner:scanner];

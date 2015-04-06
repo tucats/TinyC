@@ -109,6 +109,7 @@
         [self addSpelling:@"long" forToken:TOKEN_DECL_LONG];
         [self addSpelling:@"double" forToken:TOKEN_DECL_DOUBLE];
         [self addSpelling:@"float" forToken:TOKEN_DECL_FLOAT];
+        [self addSpelling:@"void" forToken:TOKEN_DECL_VOID];
         [self addSpelling:@"if" forToken:TOKEN_IF];
         [self addSpelling:@"else" forToken:TOKEN_ELSE];
         [self addSpelling:@"return" forToken:TOKEN_RETURN];

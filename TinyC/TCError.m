@@ -78,6 +78,10 @@
             return @"Mismatched [] brackets";
         case TCERROR_PARENMISMATCH:
             return @"Mismatched () parenthesis";
+        case TCERROR_VOIDRETURN:
+            return @"Cannot return a value from a void function";
+        case TCERROR_RETURNVALUE:
+            return @"Non-void function requires return value";
         case TCERROR_BREAK:
             return @"!BREAK";
         case TCERROR_RETURN:

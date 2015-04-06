@@ -79,11 +79,19 @@
     // RETURN
     if( tree == nil ) {
         if( [scanner isNextToken:TOKEN_RETURN]) {
-            TCExpressionParser * expr = [[TCExpressionParser alloc]init];
-
+            long mark = scanner.position;
+            TCExpressionParser * expr = nil;
             TCSyntaxNode * ret = [TCSyntaxNode node:LANGUAGE_RETURN usingScanner:scanner];
             ret.position = scanner.tokenPosition;
+            
+            if( [scanner nextToken] != TOKEN_SEMICOLON) {
+                scanner.position = mark;
+                expr = [[TCExpressionParser alloc]init];
             ret.subNodes = [NSMutableArray arrayWithArray:@[[expr parse:scanner]]];
+            }
+            else
+                scanner.position = mark;
+            
             if(scanner.error)
                 return nil;
             return ret;

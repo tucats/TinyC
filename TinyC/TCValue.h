@@ -20,6 +20,9 @@ typedef enum {
     /** An undefined data item. This should never exist at runtime */
     TCVALUE_UNDEFINED=0,
     
+    /** An intentionally undefined type */
+    TCVALUE_VOID,
+    
     /** A char, 16-bit integer that holds a character */
     TCVALUE_CHAR,
     

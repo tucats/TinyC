@@ -20,6 +20,7 @@
     if([scanner isNextToken:TOKEN_DECL_INT] ||
        [scanner isNextToken:TOKEN_DECL_LONG] ||
        [scanner isNextToken:TOKEN_DECL_DOUBLE] ||
+       [scanner isNextToken:TOKEN_DECL_VOID] ||
        [scanner isNextToken:TOKEN_DECL_CHAR]) {
         
         decl = [TCSyntaxNode node:LANGUAGE_TYPE usingScanner:scanner];
@@ -43,6 +44,10 @@
                 
             case TOKEN_DECL_CHAR:
                 decl.action = TCVALUE_CHAR;
+                break;
+            
+            case TOKEN_DECL_VOID:
+                decl.action = TCVALUE_VOID;
                 break;
                 
             default:
