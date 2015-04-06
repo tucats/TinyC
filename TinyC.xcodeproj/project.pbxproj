@@ -34,6 +34,8 @@
 		E262FE1618F8645300DFC135 /* NSString+NSStringFormatting.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */; };
 		E262FE1718FADCB400DFC135 /* TinyC in CopyFiles */ = {isa = PBXBuildFile; fileRef = E262FDC918F8478400DFC135 /* TinyC */; };
 		E262FE1B18FC2BE700DFC135 /* TCStorageManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E262FE1A18FC2BE700DFC135 /* TCStorageManager.m */; };
+		E26BFC581AD31C9100C6B7F7 /* TCstrlenFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E26BFC571AD31C9100C6B7F7 /* TCstrlenFunction.m */; };
+		E26BFC5A1AD31CAE00C6B7F7 /* TCstrlenFunction.h in Sources */ = {isa = PBXBuildFile; fileRef = E26BFC591AD31CAE00C6B7F7 /* TCstrlenFunction.h */; };
 		E275AF441906C967004BFE38 /* TCassertFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E275AF431906C967004BFE38 /* TCassertFunction.m */; };
 		E28F23DA1926843A00251790 /* TCSymbolTableManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E28F23D91926843A00251790 /* TCSymbolTableManager.m */; };
 		E2900C7E1912B7E900730BFB /* TCrandomFunction.m in Sources */ = {isa = PBXBuildFile; fileRef = E2900C7D1912B7E900730BFB /* TCrandomFunction.m */; };
@@ -110,6 +112,8 @@
 		E262FE1518F8645300DFC135 /* NSString+NSStringFormatting.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSStringFormatting.m"; sourceTree = "<group>"; };
 		E262FE1918FC2BE700DFC135 /* TCStorageManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TCStorageManager.h; path = ../TCStorageManager.h; sourceTree = "<group>"; };
 		E262FE1A18FC2BE700DFC135 /* TCStorageManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TCStorageManager.m; path = ../TCStorageManager.m; sourceTree = "<group>"; };
+		E26BFC571AD31C9100C6B7F7 /* TCstrlenFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCstrlenFunction.m; sourceTree = "<group>"; };
+		E26BFC591AD31CAE00C6B7F7 /* TCstrlenFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCstrlenFunction.h; sourceTree = "<group>"; };
 		E275AF421906C967004BFE38 /* TCassertFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCassertFunction.h; sourceTree = "<group>"; };
 		E275AF431906C967004BFE38 /* TCassertFunction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TCassertFunction.m; sourceTree = "<group>"; };
 		E28F23D81926843A00251790 /* TCSymbolTableManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TCSymbolTableManager.h; sourceTree = "<group>"; };
@@ -143,6 +147,8 @@
 				E2609A791901A0F4001EF080 /* TCFunction.m */,
 				E2609A7B1901A18D001EF080 /* TCmallocFunction.h */,
 				E2609A7C1901A18D001EF080 /* TCmallocFunction.m */,
+				E26BFC591AD31CAE00C6B7F7 /* TCstrlenFunction.h */,
+				E26BFC571AD31C9100C6B7F7 /* TCstrlenFunction.m */,
 				E275AF421906C967004BFE38 /* TCassertFunction.h */,
 				E275AF431906C967004BFE38 /* TCassertFunction.m */,
 				E2609A821901A3B0001EF080 /* TCprintfFunction.h */,
@@ -357,6 +363,7 @@
 			files = (
 				E2609A7D1901A18D001EF080 /* TCmallocFunction.m in Sources */,
 				E262FDFD18F847BA00DFC135 /* TCAssignmentParser.m in Sources */,
+				E26BFC581AD31C9100C6B7F7 /* TCstrlenFunction.m in Sources */,
 				E2609A811901A34E001EF080 /* TCfreeFunction.m in Sources */,
 				E2929C701925483200D652D6 /* TCSymbol.m in Sources */,
 				E262FE0018F847BA00DFC135 /* TCError.m in Sources */,
@@ -371,6 +378,7 @@
 				E262FE0818F847BA00DFC135 /* TCRuntimeSymbol.m in Sources */,
 				E262FE0718F847BA00DFC135 /* TCStatementParser.m in Sources */,
 				E262FE0418F847BA00DFC135 /* TCIfParser.m in Sources */,
+				E26BFC5A1AD31CAE00C6B7F7 /* TCstrlenFunction.h in Sources */,
 				E262FE0318F847BA00DFC135 /* TCExpressionParser.m in Sources */,
 				E2609A891901B13E001EF080 /* TC_arrayFunction.m in Sources */,
 				E275AF441906C967004BFE38 /* TCassertFunction.m in Sources */,

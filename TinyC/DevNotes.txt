@@ -167,5 +167,9 @@
 
 47. [DONE] Support compiling global statements in module before first entry point.
 
-    
+48. String constants should be scanned for, and instead of dynamically allocating outside the runtime
+    environment before execution, should instead become global variables like __stringpool1 and
+    _stringpool2.  Pooling can occur by searching for those declares if we want.  This should be
+    added to the __runtime__ initialization module. Constant strings then can become pointers to
+    initialized storage.
     

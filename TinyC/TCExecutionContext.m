@@ -668,6 +668,10 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             
     }
     
+    if( _returnInfo.action == TCVALUE_VOID) {
+        result = [[TCValue alloc]initWithInt:0];
+    }
+
     return result;
 }
 
