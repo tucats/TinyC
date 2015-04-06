@@ -216,6 +216,20 @@ TCExecutionContext* activeContext;
     
     TCValue * argvValue = [[[TCValue alloc]initWithLong:argv] makePointer:TCVALUE_POINTER_CHAR];
     
+    // Try to execute the runtime initialization if it was compiled.  This happens
+    // when there are global variables, for example. The special name RUNTIME_ENTRYPOINT
+    // is reserved.
+    
+    TCSyntaxNode * initEntry = [context findEntryPoint:RUNTIME_ENTRYPOINT];
+    if( initEntry != nil ) {
+        _result = [context execute:context.module
+                        entryPoint:RUNTIME_ENTRYPOINT
+                     withArguments:@[]];
+        if( _result.getInt != 0 )
+            return [context error];
+    }
+    
+    // Now run the main program.
     _result = [context execute:context.module
                              entryPoint:@"main"
                           withArguments:@[ argcValue, argvValue ]];

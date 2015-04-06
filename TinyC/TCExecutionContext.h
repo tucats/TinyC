@@ -21,6 +21,7 @@ int typeSize(int t );
 
 {
     TCStorageManager* _storage;
+    BOOL  _isCoRoutine;
 }
 
 @property TCSyntaxNode * module;

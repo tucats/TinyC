@@ -18,6 +18,9 @@
 #import <Foundation/Foundation.h>
 #import "TCError.h"
 #import "TCValue.h"
+
+#define RUNTIME_ENTRYPOINT @"__runtime__"
+
 @class TCStorageManager;
 
 /**

@@ -10,6 +10,8 @@
 #import "TCStatementParser.h"
 #import "TCTypeParser.h"
 #import "TCDeclarationParser.h"
+#import "TCValue.h"
+#import "TinyC.h"
 
 @implementation TCModuleParser
 -(TCSyntaxNode*) parse:(TCLexicalScanner *)scanner
@@ -25,6 +27,50 @@
     module.subNodes = [NSMutableArray array];
     module.spelling = name;
     module.position = scanner.tokenPosition;
+    
+    // Let's see if we find any global declarations.  These become part of the
+    // "__runtime__" module if we find any.
+    
+    TCSyntaxNode * globals = nil;
+    TCSyntaxNode * globalBlock = nil;
+    
+    TCDeclarationParser * globalDeclares = [[TCDeclarationParser alloc]init];
+    
+    while(1) {
+        if([scanner isAtEnd])
+            break;
+        
+        long mark = scanner.position;
+        
+        TCSyntaxNode * global = [globalDeclares parse:scanner];
+        if(global == nil || [scanner nextToken] != TOKEN_SEMICOLON) {
+            [scanner setPosition:mark];
+            break;
+        }
+        if( globals == nil ) {
+            // Create entry point
+            globals = [TCSyntaxNode node:LANGUAGE_ENTRYPOINT usingScanner:scanner];
+            globals.subNodes = [NSMutableArray array];
+            globals.spelling = RUNTIME_ENTRYPOINT;
+            // First subnode is the return type, we specify int
+            globalBlock = [TCSyntaxNode node:LANGUAGE_RETURN_TYPE usingScanner:scanner];
+            globalBlock.action = TCVALUE_INT;
+            [globals addNode:globalBlock];
+            // Second subnode is a BLOCK with the actual declarations inside it
+            globalBlock = [TCSyntaxNode node:LANGUAGE_BLOCK usingScanner:scanner];
+            globalBlock.subNodes = [NSMutableArray array];
+            [globals addNode:globalBlock];
+        }
+        [globalBlock addNode: global];
+    }
+    if( globals != nil ) {
+        [module addNode: globals];
+        globals = nil;
+        globalBlock = nil;
+    }
+    
+    
+    // Now that we're dispatched any globals, compile all modules we find.
     
     while( 1 ) {
         if([scanner isAtEnd])

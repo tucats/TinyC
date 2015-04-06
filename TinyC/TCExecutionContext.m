@@ -14,7 +14,7 @@
 #import "TCToken.h"
 #import "TCExpressionInterpreter.h"
 #import "TCFunction.h"
-
+#import "TinyC.h"
 
 TCExecutionContext* activeContext;
 
@@ -297,6 +297,8 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             if( _debug)
                 NSLog(@"TRACE:   Beginning execution of entrypoint %@", tree.spelling);
             
+            if( [tree.spelling isEqualToString:RUNTIME_ENTRYPOINT])
+                _isCoRoutine = TRUE;
             
             // The first subnode is the return type; squirrel that away.
             
@@ -393,10 +395,13 @@ TCValue* coerceType(TCValue* value, TokenType theType)
                     return nil;
             }
             
-            // Now release the scoped block
-            self.symbols = scopedSymbols.parent;
-            scopedSymbols = nil;
-            [_storage popStorage];
+            // Now release the scoped block as long as we're not doing a branch
+            // to a co-routine (lateral call, essentially).
+            if(!_isCoRoutine) {
+                self.symbols = scopedSymbols.parent;
+                scopedSymbols = nil;
+                [_storage popStorage];
+            }
         }
             break;
 #pragma mark > assignment
