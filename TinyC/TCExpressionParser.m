@@ -249,7 +249,7 @@
         TCSyntaxNode * source = [self parseAtom:parser];
         if( source == nil)
             return nil;
-        TCSyntaxNode * deref = [TCSyntaxNode node:LANGUAGE_ADDRESS usingScanner:parser];
+        TCSyntaxNode * deref = [TCSyntaxNode node:LANGUAGE_DEREFERENCE usingScanner:parser];
         deref.argument = nil;
         deref.action = 0;
         deref.position = parser.tokenPosition;
