@@ -162,5 +162,10 @@
 
 45. [DONE] If there is no program file, just assume stdin. Modify XCode project to pass parameters
     for default test case execution.
+
+46. [DONE] Allow void functions, and handle "return" with or without value correcty.
+
+47. [DONE] Support compiling global statements in module before first entry point.
+
     
     
