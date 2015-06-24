@@ -14,6 +14,9 @@
 {
     NSMutableArray * _freeList;
     NSMutableArray * _allocList;
+    NSMutableArray * _stringPool;
+    NSMutableArray * _stringAddress;
+    
 }
 @property char * buffer;
 @property long base;
@@ -55,4 +58,6 @@
 -(void) setDouble:(double) value at:(long) address;
 
 -(NSString*) getString:(long)address;
+
+-(TCValue*) allocateString: (NSString*) string;
 @end

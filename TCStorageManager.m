@@ -179,6 +179,32 @@ const char * typeName( TCValueType t )
     return newAddr;
 }
 
+-(TCValue*) allocateString:(NSString *)string
+{
+    TCValue * result = nil;
+    
+    if(_stringPool == nil ) {
+        _stringPool = [NSMutableArray array];
+        _stringAddress = [NSMutableArray array];
+        
+    }
+    long pos = [_stringPool indexOfObject:(string)];
+    if( pos != NSNotFound) {
+        NSNumber * n = _stringAddress[pos];
+        result = [[TCValue alloc]initWithLong:[n longValue]];
+        [result makePointer:TCVALUE_POINTER_CHAR];
+        return result;
+    }
+
+    pos = [self allocateDynamic:string.length];
+    [_stringPool addObject:string];
+    [_stringAddress addObject:[[NSNumber alloc]initWithLong:pos]];
+    
+    result = [[TCValue alloc]initWithLong:pos];
+    [result makePointer:TCVALUE_POINTER_CHAR];
+    return result;
+}
+
 -(long) allocateDynamic:(long)size
 {
 

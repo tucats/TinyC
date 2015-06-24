@@ -446,7 +446,14 @@ TCValue* coerceType(TCValue* value, TokenType theType)
             }
             
             if(value.getType != actualType) {
-                value = [value castTo:actualType];
+                
+                // Special case; if this is a string constant then allocate storage for
+                // it and then return value.
+                if( value.getType == TCVALUE_STRING && actualType >= TCVALUE_POINTER) {
+                    value = [_storage allocateString:value.getString];
+                }
+                else
+                    value = [value castTo:actualType];
                 if(_debug)
                     NSLog(@"TRACE:   Assignment cast to target type of %@", value.getTypeName);
             }

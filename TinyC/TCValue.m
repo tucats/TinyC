@@ -355,9 +355,21 @@ typedef struct {
                     
                     
                 default:
-                    NSLog(@"Unsupported conversion of TCValue from %d", newType);
+                    NSLog(@"Unsupported conversion of TCValue to %d", newType);
                     return nil;
                     
+            }
+        
+        case TCVALUE_POINTER_CHAR:
+            switch ([self getType]) {
+
+                /* We might be asked to store a string in a pointer */
+                case TCVALUE_STRING:
+                    
+                default:
+                    NSLog(@"Unsupported conversion of TCValue to %d", newType);
+                    return nil;
+
             }
         default:
             NSLog(@"Unsupported conversion of TCValue to %d", newType);

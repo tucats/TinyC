@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>2AB98F57-9589-4FA3-9D8B-F13892870A25</string>
+	<key>IDESourceControlProjectName</key>
+	<string>TinyC</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>D0034AB62F0F47590C4E0987ECC9E8BEBB69A6C2</key>
+		<string>https://github.com/tucats/TinyC.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>TinyC.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>D0034AB62F0F47590C4E0987ECC9E8BEBB69A6C2</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/tucats/TinyC.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>D0034AB62F0F47590C4E0987ECC9E8BEBB69A6C2</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>D0034AB62F0F47590C4E0987ECC9E8BEBB69A6C2</string>
+			<key>IDESourceControlWCCName</key>
+			<string>TinyC</string>
+		</dict>
+	</array>
+</dict>
+</plist>
