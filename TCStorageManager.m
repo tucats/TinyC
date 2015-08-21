@@ -196,9 +196,16 @@ const char * typeName( TCValueType t )
         return result;
     }
 
-    pos = [self allocateDynamic:string.length];
+    pos = [self allocateDynamic:string.length+1];
     [_stringPool addObject:string];
     [_stringAddress addObject:[[NSNumber alloc]initWithLong:pos]];
+    
+    // Let's actually copy the string into the memory storage as well.
+    
+    for( int idx = 0; idx < string.length; idx++) {
+        [self setChar:[string characterAtIndex:idx] at:pos+idx];
+    }
+    [self setChar:0 at:pos+string.length];
     
     result = [[TCValue alloc]initWithLong:pos];
     [result makePointer:TCVALUE_POINTER_CHAR];

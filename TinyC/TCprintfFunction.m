@@ -32,7 +32,8 @@
     for( int i = 1; i < arguments.count; i++ ) {
         TCValue * x = (TCValue*) arguments[i];
         if( x.getType == TCVALUE_POINTER_CHAR) {
-            [valueArgs addObject:[self.storage getString:x.getLong]];
+            long strPtrAddress = x.getLong;
+            [valueArgs addObject:[self.storage getString:strPtrAddress]];
         } else if( x.getType == TCVALUE_STRING)
             [valueArgs addObject:x.getString];
         else if( x.getType == TCVALUE_BOOLEAN)
